@@ -1,7 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ControlsPanel extends JPanel {
+    private VideoPlayerComponent videoPlayer;
     private JLabel currentTimeLabel;
     private JLabel totalTimeLabel;
     private JSlider seekSlider;
@@ -13,8 +16,19 @@ public class ControlsPanel extends JPanel {
     private JSlider volumeSlider;
     private JLabel volumeLevelLabel;
 
-    public ControlsPanel(){
+    public ControlsPanel(VideoPlayerComponent videoPlayer){
+        this.videoPlayer=videoPlayer;
         setupLayout();
+        setupListeners();
+    }
+
+    private void setupListeners() {
+        playButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                videoPlayer.play();
+            }
+        });
     }
 
     /**
@@ -23,6 +37,7 @@ public class ControlsPanel extends JPanel {
     private void setupLayout(){
         setLayout(new GridBagLayout());
         GridBagConstraints gbc=new GridBagConstraints();
+        gbc.insets=new Insets(5,5,5,5);
 
         //set up the time slider layout
         JPanel sliderPanel=new JPanel();

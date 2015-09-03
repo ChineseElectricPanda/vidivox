@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 public class MainFrame extends JFrame{
@@ -12,14 +14,27 @@ public class MainFrame extends JFrame{
     private JMenuItem exportButton;
     private JMenuItem quitButton;
 
+    private JMenuItem commentaryButton;
+
     public MainFrame(){
         super("VIDIVOX");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setupMenuBar();
         setupLayout();
+        setupListeners();
         setMinimumSize(new Dimension(600,300));
         pack();
     }
+
+    private void setupListeners() {
+        commentaryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                new CommentaryDialog().setVisible(true);
+            }
+        });
+    }
+
 
     /**
      * Seys up the frame layout
@@ -41,7 +56,7 @@ public class MainFrame extends JFrame{
         contentPane.add(videoPlayer, gbc);
 
         //set up the controls panel
-        controlsPanel=new ControlsPanel();
+        controlsPanel=new ControlsPanel(videoPlayer);
         gbc.gridx=0;
         gbc.gridy=1;
         gbc.weightx=1.0f;
@@ -73,6 +88,12 @@ public class MainFrame extends JFrame{
         quitButton=new JMenuItem("Quit");
         fileMenu.add(quitButton);
         menuBar.add(fileMenu);
+
+        JMenu editMenu=new JMenu("Edit");
+        editMenu.setMnemonic(KeyEvent.VK_E);
+        commentaryButton=new JMenuItem("Commentaries...");
+        editMenu.add(commentaryButton);
+        menuBar.add(editMenu);
 
         setJMenuBar(menuBar);
 
