@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,12 +45,22 @@ public class AudioOverlaysDialog extends JDialog {
             deleteButtons.get(i).addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
+                	overlays.get(position).stop();
                     overlays.remove(position);
                     setupLayout();
                     setupListeners();
                 }
             });
         }
+        //stop all the audios when closing the dialog
+        addWindowListener(new WindowAdapter() {
+        	@Override
+        	public void windowClosed(WindowEvent e){
+        		for(AudioOverlay overlay: overlays){
+        			overlay.stop();
+        		}
+        	}
+		});
     }
 
     private void setupLayout(){

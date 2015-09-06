@@ -72,7 +72,7 @@ public class FileOverlay extends AudioOverlay{
     @Override
     protected String getFilePath() {
         if(selectedFile==null){
-            return "";
+            return null;
         }else {
             return selectedFile.getAbsolutePath();
         }

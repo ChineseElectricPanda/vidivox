@@ -133,6 +133,7 @@ public abstract class AudioOverlay {
                         playButton.setText("Play");
                         playButton.removeActionListener(stopActionListener);
                         playButton.addActionListener(playActionListener);
+                        audioPlayWorker=null;
                     }
                 };
                 audioPlayWorker.execute();
@@ -145,7 +146,6 @@ public abstract class AudioOverlay {
                 audioPlayWorker.kill();
             }
         };
-        playButton.addActionListener(playActionListener);
 
         //set the values of the displays
         startTimeField.setText(startTime+"");
@@ -159,8 +159,23 @@ public abstract class AudioOverlay {
                 durationLabel.setText("????");
             }
         }
+        if(getFilePath()!=null){
+        	playButton.setEnabled(true);
+        }
+        if(audioPlayWorker!=null){
+        	playButton.setText("Stop");
+            playButton.addActionListener(stopActionListener);
+        }else{
+        	playButton.addActionListener(playActionListener);
+        }
 
         return contentPane;
+    }
+    
+    public void stop(){
+    	if(audioPlayWorker!=null){
+    		audioPlayWorker.kill();
+    	}
     }
 
     abstract protected String getFilePath();
