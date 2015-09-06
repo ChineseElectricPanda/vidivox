@@ -68,6 +68,9 @@ public class CommentaryOverlay extends AudioOverlay{
                 synthesisWorker.execute();
             }
         });
+        if(text!=null){
+            textField.setText(text);
+        }
         return contentPane;
     }
 
