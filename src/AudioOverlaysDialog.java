@@ -14,6 +14,7 @@ public class AudioOverlaysDialog extends JDialog {
     private JButton addAudioButton;
 
     public AudioOverlaysDialog() {
+        super((Dialog)null);
         setupLayout();
         setupListeners();
         setMinimumSize(new Dimension(800, 400));
@@ -54,13 +55,13 @@ public class AudioOverlaysDialog extends JDialog {
         }
         //stop all the audios when closing the dialog
         addWindowListener(new WindowAdapter() {
-        	@Override
-        	public void windowClosed(WindowEvent e){
-        		for(AudioOverlay overlay: overlays){
-        			overlay.stop();
-        		}
-        	}
-		});
+            @Override
+            public void windowClosed(WindowEvent e) {
+                for (AudioOverlay overlay : overlays) {
+                    overlay.stop();
+                }
+            }
+        });
     }
 
     private void setupLayout(){
