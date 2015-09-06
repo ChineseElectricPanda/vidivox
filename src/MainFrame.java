@@ -30,7 +30,7 @@ public class MainFrame extends JFrame{
         commentaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                new CommentaryDialog().setVisible(true);
+                new AudioOverlaysDialog().setVisible(true);
             }
         });
     }
@@ -91,7 +91,7 @@ public class MainFrame extends JFrame{
 
         JMenu editMenu=new JMenu("Edit");
         editMenu.setMnemonic(KeyEvent.VK_E);
-        commentaryButton=new JMenuItem("Commentaries...");
+        commentaryButton=new JMenuItem("Audio Overlays...");
         editMenu.add(commentaryButton);
         menuBar.add(editMenu);
 

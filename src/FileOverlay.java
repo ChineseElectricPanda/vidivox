@@ -38,7 +38,6 @@ public class FileOverlay extends AudioOverlay{
         gbc.anchor= GridBagConstraints.NORTH;
         contentPane.add(fileSelectorPanel,gbc);
 
-
         fileSelectorButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -62,7 +61,6 @@ public class FileOverlay extends AudioOverlay{
                         playButton.setEnabled(false);
                     }
                 }
-
             }
         });
         if(selectedFile!=null){

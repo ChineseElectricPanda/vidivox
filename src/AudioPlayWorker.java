@@ -12,7 +12,7 @@ public class AudioPlayWorker extends SwingWorker<Void,Void>{
     }
     @Override
     protected Void doInBackground() throws Exception {
-        playerProcess=new ProcessBuilder("/bin/bash","-c","ffplay -nodisp -af volume="+(((float)volume)/100)+" "+filePath).start();
+        playerProcess=new ProcessBuilder("/bin/bash","-c","ffplay -nodisp -autoexit -af volume="+(((float)volume)/100)+" "+filePath).start();
         playerProcess.waitFor();
         return null;
     }
