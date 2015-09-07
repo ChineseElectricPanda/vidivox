@@ -29,6 +29,7 @@ public class ControlsPanel extends JPanel {
     private void setupLayout(){
         setLayout(new GridBagLayout());
         GridBagConstraints gbc=new GridBagConstraints();
+        gbc.insets=new Insets(5,5,5,5);
 
         //set up the time slider layout
         JPanel sliderPanel=new JPanel();
