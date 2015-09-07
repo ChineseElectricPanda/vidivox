@@ -16,14 +16,25 @@ public class MainFrame extends JFrame{
     private JMenuItem saveProjectButton;
     private JMenuItem exportButton;
     private JMenuItem quitButton;
+    private JMenuItem commentaryButton;
 
     public MainFrame(){
         super("VIDIVOX");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setupMenuBar();
         setupLayout();
+        setupListeners();
         setMinimumSize(new Dimension(600,300));
         pack();
+    }
+
+    private void setupListeners() {
+        commentaryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                new AudioOverlaysDialog().setVisible(true);
+            }
+        });
     }
 
     /**
@@ -44,39 +55,40 @@ public class MainFrame extends JFrame{
         gbc.anchor= GridBagConstraints.NORTH;
         gbc.fill= GridBagConstraints.BOTH;
         videoPlayer.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.out.println("Testing - mouse clicked inside player");
-				// if paused then play else pause 
-				if (videoPlayer.getMediaPlayer().isPlaying()) {
-					 videoPlayer.getMediaPlayer().pause();
-				} else {
-					 videoPlayer.getMediaPlayer().play();
-				}
-			}
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				// Maybe could use this to show buttons later on in design
-				System.out.println("Testing - mouse entered player");
-			}
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("Testing - mouse clicked inside player");
+                // if paused then play else pause
+                if (videoPlayer.getMediaPlayer().isPlaying()) {
+                    videoPlayer.getMediaPlayer().pause();
+                } else {
+                    videoPlayer.getMediaPlayer().play();
+                }
+            }
 
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				// Maybe could use this to hide buttons later on in design
-				System.out.println("Testing - mouse exited player");
-			}
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // TODO Auto-generated method stub
+                // Maybe could use this to show buttons later on in design
+                System.out.println("Testing - mouse entered player");
+            }
 
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-			}
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // TODO Auto-generated method stub
+                // Maybe could use this to hide buttons later on in design
+                System.out.println("Testing - mouse exited player");
+            }
 
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub	
-			}
+            @Override
+            public void mousePressed(MouseEvent e) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                // TODO Auto-generated method stub
+            }
         });
         contentPane.add(videoPlayer, gbc);
 
@@ -159,6 +171,13 @@ public class MainFrame extends JFrame{
         fileMenu.add(quitButton);
         
         menuBar.add(fileMenu);
+
+        JMenu editMenu=new JMenu("Edit");
+        editMenu.setMnemonic(KeyEvent.VK_E);
+        commentaryButton=new JMenuItem("Audio Overlays...");
+        editMenu.add(commentaryButton);
+        menuBar.add(editMenu);
+
         setJMenuBar(menuBar);
     }
     
