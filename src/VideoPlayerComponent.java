@@ -1,14 +1,13 @@
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
-import uk.co.caprica.vlcj.player.MediaPlayer;
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 public class VideoPlayerComponent extends EmbeddedMediaPlayerComponent {
-    EmbeddedMediaPlayer player;
-    public VideoPlayerComponent(){
-        this.player=getMediaPlayer();
-    }
+		
+	// Method to play video
+	public void playVideo(VideoPlayerComponent videoPlayer, String path) {
+		
+		videoPlayer.getMediaPlayer().playMedia(path);
+		
+	}
 
-    public void play(){
-        player.playMedia("/home/hamcake/aiuraop.mkv");
-    }
+	
 }

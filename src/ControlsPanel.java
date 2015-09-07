@@ -1,10 +1,11 @@
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 public class ControlsPanel extends JPanel {
-    private VideoPlayerComponent videoPlayer;
     private JLabel currentTimeLabel;
     private JLabel totalTimeLabel;
     private JSlider seekSlider;
@@ -15,20 +16,11 @@ public class ControlsPanel extends JPanel {
     private JButton fastForwardButton;
     private JSlider volumeSlider;
     private JLabel volumeLevelLabel;
-
-    public ControlsPanel(VideoPlayerComponent videoPlayer){
-        this.videoPlayer=videoPlayer;
+    private int volume = 50;
+    private String totalTime = "00:00";
+    
+    public ControlsPanel(){
         setupLayout();
-        setupListeners();
-    }
-
-    private void setupListeners() {
-        playButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                videoPlayer.play();
-            }
-        });
     }
 
     /**
@@ -37,7 +29,6 @@ public class ControlsPanel extends JPanel {
     private void setupLayout(){
         setLayout(new GridBagLayout());
         GridBagConstraints gbc=new GridBagConstraints();
-        gbc.insets=new Insets(5,5,5,5);
 
         //set up the time slider layout
         JPanel sliderPanel=new JPanel();
@@ -55,7 +46,7 @@ public class ControlsPanel extends JPanel {
         gbc.weighty=1.0f;
         gbc.fill=GridBagConstraints.HORIZONTAL;
         sliderPanel.add(seekSlider,gbc);
-        totalTimeLabel=new JLabel("00:00");
+        totalTimeLabel=new JLabel(totalTime);
         gbc.gridx=2;
         gbc.gridy=0;
         gbc.weightx=0.0f;
@@ -68,7 +59,6 @@ public class ControlsPanel extends JPanel {
         add(sliderPanel,gbc);
 
         //set up the control buttons layout
-        //TODO use icons for buttons
         JPanel buttonsPanel=new JPanel();
         buttonsPanel.setLayout(new GridBagLayout());
         playButton=new JButton("Play");
@@ -76,18 +66,38 @@ public class ControlsPanel extends JPanel {
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
+        playButton.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		// Playing the video
+        		MainFrame.videoPlayer.getMediaPlayer().play();
+        	}
+        });
         buttonsPanel.add(playButton);
         pauseButton=new JButton("Pause");
         gbc.gridx=1;
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
+        pauseButton.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		// Pausing the video player
+        		MainFrame.videoPlayer.getMediaPlayer().pause();
+        	}
+        });
         buttonsPanel.add(pauseButton,gbc);
         stopButton=new JButton("Stop");
         gbc.gridx=2;
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
+        stopButton.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		MainFrame.videoPlayer.getMediaPlayer().stop();
+        	}
+        });
         buttonsPanel.add(stopButton,gbc);
         gbc.gridx=3;
         gbc.gridy=0;
@@ -99,12 +109,26 @@ public class ControlsPanel extends JPanel {
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
+        rewindButton.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		// Rewinding the player
+        		MainFrame.videoPlayer.getMediaPlayer().skip(-10000);
+        	}
+        });
         buttonsPanel.add(rewindButton,gbc);
         fastForwardButton=new JButton(">>");
         gbc.gridx=5;
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
+        fastForwardButton.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		// Forwarding the video
+        		MainFrame.videoPlayer.getMediaPlayer().skip(10000);
+        	}
+        });
         buttonsPanel.add(fastForwardButton,gbc);
         gbc.gridx=6;
         gbc.gridy=0;
@@ -122,18 +146,34 @@ public class ControlsPanel extends JPanel {
         gbc.gridy=0;
         gbc.weightx=1.0f;
         gbc.weighty=1.0f;
+        volumeSlider.addChangeListener(new ChangeListener()  {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				// Getting current volume user has set
+				volume = volumeSlider.getValue();
+				// Updating the audio in the video player to the selected volume
+				MainFrame.videoPlayer.getMediaPlayer().setVolume(volume);
+				// Updating the label for the volume to show current volume level
+				volumeLevelLabel.setText(volume + "%");
+			}
+        });
         buttonsPanel.add(volumeSlider);
-        volumeLevelLabel=new JLabel("100%");
+        volumeLevelLabel=new JLabel(volume + "%");
         gbc.gridx=9;
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
         buttonsPanel.add(volumeLevelLabel);
-
+        
         gbc.gridx=0;
         gbc.gridy=1;
         gbc.weightx=1.0;
         gbc.weighty=0.0;
         add(buttonsPanel,gbc);
     }
+    
+    public void setTotalTime(String time) {
+    	totalTimeLabel.setText(time);
+    }
+    
 }
