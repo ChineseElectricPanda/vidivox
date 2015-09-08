@@ -12,6 +12,7 @@ public class AudioOverlaysDialog extends JDialog {
     private JButton addAudioButton;
 
     public AudioOverlaysDialog() {
+        super((Dialog)null);
         setupLayout();
         setupListeners();
         setMinimumSize(new Dimension(800, 400));
