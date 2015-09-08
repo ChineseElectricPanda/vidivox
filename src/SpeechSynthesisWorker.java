@@ -6,9 +6,9 @@ public class SpeechSynthesisWorker extends SwingWorker<Void,Void>{
     protected Process synthesisProcess;
     protected String filePath;
 
-    public SpeechSynthesisWorker(String text){
+    public SpeechSynthesisWorker(String text,String fileName){
         this.text=text;
-        filePath="/tmp/"+text.hashCode();
+        filePath="/tmp/"+fileName;
         try {
             synthesisProcess=new ProcessBuilder("/bin/bash","-c","echo \""+text+"\" | text2wave -o "+filePath).start();
         } catch (IOException e) {

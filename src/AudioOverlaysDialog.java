@@ -22,7 +22,7 @@ public class AudioOverlaysDialog extends JDialog {
         addCommentaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                CommentaryOverlay overlay=new CommentaryOverlay();
+                CommentaryOverlay overlay=new CommentaryOverlay(overlays.size());
                 overlays.add(overlay);
                 setupLayout();
                 setupListeners();

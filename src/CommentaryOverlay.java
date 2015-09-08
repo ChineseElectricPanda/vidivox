@@ -7,18 +7,19 @@ import java.io.IOException;
 public class CommentaryOverlay extends AudioOverlay{
     private String text;
     private String filePath;
+    private int position;
     private SpeechSynthesisWorker synthesisWorker;
     private JTextField textField;
 
-    public CommentaryOverlay(){
-        this("",0);
+    public CommentaryOverlay(int position){
+        this(position,"",0);
     }
 
-    public CommentaryOverlay(String text, float startTime){
+    public CommentaryOverlay(int position, String text, float startTime){
+        this.position=position;
         this.text=text;
         this.startTime=startTime;
     }
-
 
     public JPanel getComponentView() {
         JPanel contentPane=super.getComponentView();
@@ -50,7 +51,7 @@ public class CommentaryOverlay extends AudioOverlay{
                 if (synthesisWorker != null && !synthesisWorker.isDone()) {
                     synthesisWorker.kill();
                 }
-                synthesisWorker = new SpeechSynthesisWorker(text) {
+                synthesisWorker = new SpeechSynthesisWorker(text,"commentary"+position) {
                     @Override
                     protected void done() {
                         super.done();
