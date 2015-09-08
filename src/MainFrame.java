@@ -161,7 +161,13 @@ public class MainFrame extends JFrame{
                 JFileChooser fileChooser = new JFileChooser();
                 if (fileChooser.showOpenDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
                     try {
-                        openProject(fileChooser.getSelectedFile());
+                        String[] options=new String[]{"Yes, Discard changes","No"};
+                        String message="Opening another project will cause usaved changes to be discarded\n" +
+                                "Are you sure you want to do this?";
+                        int result=JOptionPane.showOptionDialog(MainFrame.this,message,"Warning",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE,null,options,options[1]);
+                        if(result==JOptionPane.YES_OPTION) {
+                            openProject(fileChooser.getSelectedFile());
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (FileFormatException e) {
