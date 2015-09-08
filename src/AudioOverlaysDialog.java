@@ -18,6 +18,14 @@ public class AudioOverlaysDialog extends JDialog {
         pack();
     }
 
+    public static List<AudioOverlay> getOverlays() {
+        return overlays;
+    }
+
+    public static void setOverlays(List<AudioOverlay> overlays){
+        AudioOverlaysDialog.overlays=overlays;
+    }
+
     private void setupListeners() {
         addCommentaryButton.addActionListener(new ActionListener() {
             @Override

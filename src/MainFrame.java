@@ -3,12 +3,15 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.File;
+import java.io.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.List;
+import java.util.ArrayList;
 
 public class MainFrame extends JFrame{
-    public static VideoPlayerComponent videoPlayer;
+    private VideoPlayerComponent videoPlayer;
+    private String videoPath;
     private ControlsPanel controlsPanel;
     private JMenuBar menuBar;
     private JMenuItem openVideoButton;
@@ -93,14 +96,14 @@ public class MainFrame extends JFrame{
         contentPane.add(videoPlayer, gbc);
 
         //set up the controls panel
-        controlsPanel=new ControlsPanel();
+        controlsPanel=new ControlsPanel(videoPlayer);
         gbc.gridx=0;
         gbc.gridy=1;
         gbc.weightx=1.0f;
         gbc.weighty=0.0f;
         gbc.anchor= GridBagConstraints.SOUTH;
         gbc.fill= GridBagConstraints.HORIZONTAL;
-        contentPane.add(controlsPanel,gbc);
+        contentPane.add(controlsPanel, gbc);
     }
 
     /**
@@ -116,44 +119,72 @@ public class MainFrame extends JFrame{
         // Menu item choice to choose a video and play in the player
         openVideoButton=new JMenuItem("Open Video");
         openVideoButton.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		// File chooser to allow user to select a video to open
-        		JFileChooser fileChooser = new JFileChooser();
+            public void actionPerformed(ActionEvent e) {
+                // File chooser to allow user to select a video to open
+                JFileChooser fileChooser = new JFileChooser();
                 int returnValue = fileChooser.showOpenDialog(null);
-                
-                if (returnValue == JFileChooser.APPROVE_OPTION) {
-                  File selectedFile = fileChooser.getSelectedFile();	
-                  String path = selectedFile.getPath(); // Getting file path
-                                   
-                  // Playing the video
-                  videoPlayer.playVideo(videoPlayer, path);
-                  
-                // Sleeping the thread to allow for the time to be gotten
-                try {
-					Thread.sleep(50);
-				} catch (InterruptedException e1) {
-					System.out.println("Error while sleeping open video button thread");
-					e1.printStackTrace();
-				}
-                  // Getting total length of video in milliseconds
-                  long time = videoPlayer.getMediaPlayer().getLength();
-                  
-                  // Converting millisecond time to preferred format
-                  long second = (time / 1000) % 60;
-                  long minute = (time / 60000) % 60;
-                  long hour = (time / 3600000) % 24;
-                  String totalTime = String.format("%02d:%02d:%02d", hour, minute, second);
 
-                  // Setting total time variable
-                  controlsPanel.setTotalTime(totalTime);
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    videoPath = selectedFile.getPath(); // Getting file path
+
+                    // Playing the video
+                    videoPlayer.playVideo(videoPath);
+
+                    // Sleeping the thread to allow for the time to be gotten
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e1) {
+                        System.out.println("Error while sleeping open video button thread");
+                        e1.printStackTrace();
+                    }
+                    // Getting total length of video in milliseconds
+                    long time = videoPlayer.getMediaPlayer().getLength();
+
+                    // Converting millisecond time to preferred format
+                    long second = (time / 1000) % 60;
+                    long minute = (time / 60000) % 60;
+                    long hour = (time / 3600000) % 24;
+                    String totalTime = String.format("%02d:%02d:%02d", hour, minute, second);
+
+                    // Setting total time variable
+                    controlsPanel.setTotalTime(totalTime);
                 }
-        	}
+            }
         });
         fileMenu.add(openVideoButton);
         
         openProjectButton=new JMenuItem("Open Project");
+        openProjectButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JFileChooser fileChooser = new JFileChooser();
+                if (fileChooser.showOpenDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        openProject(fileChooser.getSelectedFile());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (FileFormatException e) {
+                        JOptionPane.showMessageDialog(MainFrame.this,"Invalid or corrupted VIDIVOX project file","Invalid File",JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
         fileMenu.add(openProjectButton);
         saveProjectButton=new JMenuItem("Save Project");
+        saveProjectButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JFileChooser fileChooser = new JFileChooser();
+                if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        saveProject(fileChooser.getSelectedFile());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
         fileMenu.add(saveProjectButton);
         fileMenu.addSeparator();
         exportButton=new JMenuItem("Export");
@@ -179,6 +210,39 @@ public class MainFrame extends JFrame{
         menuBar.add(editMenu);
 
         setJMenuBar(menuBar);
+    }
+
+    private void saveProject(File file) throws IOException {
+        BufferedWriter f=new BufferedWriter(new FileWriter(file));
+        if(videoPath==null){
+            f.write("\n");
+        }else {
+            f.write(videoPath + "\n");
+        }
+        for(AudioOverlay overlay:AudioOverlaysDialog.getOverlays()){
+            f.write(overlay.toString()+"\n");
+        }
+        f.close();
+    }
+
+    private void openProject(File file) throws IOException, FileFormatException {
+        BufferedReader f=new BufferedReader(new FileReader(file));
+        String line=f.readLine();
+        String videoPath=null;
+        if(!line.equals("")) {
+            videoPath = line;
+        }
+        List<AudioOverlay> overlays=new ArrayList<>();
+        while((line=f.readLine())!=null){
+            overlays.add(AudioOverlay.fromString(line));
+        }
+        //only set the new variables after ALL lines have been read
+        this.videoPath=videoPath;
+        if(videoPath!=null){
+            videoPlayer.playVideo(videoPath);
+        }
+        AudioOverlaysDialog.setOverlays(overlays);
+
     }
     
 }

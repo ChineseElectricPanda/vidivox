@@ -12,13 +12,14 @@ public class CommentaryOverlay extends AudioOverlay{
     private JTextField textField;
 
     public CommentaryOverlay(int position){
-        this(position,"",0);
+        this(position,"",0,100);
     }
 
-    public CommentaryOverlay(int position, String text, float startTime){
+    public CommentaryOverlay(int position, String text, float startTime,int volume){
         this.position=position;
         this.text=text;
         this.startTime=startTime;
+        this.volume=volume;
     }
 
     public JPanel getComponentView() {
@@ -73,6 +74,21 @@ public class CommentaryOverlay extends AudioOverlay{
             textField.setText(text);
         }
         return contentPane;
+    }
+
+    @Override
+    public String toString(){
+        String s="C\t"+position+"\t"+text+"\t"+startTime+"\t"+volume;
+        return s;
+    }
+
+    public static CommentaryOverlay fromString(String s){
+        int position=Integer.parseInt(s.split("\\t")[1]);
+        String text=s.split("\\t")[2];
+        float startTime=Float.parseFloat(s.split("\\t")[3]);
+        int volume=Integer.parseInt(s.split("\\t")[4]);
+
+        return new CommentaryOverlay(position,text,startTime,volume);
     }
 
     @Override

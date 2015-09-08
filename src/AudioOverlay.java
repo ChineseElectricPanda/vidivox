@@ -88,20 +88,22 @@ public abstract class AudioOverlay {
                 volumeLevelLabel.setText(volume + "%");
             }
         });
+
+        //TODO this
         startTimeField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent documentEvent) {
-
+                changedUpdate(documentEvent);
             }
 
             @Override
             public void removeUpdate(DocumentEvent documentEvent) {
-
+                changedUpdate(documentEvent);
             }
 
             @Override
             public void changedUpdate(DocumentEvent documentEvent) {
-
+                startTime=Float.parseFloat(startTimeField.getText());
             }
         });
         startTimeField.addFocusListener(new FocusListener() {
@@ -161,6 +163,20 @@ public abstract class AudioOverlay {
         }
 
         return contentPane;
+    }
+
+    public static AudioOverlay fromString(String s) throws FileFormatException {
+        try {
+            if (s.startsWith("F")) {
+                return FileOverlay.fromString(s);
+            } else if (s.startsWith("C")) {
+                return CommentaryOverlay.fromString(s);
+            }
+        }catch(ArrayIndexOutOfBoundsException|NumberFormatException e){
+            throw new FileFormatException();
+        }
+        throw new FileFormatException();
+
     }
 
     abstract protected String getFilePath();

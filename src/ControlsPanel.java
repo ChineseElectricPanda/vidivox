@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class ControlsPanel extends JPanel {
+    private VideoPlayerComponent videoPlayer;
     private JLabel currentTimeLabel;
     private JLabel totalTimeLabel;
     private JSlider seekSlider;
@@ -19,7 +20,8 @@ public class ControlsPanel extends JPanel {
     private int volume = 50;
     private String totalTime = "00:00";
     
-    public ControlsPanel(){
+    public ControlsPanel(VideoPlayerComponent videoPlayer){
+        this.videoPlayer=videoPlayer;
         setupLayout();
     }
 
@@ -71,7 +73,7 @@ public class ControlsPanel extends JPanel {
         	@Override
         	public void actionPerformed(ActionEvent e) {
         		// Playing the video
-        		MainFrame.videoPlayer.getMediaPlayer().play();
+        		videoPlayer.getMediaPlayer().play();
         	}
         });
         buttonsPanel.add(playButton);
@@ -84,7 +86,7 @@ public class ControlsPanel extends JPanel {
         	@Override
         	public void actionPerformed(ActionEvent e) {
         		// Pausing the video player
-        		MainFrame.videoPlayer.getMediaPlayer().pause();
+        		videoPlayer.getMediaPlayer().pause();
         	}
         });
         buttonsPanel.add(pauseButton,gbc);
@@ -96,7 +98,7 @@ public class ControlsPanel extends JPanel {
         stopButton.addActionListener(new ActionListener() {
         	@Override
         	public void actionPerformed(ActionEvent e) {
-        		MainFrame.videoPlayer.getMediaPlayer().stop();
+        		videoPlayer.getMediaPlayer().stop();
         	}
         });
         buttonsPanel.add(stopButton,gbc);
@@ -114,7 +116,7 @@ public class ControlsPanel extends JPanel {
         	@Override
         	public void actionPerformed(ActionEvent e) {
         		// Rewinding the player
-        		MainFrame.videoPlayer.getMediaPlayer().skip(-10000);
+        		videoPlayer.getMediaPlayer().skip(-10000);
         	}
         });
         buttonsPanel.add(rewindButton,gbc);
@@ -127,7 +129,7 @@ public class ControlsPanel extends JPanel {
         	@Override
         	public void actionPerformed(ActionEvent e) {
         		// Forwarding the video
-        		MainFrame.videoPlayer.getMediaPlayer().skip(10000);
+        		videoPlayer.getMediaPlayer().skip(10000);
         	}
         });
         buttonsPanel.add(fastForwardButton,gbc);
@@ -153,7 +155,7 @@ public class ControlsPanel extends JPanel {
 				// Getting current volume user has set
 				volume = volumeSlider.getValue();
 				// Updating the audio in the video player to the selected volume
-				MainFrame.videoPlayer.getMediaPlayer().setVolume(volume);
+				videoPlayer.getMediaPlayer().setVolume(volume);
 				// Updating the label for the volume to show current volume level
 				volumeLevelLabel.setText(volume + "%");
 			}
