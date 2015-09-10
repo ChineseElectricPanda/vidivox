@@ -194,6 +194,19 @@ public class MainFrame extends JFrame{
         fileMenu.add(saveProjectButton);
         fileMenu.addSeparator();
         exportButton=new JMenuItem("Export");
+        exportButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JFileChooser fileChooser = new JFileChooser();
+                if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        exportProject(fileChooser.getSelectedFile());
+                    } catch (IOException|InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
         fileMenu.add(exportButton);
         fileMenu.addSeparator();
         
@@ -249,6 +262,60 @@ public class MainFrame extends JFrame{
         }
         AudioOverlaysDialog.setOverlays(overlays);
 
+    }
+
+    private void exportProject(final File file) throws InterruptedException, IOException {
+        final ProgressDialog progressDialog=new ProgressDialog();
+        progressDialog.setVisible(true);
+        final List<AudioOverlay> overlays=AudioOverlaysDialog.getOverlays();
+        progressDialog.setOverallTotal(overlays.size()+1);
+
+
+        new SwingWorker<Void,AudioOverlay>(){
+            int progress=0;
+            @Override
+            protected void process(List<AudioOverlay> chunks) {
+                if(chunks.size()==0){
+                    return;
+                }
+                progress+=chunks.size();
+                progressDialog.setOverallProgress(progress-1);
+                AudioOverlay currentlyProcessedOverlay=chunks.get(chunks.size()-1);
+                if(currentlyProcessedOverlay!=null){
+                    progressDialog.setTaskProgressNote("Processing "+currentlyProcessedOverlay.getFileName()+"...");
+                }else{
+                    progressDialog.setTaskProgressNote("Merging video with audio tracks...");
+                }
+            }
+
+            @Override
+            protected Void doInBackground() throws Exception {
+                //process all of the audio files
+                List<String> audioPaths=new ArrayList<>();
+                for(AudioOverlay overlay:overlays){
+                    publish(overlay);
+                    audioPaths.add(overlay.getProcessedFilePath());
+                }
+
+                //combine all the audio files with the video file
+                publish((AudioOverlay) null);
+                StringBuilder cmd=new StringBuilder("ffmpeg -y -i "+videoPath);
+                for(String audioPath: audioPaths){
+                    cmd.append(" -i "+audioPath);
+                }
+                cmd.append(" -filter_complex amix -strict -2 " + file.getAbsolutePath());
+                Process process=new ProcessBuilder("/bin/bash","-c",cmd.toString()).start();
+                System.out.println(cmd.toString());
+                process.waitFor();
+                progressDialog.close();
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                JOptionPane.showMessageDialog(MainFrame.this,"Sucessfully exported project to "+file.getAbsolutePath(),"Success!",JOptionPane.INFORMATION_MESSAGE);
+            }
+        }.execute();
     }
     
 }

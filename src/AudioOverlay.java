@@ -179,7 +179,36 @@ public abstract class AudioOverlay {
 
     }
 
+    public String getProcessedFilePath() throws IOException, InterruptedException {
+        System.out.println(Thread.currentThread().getName());
+        if(!Thread.currentThread().getName().startsWith("SwingWorker")){
+            System.err.println("BIG RED LETTERS!");
+            throw new RuntimeException("This method must be called on a swingworker thread!");
+        }
+        if(startTime==0){
+            return getFilePath();
+        }
+        //create a silent audio file equal to the length of the start time offset
+        //(reference: http://superuser.com/questions/579008/add-1-second-of-silence-to-audio-through-ffmpeg)
+        String silenceFilePath="/tmp/silence"+startTime+".mp3";
+        Process process=new ProcessBuilder("/bin/bash","-c","ffmpeg -y -f lavfi -i aevalsrc=0:0:0:0:0:0::duration="+startTime+" "+silenceFilePath).start();
+        System.out.println("ffmpeg -y -f lavfi -i aevalsrc=0:0:0:0:0:0::duration="+startTime+" "+silenceFilePath);
+        process.waitFor();
+
+        //concatenate the silence file before the actual file and adjust the volume
+        //(reference: http://superuser.com/questions/587511/concatenate-multiple-wav-files-using-single-command-without-extra-file)
+        String outFilePath="/tmp/"+getFileName()+".mp3";
+        process=new ProcessBuilder("/bin/bash","-c","ffmpeg -y -i "+silenceFilePath+" -i "+getFilePath()+" -filter_complex '[0:0][1:0]concat=n=2:v=0:a=1[combined];[combined]volume="+(((float)volume)/100)+"[out]' -map '[out]' "+outFilePath).start();
+        System.out.println("ffmpeg -y -i "+silenceFilePath+" -i "+getFilePath()+" -filter_complex '[0:0][1:0]concat=n=2:v=0:a=1[combined];[combined]volume="+(((float)volume)/100)+"[out]' -map '[out]' "+outFilePath);
+        process.waitFor();
+        return outFilePath;
+    }
+
     abstract protected String getFilePath();
+
+    public String getFileName(){
+        return getFilePath().split("/")[getFilePath().split("/").length-1];
+    }
 
     protected float getDuration(String filePath) throws IOException, InterruptedException {
         Process ffProbeProcess=new ProcessBuilder("/bin/bash","-c","ffprobe -i "+filePath+" -show_entries format=duration 2>&1 | grep \"duration=\"").start();
