@@ -3,18 +3,21 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.MaskFormatter;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.*;
+import java.text.ParseException;
 
 public abstract class AudioOverlay {
     protected float startTime=0;
     protected int volume=100;
 
-    protected JTextField startTimeField;
+    protected JFormattedTextField startTimeField;
     protected JLabel durationLabel;
     protected JButton playButton;
     protected JSlider volumeSlider;
@@ -39,7 +42,15 @@ public abstract class AudioOverlay {
         gbc.gridwidth=1;
         gbc.weightx=0.0f;
         propertiesPanel.add(new JLabel("Start Time"),gbc);
-        startTimeField=new JTextField();
+        startTimeField=new JFormattedTextField();
+        startTimeField.setHighlighter(null);
+        try {
+			new MaskFormatter("##:##.###").install(startTimeField);
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        startTimeField.setText("00:00.000");
         startTimeField.setPreferredSize(new Dimension(50,19));
         gbc.gridx++;
         gbc.weightx=1.0f;
@@ -89,8 +100,7 @@ public abstract class AudioOverlay {
             }
         });
 
-        //TODO this
-        startTimeField.getDocument().addDocumentListener(new DocumentListener() {
+        final DocumentListener startTimeFieldDocumentListener=new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent documentEvent) {
                 changedUpdate(documentEvent);
@@ -103,18 +113,43 @@ public abstract class AudioOverlay {
 
             @Override
             public void changedUpdate(DocumentEvent documentEvent) {
-                startTime=Float.parseFloat(startTimeField.getText());
+                String timeString=startTimeField.getText();
+                System.out.println("time entered"+timeString);
+                int minutes,seconds,milliseconds;
+                try{
+                	minutes=Integer.parseInt(timeString.split(":")[0]);
+                }catch(NumberFormatException|NullPointerException e){
+                	minutes=0;
+                }
+                try{
+                	seconds=Integer.parseInt(timeString.split(":")[1].split("\\.")[0]);
+                }catch(NumberFormatException|NullPointerException e){
+                	seconds=0;
+                }
+                try{
+                	milliseconds=Integer.parseInt(timeString.split("\\.")[1]);
+                }catch(NumberFormatException|NullPointerException e){
+                	milliseconds=0;
+                }
+                startTime=minutes*60+seconds+((float)milliseconds)/1000;
             }
-        });
+        };
+        startTimeField.getDocument().addDocumentListener(startTimeFieldDocumentListener);
         startTimeField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent focusEvent) {
-
+            	
             }
 
             @Override
             public void focusLost(FocusEvent focusEvent) {
-
+            	startTimeField.getDocument().removeDocumentListener(startTimeFieldDocumentListener);
+            	int minutes=(int)(startTime/60);
+            	int seconds=(int)(startTime%60);
+            	int milliseconds=(int)((startTime-seconds-minutes*60)*1000);
+            	System.out.println(String.format("%02d:%02d.%03d", minutes,seconds,milliseconds));
+            	startTimeField.setText(String.format("%02d:%02d.%03d", minutes,seconds,milliseconds));
+            	startTimeField.getDocument().addDocumentListener(startTimeFieldDocumentListener);
             }
         });
 
@@ -150,7 +185,6 @@ public abstract class AudioOverlay {
         playButton.addActionListener(playActionListener);
 
         //set the values of the displays
-        startTimeField.setText(startTime+"");
         volumeSlider.setValue(volume);
         if(getFilePath()!=null) {
             try {
