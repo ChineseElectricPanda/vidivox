@@ -14,10 +14,12 @@ import java.io.*;
 import java.text.ParseException;
 
 public abstract class AudioOverlay {
-    protected float startTime=0;
+    protected double startTime=0;
     protected int volume=100;
 
-    protected JFormattedTextField startTimeField;
+    protected JTextField startTimeMinutesField;
+    protected JTextField startTimeSecondsField;
+    protected JTextField startTimeMillisecondsField;
     protected JLabel durationLabel;
     protected JButton playButton;
     protected JSlider volumeSlider;
@@ -42,19 +44,29 @@ public abstract class AudioOverlay {
         gbc.gridwidth=1;
         gbc.weightx=0.0f;
         propertiesPanel.add(new JLabel("Start Time"),gbc);
-        startTimeField=new JFormattedTextField();
-        startTimeField.setHighlighter(null);
-        try {
-			new MaskFormatter("##:##.###").install(startTimeField);
-		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-        startTimeField.setText("00:00.000");
-        startTimeField.setPreferredSize(new Dimension(50,19));
+        
+        gbc.insets=new Insets(0, 0, 0, 0);
+        startTimeMinutesField=new JTextField();
+        startTimeMinutesField.setHorizontalAlignment(JTextField.RIGHT);
+        startTimeMinutesField.setPreferredSize(new Dimension(50,19));
         gbc.gridx++;
-        gbc.weightx=1.0f;
-        propertiesPanel.add(startTimeField,gbc);
+        propertiesPanel.add(startTimeMinutesField,gbc);
+        gbc.gridx++;
+        propertiesPanel.add(new JLabel(":"),gbc);
+        startTimeSecondsField=new JTextField();
+        startTimeSecondsField.setHorizontalAlignment(JTextField.RIGHT);
+        startTimeSecondsField.setPreferredSize(new Dimension(25,19));
+        gbc.gridx++;
+        propertiesPanel.add(startTimeSecondsField,gbc);
+        gbc.gridx++;
+        propertiesPanel.add(new JLabel("."),gbc);
+        startTimeMillisecondsField=new JTextField();
+        startTimeMillisecondsField.setHorizontalAlignment(JTextField.RIGHT);
+        startTimeMillisecondsField.setPreferredSize(new Dimension(35,19));
+        gbc.gridx++;
+        propertiesPanel.add(startTimeMillisecondsField,gbc);
+        
+        gbc.insets=new Insets(5, 5, 5, 5);
         gbc.gridx++;
         gbc.weightx=0;
         propertiesPanel.add(new JLabel("Duration"),gbc);
@@ -91,65 +103,60 @@ public abstract class AudioOverlay {
         contentPane.add(propertiesPanel, gbc);
 
         //set up the listeners
+        final DocumentListener startTimeDocumentListener=new DocumentListener() {
+			
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				changedUpdate(e);
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				changedUpdate(e);
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				int minutes=0,seconds=0,milliseconds=0;
+				try{
+					minutes=Integer.parseInt(startTimeMinutesField.getText());
+				}catch(NumberFormatException|NullPointerException ex){}
+				try{
+					seconds=Integer.parseInt(startTimeSecondsField.getText());
+				}catch(NumberFormatException|NullPointerException ex){}
+				try{
+					milliseconds=Integer.parseInt(startTimeMillisecondsField.getText());
+				}catch(NumberFormatException|NullPointerException ex){}
+				startTime=minutes*60+seconds+((float)milliseconds)/1000;
+				System.out.println(startTime);
+			}
+		};
+		
+		final FocusListener startTimeFocusListener=new FocusListener() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				updateStartTimeFields();
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e) {
+
+			}
+		};
+		startTimeMinutesField.addFocusListener(startTimeFocusListener);
+		startTimeSecondsField.addFocusListener(startTimeFocusListener);
+		startTimeMillisecondsField.addFocusListener(startTimeFocusListener);
+		
+		startTimeMinutesField.getDocument().addDocumentListener(startTimeDocumentListener);
+		startTimeSecondsField.getDocument().addDocumentListener(startTimeDocumentListener);
+		startTimeMillisecondsField.getDocument().addDocumentListener(startTimeDocumentListener);
+		
         volumeSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 JSlider slider = (JSlider) e.getSource();
                 volume = slider.getValue();
                 volumeLevelLabel.setText(volume + "%");
-            }
-        });
-
-        final DocumentListener startTimeFieldDocumentListener=new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent documentEvent) {
-                changedUpdate(documentEvent);
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent documentEvent) {
-                changedUpdate(documentEvent);
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent documentEvent) {
-                String timeString=startTimeField.getText();
-                System.out.println("time entered"+timeString);
-                int minutes,seconds,milliseconds;
-                try{
-                	minutes=Integer.parseInt(timeString.split(":")[0]);
-                }catch(NumberFormatException|NullPointerException e){
-                	minutes=0;
-                }
-                try{
-                	seconds=Integer.parseInt(timeString.split(":")[1].split("\\.")[0]);
-                }catch(NumberFormatException|NullPointerException e){
-                	seconds=0;
-                }
-                try{
-                	milliseconds=Integer.parseInt(timeString.split("\\.")[1]);
-                }catch(NumberFormatException|NullPointerException e){
-                	milliseconds=0;
-                }
-                startTime=minutes*60+seconds+((float)milliseconds)/1000;
-            }
-        };
-        startTimeField.getDocument().addDocumentListener(startTimeFieldDocumentListener);
-        startTimeField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent focusEvent) {
-            	
-            }
-
-            @Override
-            public void focusLost(FocusEvent focusEvent) {
-            	startTimeField.getDocument().removeDocumentListener(startTimeFieldDocumentListener);
-            	int minutes=(int)(startTime/60);
-            	int seconds=(int)(startTime%60);
-            	int milliseconds=(int)((startTime-seconds-minutes*60)*1000);
-            	System.out.println(String.format("%02d:%02d.%03d", minutes,seconds,milliseconds));
-            	startTimeField.setText(String.format("%02d:%02d.%03d", minutes,seconds,milliseconds));
-            	startTimeField.getDocument().addDocumentListener(startTimeFieldDocumentListener);
             }
         });
 
@@ -185,6 +192,7 @@ public abstract class AudioOverlay {
         playButton.addActionListener(playActionListener);
 
         //set the values of the displays
+        updateStartTimeFields();
         volumeSlider.setValue(volume);
         if(getFilePath()!=null) {
             try {
@@ -259,4 +267,13 @@ public abstract class AudioOverlay {
     protected float getDuration(File file) throws IOException, InterruptedException {
         return getDuration(file.getAbsolutePath());
     }
+
+	private void updateStartTimeFields() {
+		int minutes=(int)(startTime/60);
+		int seconds=(int)(startTime%60);
+		int milliseconds=(int)((startTime-seconds-minutes*60)*1000);
+		startTimeMinutesField.setText(String.format("%02d", minutes));
+		startTimeSecondsField.setText(String.format("%02d", seconds));
+		startTimeMillisecondsField.setText(String.format("%03d", milliseconds));
+	}
 }
