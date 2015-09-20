@@ -1,16 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
 
+
+// Progress bar to 
 public class ProgressDialog extends JDialog {
     private JLabel overallProgressLabel;
     private JProgressBar overallProgresBar;
     private JLabel taskProgressLabel;
     private JProgressBar taskProgressBar;
     private JButton cancelButton;
-
-    public static void main(String[] args){
-        new ProgressDialog().setVisible(true);
-    }
 
     public ProgressDialog(){
         setupLayout();
