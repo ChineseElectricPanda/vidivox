@@ -20,6 +20,15 @@ public class CommentaryOverlay extends AudioOverlay{
         this.text=text;
         this.startTime=startTime;
         this.volume=volume;
+        if(text!=null && !text.isEmpty()){
+            new SpeechSynthesisWorker(text,"commentary"+position){
+                @Override
+                protected void done() {
+                    super.done();
+                    CommentaryOverlay.this.filePath=filePath;
+                }
+            }.execute();
+        }
     }
 
     public JPanel getComponentView() {
