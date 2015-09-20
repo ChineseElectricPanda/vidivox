@@ -1,0 +1,34 @@
+import javax.swing.SwingUtilities;
+
+
+public class UpdateRunnable implements Runnable {
+	
+	private ControlsPanel controlsPanel;
+
+	
+	public UpdateRunnable(ControlsPanel controlsPanel) {
+		this.controlsPanel = controlsPanel;
+	}
+	
+	
+	@Override
+	public void run() {
+		
+		final VideoPlayerComponent videoPlayer = controlsPanel.getVideoPlayer();
+		final int position = (int) (videoPlayer.getMediaPlayer().getPosition() * 100);
+		
+		 SwingUtilities.invokeLater(new Runnable() {
+             @Override
+             public void run() {
+                 if(videoPlayer.getMediaPlayer().isPlaying()) {
+                     updatePosition(position);
+                 }
+             }
+
+			private void updatePosition(int position) {
+				controlsPanel.seekSlider.setValue(position);				
+			}
+         });
+	}
+
+}
