@@ -6,23 +6,33 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class ControlsPanel extends JPanel {
+	private ControlsPanel controlsPanel = this;
     private VideoPlayerComponent videoPlayer;
-    private JLabel currentTimeLabel;
-    private JLabel totalTimeLabel;
-    private JSlider seekSlider;
+    protected JLabel currentTimeLabel;
+    protected JLabel totalTimeLabel;
+    protected JSlider seekSlider;
     private JButton playButton;
     private JButton pauseButton;
     private JButton stopButton;
     private JButton rewindButton;
     private JButton fastForwardButton;
+    private JButton skipBackButton;
     private JSlider volumeSlider;
     private JLabel volumeLevelLabel;
+    private JButton skipForwardButton;
     private int volume = 50;
-    private String totalTime = "00:00";
+    protected float totalTime = 0;
+    protected float currentTime = 0;
+    protected boolean sliderCanMove = false;
+    private SkipVideo skipVid = null;
     
     public ControlsPanel(VideoPlayerComponent videoPlayer){
         this.videoPlayer=videoPlayer;
         setupLayout();
+    }
+    
+    public VideoPlayerComponent getVideoPlayer() {
+    	return videoPlayer;
     }
 
     /**
@@ -36,11 +46,11 @@ public class ControlsPanel extends JPanel {
         //set up the time slider layout
         JPanel sliderPanel=new JPanel();
         sliderPanel.setLayout(new GridBagLayout());
-        currentTimeLabel=new JLabel("00:00");
+        currentTimeLabel=new JLabel("00:00:00");
         gbc.gridx=0;
         gbc.gridy=0;
         gbc.weightx=0.0f;
-        gbc.weighty=1.0f;
+        gbc.weighty=1.0f;       
         sliderPanel.add(currentTimeLabel,gbc);
         seekSlider=new JSlider();
         gbc.gridx=1;
@@ -48,8 +58,36 @@ public class ControlsPanel extends JPanel {
         gbc.weightx=1.0f;
         gbc.weighty=1.0f;
         gbc.fill=GridBagConstraints.HORIZONTAL;
-        sliderPanel.add(seekSlider,gbc);
-        totalTimeLabel=new JLabel(totalTime);
+        seekSlider.setMaximum(100);
+        seekSlider.setMinimum(0);
+        seekSlider.setValue(0);
+        // Seek slider change event to make video player to play at set time
+        seekSlider.addChangeListener(new ChangeListener()  {
+			// For when user drags the seek bar
+        	@Override
+			public void stateChanged(ChangeEvent e) {
+        		VideoTimer videoTimeControl = new VideoTimer(controlsPanel);
+        		videoTimeControl.execute();
+        	}
+        });
+        seekSlider.addMouseListener(new MouseListener() {
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				sliderCanMove = true;
+			}
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				sliderCanMove = false;
+			}
+			@Override
+			public void mouseClicked(MouseEvent e) {}
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			@Override
+			public void mouseExited(MouseEvent e) {}     	
+        });
+        sliderPanel.add(seekSlider,gbc);        
+        totalTimeLabel=new JLabel("00:00");
         gbc.gridx=2;
         gbc.gridy=0;
         gbc.weightx=0.0f;
@@ -60,10 +98,11 @@ public class ControlsPanel extends JPanel {
         gbc.weightx=1.0;
         gbc.weighty=0.0;
         add(sliderPanel,gbc);
-
+        
         //set up the control buttons layout
         JPanel buttonsPanel=new JPanel();
         buttonsPanel.setLayout(new GridBagLayout());
+        
         playButton=new JButton("Play");
         gbc.gridx=0;
         gbc.gridy=0;
@@ -72,6 +111,12 @@ public class ControlsPanel extends JPanel {
         playButton.addActionListener(new ActionListener() {
         	@Override
         	public void actionPerformed(ActionEvent e) {
+        		if (skipVid != null) {
+        			skipVid.setIsSkipping(false);
+        			skipVid.cancel(true);
+        			skipVid = null;
+        		}
+        	
         		// Playing the video
         		videoPlayer.getMediaPlayer().play();
         	}
@@ -85,6 +130,11 @@ public class ControlsPanel extends JPanel {
         pauseButton.addActionListener(new ActionListener() {
         	@Override
         	public void actionPerformed(ActionEvent e) {
+        		if (skipVid != null) {
+        			skipVid.setIsSkipping(false);
+        			skipVid.cancel(true);
+        			skipVid = null;
+        		}
         		// Pausing the video player
         		videoPlayer.getMediaPlayer().pause();
         	}
@@ -98,7 +148,13 @@ public class ControlsPanel extends JPanel {
         stopButton.addActionListener(new ActionListener() {
         	@Override
         	public void actionPerformed(ActionEvent e) {
+        		if (skipVid != null) {
+        			skipVid.setIsSkipping(false);
+        			skipVid.cancel(true);
+        			skipVid = null;
+        		}
         		videoPlayer.getMediaPlayer().stop();
+        		seekSlider.setValue(0);
         	}
         });
         buttonsPanel.add(stopButton,gbc);
@@ -115,8 +171,19 @@ public class ControlsPanel extends JPanel {
         rewindButton.addActionListener(new ActionListener() {
         	@Override
         	public void actionPerformed(ActionEvent e) {
-        		// Rewinding the player
-        		videoPlayer.getMediaPlayer().skip(-10000);
+        		if (skipVid == null) {
+        			videoPlayer.getMediaPlayer().mute(true);
+        			skipVid =  new SkipVideo(videoPlayer);
+        			skipVid.setSkipValue(-500);
+        			skipVid.setIsSkipping(true);
+        			skipVid.execute();
+        			
+        		} else if (skipVid != null) {
+        			videoPlayer.getMediaPlayer().mute(false);
+        			skipVid.setIsSkipping(false);
+        			skipVid.cancel(true);
+        			skipVid = null;
+        		}
         	}
         });
         buttonsPanel.add(rewindButton,gbc);
@@ -128,17 +195,66 @@ public class ControlsPanel extends JPanel {
         fastForwardButton.addActionListener(new ActionListener() {
         	@Override
         	public void actionPerformed(ActionEvent e) {
-        		// Forwarding the video
-        		videoPlayer.getMediaPlayer().skip(10000);
+        		if (skipVid == null) {
+        			videoPlayer.getMediaPlayer().mute(true);
+        			skipVid =  new SkipVideo(videoPlayer);
+        			skipVid.setSkipValue(500);
+        			skipVid.setIsSkipping(true);
+        			skipVid.execute();
+        			
+        		} else if (skipVid != null) {
+        			videoPlayer.getMediaPlayer().mute(false);
+        			skipVid.setIsSkipping(false);
+        			skipVid.cancel(true);
+        			skipVid = null;
+        		}
         	}
         });
         buttonsPanel.add(fastForwardButton,gbc);
-        gbc.gridx=6;
+        skipForwardButton = new JButton(">");
+        gbc.gridx = 7;
+        gbc.gridy = 0;
+        gbc.weightx=0.0f;
+        gbc.weighty=3.0f;
+        skipForwardButton.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {        		
+        		if (skipVid != null) {
+        			skipVid.setIsSkipping(false);
+        			skipVid.cancel(true);
+        			skipVid = null;
+        		}
+        		// Forwarding the video
+        		videoPlayer.getMediaPlayer().skip(10000);  
+        	}
+        });
+        buttonsPanel.add(skipForwardButton, gbc);
+        
+        skipBackButton = new JButton("<");
+        gbc.gridx = 6;
+        gbc.gridy = 0;
+        gbc.weightx=0.0f;
+        gbc.weighty=3.0f;
+        skipBackButton.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {        		
+        		if (skipVid != null) {
+        			skipVid.setIsSkipping(false);
+        			skipVid.cancel(true);
+        			skipVid = null;
+        		}
+        		// Rewinding the player
+        		videoPlayer.getMediaPlayer().skip(-10000);
+        	}
+        });
+        buttonsPanel.add(skipBackButton, gbc);
+        
+        gbc.gridx=8;
         gbc.gridy=0;
         gbc.weightx=0.5f;
         gbc.weighty=1.0f;
         buttonsPanel.add(new JPanel(),gbc);
-        gbc.gridx=7;
+        gbc.gridx=8;
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
@@ -175,8 +291,14 @@ public class ControlsPanel extends JPanel {
         add(buttonsPanel,gbc);
     }
     
-    public void setTotalTime(String time) {
-    	totalTimeLabel.setText(time);
+    public void setTotalTime(String timeString, long time) {
+    	totalTimeLabel.setText(timeString);
+    	totalTime = time;
+    }
+    
+    public void setCurrentTime(String timeString, long time) {
+    	currentTimeLabel.setText(timeString);
+    	currentTime = time;
     }
     
 }
