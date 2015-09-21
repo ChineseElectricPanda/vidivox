@@ -27,7 +27,7 @@ public class MainFrame extends JFrame{
         setupMenuBar();
         setupLayout();
         setupListeners();
-        setMinimumSize(new Dimension(600,300));
+        setMinimumSize(new Dimension(750,400));
         pack();
     }
 
@@ -56,54 +56,18 @@ public class MainFrame extends JFrame{
         gbc.weightx=1.0f;
         gbc.weighty=1.0f;
         gbc.anchor= GridBagConstraints.NORTH;
-        gbc.fill= GridBagConstraints.BOTH;
-        videoPlayer.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("Testing - mouse clicked inside player");
-                // if paused then play else pause
-                if (videoPlayer.getMediaPlayer().isPlaying()) {
-                    videoPlayer.getMediaPlayer().pause();
-                } else {
-                    videoPlayer.getMediaPlayer().play();
-                }
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                // TODO Auto-generated method stub
-                // Maybe could use this to show buttons later on in design
-                System.out.println("Testing - mouse entered player");
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                // TODO Auto-generated method stub
-                // Maybe could use this to hide buttons later on in design
-                System.out.println("Testing - mouse exited player");
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                // TODO Auto-generated method stub
-            }
-        });
+        gbc.fill= GridBagConstraints.BOTH;       
         contentPane.add(videoPlayer, gbc);
 
         //set up the controls panel
-        controlsPanel=new ControlsPanel(videoPlayer);
+        setControlsPanel(new ControlsPanel(videoPlayer));
         gbc.gridx=0;
         gbc.gridy=1;
         gbc.weightx=1.0f;
         gbc.weighty=0.0f;
         gbc.anchor= GridBagConstraints.SOUTH;
         gbc.fill= GridBagConstraints.HORIZONTAL;
-        contentPane.add(controlsPanel, gbc);
+        contentPane.add(getControlsPanel(), gbc);
     }
 
     /**
@@ -148,7 +112,7 @@ public class MainFrame extends JFrame{
                     String totalTime = String.format("%02d:%02d:%02d", hour, minute, second);
 
                     // Setting total time variable
-                    controlsPanel.setTotalTime(totalTime);
+                    getControlsPanel().setTotalTime(totalTime, time);
                 }
             }
         });
@@ -317,5 +281,13 @@ public class MainFrame extends JFrame{
             }
         }.execute();
     }
+
+	public ControlsPanel getControlsPanel() {
+		return controlsPanel;
+	}
+
+	public void setControlsPanel(ControlsPanel controlsPanel) {
+		this.controlsPanel = controlsPanel;
+	}
     
 }
