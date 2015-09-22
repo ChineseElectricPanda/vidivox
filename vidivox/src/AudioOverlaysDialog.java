@@ -7,6 +7,7 @@ import java.util.List;
 
 public class AudioOverlaysDialog extends JDialog {
     private static List<AudioOverlay> overlays=new ArrayList<>();
+    protected static List<CommentaryOverlay> commentaryOverlays = new ArrayList<>();
     private List<JButton> deleteButtons;
     private JButton addCommentaryButton;
     private JButton addAudioButton;
@@ -33,6 +34,8 @@ public class AudioOverlaysDialog extends JDialog {
             public void actionPerformed(ActionEvent actionEvent) {
                 CommentaryOverlay overlay=new CommentaryOverlay(overlays.size());
                 overlays.add(overlay);
+                commentaryOverlays.add(overlay);
+
                 setupLayout();
                 setupListeners();
             }

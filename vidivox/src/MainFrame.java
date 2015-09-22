@@ -39,6 +39,7 @@ public class MainFrame extends JFrame{
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 new AudioOverlaysDialog().setVisible(true);
+                videoPlayer.getMediaPlayer().stop();
             }
         });
     }

@@ -5,7 +5,7 @@ import java.awt.*;
 import java.io.IOException;
 
 public class CommentaryOverlay extends AudioOverlay{
-    private String text;
+    protected String text;
     private String filePath;
     private int position;
     private SpeechSynthesisWorker synthesisWorker;
@@ -20,6 +20,14 @@ public class CommentaryOverlay extends AudioOverlay{
         this.text=text;
         this.startTime=startTime;
         this.volume=volume;
+    }
+    
+    public int getPosition() {
+    	return position;
+    }
+    
+    public String getText() {
+    	return text;
     }
 
     public JPanel getComponentView() {
@@ -49,25 +57,34 @@ public class CommentaryOverlay extends AudioOverlay{
             @Override
             public void changedUpdate(DocumentEvent documentEvent) {
                 text = textField.getText();
-                if (synthesisWorker != null && !synthesisWorker.isDone()) {
-                    synthesisWorker.kill();
+
+                if (text.length() > 20) {
+                	JOptionPane.showMessageDialog(null,
+                		    "Must specify comment less than or equal 20 characters",
+                		    "Error",
+                		    JOptionPane.ERROR_MESSAGE);
+                } else {
+                
+                	if (synthesisWorker != null && !synthesisWorker.isDone()) {
+                		synthesisWorker.kill();
+                	}
+                	synthesisWorker = new SpeechSynthesisWorker(text,"commentary"+position) {
+                		@Override
+                		protected void done() {
+                			super.done();
+                			playButton.setEnabled(true);
+                			CommentaryOverlay.this.filePath = synthesisWorker.filePath;
+                			try {
+                				float duration = getDuration(filePath);
+                				String durationText = (int) (duration / 60) + ":" + (int) (duration % 60) + "." + (int) ((duration - (int) duration)*1000);
+                				durationLabel.setText(durationText);
+                			} catch (IOException | InterruptedException e) {
+                				durationLabel.setText("???");
+                			}
+                		}
+                	};
+                	synthesisWorker.execute();
                 }
-                synthesisWorker = new SpeechSynthesisWorker(text,"commentary"+position) {
-                    @Override
-                    protected void done() {
-                        super.done();
-                        playButton.setEnabled(true);
-                        CommentaryOverlay.this.filePath=filePath;
-                        try {
-                            float duration = getDuration(filePath);
-                            String durationText = (int) (duration / 60) + ":" + (int) (duration % 60) + "." + (int) ((duration - (int) duration)*1000);
-                            durationLabel.setText(durationText);
-                        } catch (IOException | InterruptedException e) {
-                            durationLabel.setText("???");
-                        }
-                    }
-                };
-                synthesisWorker.execute();
             }
         });
         if(text!=null){

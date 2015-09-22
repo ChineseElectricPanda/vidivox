@@ -8,18 +8,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AudioOverlay {
     protected float startTime=0;
     protected int volume=100;
-
+    protected CommentaryOverlay commentary;
     protected JTextField startTimeField;
     protected JLabel durationLabel;
     protected JButton playButton;
     protected JSlider volumeSlider;
     protected JLabel volumeLevelLabel;
-
+    protected JCheckBox previewCheckBox;
+    protected boolean showPreview = false;
+    
     private ActionListener playActionListener;
     private ActionListener stopActionListener;
     private AudioPlayWorker audioPlayWorker;
@@ -58,6 +64,10 @@ public abstract class AudioOverlay {
         propertiesPanel.add(playButton,gbc);
         gbc.gridx++;
         gbc.weightx=1.0f;
+        previewCheckBox = new JCheckBox("Preview");
+        gbc.gridx++;
+        gbc.weightx=1.0f;
+        propertiesPanel.add(previewCheckBox, gbc);
         propertiesPanel.add(new JPanel(),gbc);
         gbc.gridx++;
         gbc.weightx=0;
@@ -87,6 +97,17 @@ public abstract class AudioOverlay {
                 volume = slider.getValue();
                 volumeLevelLabel.setText(volume + "%");
             }
+        });
+        
+        previewCheckBox.addItemListener(new ItemListener () {
+        	@Override
+        	public void itemStateChanged(ItemEvent e) {
+        		if (e.getStateChange() == ItemEvent.SELECTED) {
+        			showPreview = true;
+        		} else {
+        			showPreview = false;
+        		}
+        	}
         });
 
         //TODO this
@@ -121,11 +142,23 @@ public abstract class AudioOverlay {
         playActionListener=new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                //turn the button into a start button
+            	           	
+            	ArrayList<CommentaryOverlay> overlays = (ArrayList<CommentaryOverlay>) AudioOverlaysDialog.commentaryOverlays;
+            	for (int i = 0; i < overlays.size(); i++) {
+            		if (overlays.get(i).text.length() > 20) {
+            			JOptionPane.showMessageDialog(null,
+                    		    "Must specify comment less than or equal 20 characters",
+                    		    "Error",
+                    		    JOptionPane.ERROR_MESSAGE);
+            			return;
+            		} 
+            	}
+            	
+            	 //turn the button into a start button
                 playButton.setText("Stop");
                 playButton.removeActionListener(this);
                 playButton.addActionListener(stopActionListener);
-
+                               
                 //start the process
                 audioPlayWorker=new AudioPlayWorker(getFilePath(),volume){
                     @Override
@@ -139,6 +172,7 @@ public abstract class AudioOverlay {
                 };
                 audioPlayWorker.execute();
             }
+               
         };
         stopActionListener=new ActionListener() {
             @Override
@@ -176,7 +210,6 @@ public abstract class AudioOverlay {
             throw new FileFormatException();
         }
         throw new FileFormatException();
-
     }
 
     public String getProcessedFilePath() throws IOException, InterruptedException {

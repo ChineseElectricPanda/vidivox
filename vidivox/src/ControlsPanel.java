@@ -4,6 +4,8 @@ import javax.swing.event.ChangeListener;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class ControlsPanel extends JPanel {
 	private ControlsPanel controlsPanel = this;
@@ -25,6 +27,7 @@ public class ControlsPanel extends JPanel {
     protected float currentTime = 0;
     protected boolean sliderCanMove = false;
     private SkipVideo skipVid = null;
+    private ArrayList<AudioPlayWorker> audioPlayWorkerList = new ArrayList<AudioPlayWorker>();
     
     public ControlsPanel(VideoPlayerComponent videoPlayer){
         this.videoPlayer=videoPlayer;
@@ -36,7 +39,7 @@ public class ControlsPanel extends JPanel {
     }
 
     /**
-     * Sets up the seek slider and buttons layout
+     * Sets up the seek slider and buttons layoutideo skipV
      */
     private void setupLayout(){
         setLayout(new GridBagLayout());
@@ -66,8 +69,10 @@ public class ControlsPanel extends JPanel {
 			// For when user drags the seek bar
         	@Override
 			public void stateChanged(ChangeEvent e) {
-        		VideoTimer videoTimeControl = new VideoTimer(controlsPanel);
-        		videoTimeControl.execute();
+        		if (sliderCanMove) {
+        			VideoTimer videoTimeControl = new VideoTimer(controlsPanel);
+        			videoTimeControl.execute();
+        		}
         	}
         });
         seekSlider.addMouseListener(new MouseListener() {
@@ -87,7 +92,7 @@ public class ControlsPanel extends JPanel {
 			public void mouseExited(MouseEvent e) {}     	
         });
         sliderPanel.add(seekSlider,gbc);        
-        totalTimeLabel=new JLabel("00:00");
+        totalTimeLabel=new JLabel("00:00:00");
         gbc.gridx=2;
         gbc.gridy=0;
         gbc.weightx=0.0f;
@@ -115,8 +120,30 @@ public class ControlsPanel extends JPanel {
         			skipVid.setIsSkipping(false);
         			skipVid.cancel(true);
         			skipVid = null;
+        			videoPlayer.getMediaPlayer().mute(false);
+        		}      		
+            	
+				if (Math.round(videoPlayer.getMediaPlayer().getTime()) < 100) {
+        		ArrayList<AudioOverlay> overlays = (ArrayList<AudioOverlay>) AudioOverlaysDialog.getOverlays();
+        		for (int i = 0; i < overlays.size(); i ++) {
+        			if (overlays.get(i).showPreview == true) {
+        				ArrayList<CommentaryOverlay> commentaryOverlays = (ArrayList<CommentaryOverlay>) AudioOverlaysDialog.commentaryOverlays;
+        				if (commentaryOverlays.get(i).text.length() > 20) {
+        					JOptionPane.showMessageDialog(null,
+        							"Must specify comment less than or equal 20 characters",
+        							"Error",
+        							JOptionPane.ERROR_MESSAGE);
+        					return;
+        				} 
+
+        				String filePath = overlays.get(i).getFilePath();
+        				AudioPlayWorker audioPlayer = new AudioPlayWorker(filePath, 100);
+        				audioPlayWorkerList.add(audioPlayer);
+        				audioPlayer.execute();
+        			}
         		}
-        	
+				}
+        		
         		// Playing the video
         		videoPlayer.getMediaPlayer().play();
         	}
@@ -134,6 +161,14 @@ public class ControlsPanel extends JPanel {
         			skipVid.setIsSkipping(false);
         			skipVid.cancel(true);
         			skipVid = null;
+        			videoPlayer.getMediaPlayer().mute(false);
+        		}
+        		for (int i = 0; i < audioPlayWorkerList.size(); i++) {
+        			try {
+						audioPlayWorkerList.get(i).pause();
+					} catch (IOException | InterruptedException e1) {
+						e1.printStackTrace();
+					}
         		}
         		// Pausing the video player
         		videoPlayer.getMediaPlayer().pause();
@@ -152,9 +187,14 @@ public class ControlsPanel extends JPanel {
         			skipVid.setIsSkipping(false);
         			skipVid.cancel(true);
         			skipVid = null;
+        			videoPlayer.getMediaPlayer().mute(false);
+        		}
+        		for (int i = 0; i < audioPlayWorkerList.size(); i++) {
+        			audioPlayWorkerList.get(i).kill();
         		}
         		videoPlayer.getMediaPlayer().stop();
         		seekSlider.setValue(0);
+        		setCurrentTime("00:00:00", 0);
         	}
         });
         buttonsPanel.add(stopButton,gbc);
@@ -173,8 +213,8 @@ public class ControlsPanel extends JPanel {
         	public void actionPerformed(ActionEvent e) {
         		if (skipVid == null) {
         			videoPlayer.getMediaPlayer().mute(true);
-        			skipVid =  new SkipVideo(videoPlayer);
-        			skipVid.setSkipValue(-500);
+        			skipVid =  new SkipVideo(videoPlayer, controlsPanel);
+        			skipVid.setSkipValue(-1000);
         			skipVid.setIsSkipping(true);
         			skipVid.execute();
         			
@@ -197,8 +237,8 @@ public class ControlsPanel extends JPanel {
         	public void actionPerformed(ActionEvent e) {
         		if (skipVid == null) {
         			videoPlayer.getMediaPlayer().mute(true);
-        			skipVid =  new SkipVideo(videoPlayer);
-        			skipVid.setSkipValue(500);
+        			skipVid =  new SkipVideo(videoPlayer, controlsPanel);
+        			skipVid.setSkipValue(1000);
         			skipVid.setIsSkipping(true);
         			skipVid.execute();
         			
@@ -214,7 +254,7 @@ public class ControlsPanel extends JPanel {
         skipForwardButton = new JButton(">");
         gbc.gridx = 7;
         gbc.gridy = 0;
-        gbc.weightx=0.0f;
+        gbc.weightx=0.0f;videoPlayer.getMediaPlayer().mute(false);
         gbc.weighty=3.0f;
         skipForwardButton.addActionListener(new ActionListener() {
         	@Override
@@ -223,6 +263,7 @@ public class ControlsPanel extends JPanel {
         			skipVid.setIsSkipping(false);
         			skipVid.cancel(true);
         			skipVid = null;
+        			videoPlayer.getMediaPlayer().mute(false);
         		}
         		// Forwarding the video
         		videoPlayer.getMediaPlayer().skip(10000);  
@@ -242,6 +283,7 @@ public class ControlsPanel extends JPanel {
         			skipVid.setIsSkipping(false);
         			skipVid.cancel(true);
         			skipVid = null;
+        			videoPlayer.getMediaPlayer().mute(false);
         		}
         		// Rewinding the player
         		videoPlayer.getMediaPlayer().skip(-10000);
