@@ -28,9 +28,9 @@ public class SkipVideo extends SwingWorker<Void, Integer> {
 			long minute = (long) ((time/ 60000) % 60);
 			long hour = (long) ((time/ 3600000) % 24);
 			timeString = String.format("%02d:%02d:%02d", hour, minute, second);
-			
-			publish(skipValue);
-			
+			if (time < controlsPanel.totalTime) {
+				publish(skipValue);
+			}
 		}
 		
 		return null;
