@@ -151,9 +151,9 @@ public abstract class AudioOverlay {
             	           	
             	ArrayList<CommentaryOverlay> overlays = (ArrayList<CommentaryOverlay>) AudioOverlaysDialog.commentaryOverlays;
             	for (int i = 0; i < overlays.size(); i++) {
-            		if (overlays.get(i).text.length() > 20) {
+            		if (overlays.get(i).text.length() >= 80) {
             			JOptionPane.showMessageDialog(null,
-                    		    "Must specify comment less than or equal 20 characters",
+                    		    "Must specify comment less than or equal 80 characters",
                     		    "Error",
                     		    JOptionPane.ERROR_MESSAGE);
             			return;

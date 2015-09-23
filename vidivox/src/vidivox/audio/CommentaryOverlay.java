@@ -62,9 +62,9 @@ public class CommentaryOverlay extends AudioOverlay{
             public void changedUpdate(DocumentEvent documentEvent) {
                 text = textField.getText();
 
-                if (text.length() > 20) {
+                if (text.length() >= 80) {
                 	JOptionPane.showMessageDialog(null,
-                		    "Must specify comment less than or equal 20 characters",
+                		    "Must specify comment less than or equal 80 characters",
                 		    "Error",
                 		    JOptionPane.ERROR_MESSAGE);
                 } else {

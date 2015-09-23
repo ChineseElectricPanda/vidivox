@@ -237,6 +237,7 @@ public class MainFrame extends JFrame{
     private void exportProject(final File file) throws InterruptedException, IOException {
         final ProgressDialog progressDialog=new ProgressDialog();
         progressDialog.setVisible(true);
+        
         final List<AudioOverlay> overlays=AudioOverlaysDialog.getOverlays();
         progressDialog.setOverallTotal(overlays.size()+1);
 
@@ -273,6 +274,7 @@ public class MainFrame extends JFrame{
                 for(String audioPath: audioPaths){
                     cmd.append(" -i "+audioPath);
                 }
+                // Makes the audio not overwrite each other
                 cmd.append(" -filter_complex amix -strict -2 " + file.getAbsolutePath());
                 Process process=new ProcessBuilder("/bin/bash","-c",cmd.toString()).start();
                 System.out.println(cmd.toString());
