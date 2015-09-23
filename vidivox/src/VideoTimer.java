@@ -23,8 +23,8 @@ public class VideoTimer extends SwingWorker<Void, Void>{
 
 		// Setting the video to play according to the where the user wants the video
 		// to play when they drag the seek slider
-		seekTimePercentage = controlsPanel.seekSlider.getValue();
-		newTime = seekTimePercentage * (controlsPanel.totalTime/100);
+		seekTimePercentage = controlsPanel.getSlider().getValue();
+		newTime = seekTimePercentage * (controlsPanel.getTotalTime()/100);
 		
 		timeString = controlsPanel.calculateTime(newTime);
 		

@@ -10,9 +10,9 @@ import java.util.ArrayList;
 public class ControlsPanel extends JPanel {
 	private ControlsPanel controlsPanel = this;
     private VideoPlayerComponent videoPlayer;
-    protected JLabel currentTimeLabel;
-    protected JLabel totalTimeLabel;
-    protected JSlider seekSlider;
+    private JLabel currentTimeLabel;
+    private JLabel totalTimeLabel;
+    private JSlider seekSlider;
     private JButton playButton;
     private JButton pauseButton;
     private JButton stopButton;
@@ -23,9 +23,9 @@ public class ControlsPanel extends JPanel {
     private JLabel volumeLevelLabel;
     private JButton skipForwardButton;
     private int volume = 50;
-    protected float totalTime = 0;
-    protected float currentTime = 0;
-    protected boolean sliderCanMove = false;
+    private float totalTime = 0;
+    private float currentTime = 0;
+    private boolean sliderCanMove = false;
     private SkipVideo skipVid = null;
     private ArrayList<AudioPlayWorker> audioPlayWorkerList = new ArrayList<AudioPlayWorker>();
     
@@ -351,4 +351,13 @@ public class ControlsPanel extends JPanel {
 		String timeString = String.format("%02d:%02d:%02d", hour, minute, second);
 		return timeString;
     }
+    
+    public float getTotalTime() {
+    	return totalTime;
+    }
+    
+    public JSlider getSlider() {
+    	return seekSlider;
+    }
+    
 }

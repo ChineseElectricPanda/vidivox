@@ -32,7 +32,7 @@ public class UpdateRunnable implements Runnable {
              }
 
 			private void updatePosition(int position) {
-				controlsPanel.seekSlider.setValue(position);				
+				controlsPanel.getSlider().setValue(position);				
 			}
          });
 	}

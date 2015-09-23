@@ -25,8 +25,8 @@ public class SkipVideo extends SwingWorker<Void, Integer> {
 			pos = videoPlayer.getMediaPlayer().getPosition()*100;
 			time = (Math.round(videoPlayer.getMediaPlayer().getTime()));
 			timeString = controlsPanel.calculateTime(time);
-			
-			if (time > 0 && time < controlsPanel.totalTime) {
+						
+			if (time > 0 && time < controlsPanel.getTotalTime()) {
 				publish(skipValue);
 			} else {
 				// Stopping video when it reaches the end or beginning when the user was forwarding/rewinding
@@ -40,7 +40,7 @@ public class SkipVideo extends SwingWorker<Void, Integer> {
 	
 	public void process (List<Integer> chunks) {
 		videoPlayer.getMediaPlayer().skip(skipValue);
-		controlsPanel.seekSlider.setValue((int)pos);
+		controlsPanel.getSlider().setValue((int)pos);
 		controlsPanel.setCurrentTime(timeString, time);
 	}
 	
