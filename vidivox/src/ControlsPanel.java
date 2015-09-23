@@ -343,4 +343,12 @@ public class ControlsPanel extends JPanel {
     	currentTime = time;
     }
     
+    public String calculateTime(float newTime) {
+    	
+    	long second = (long) ((newTime / 1000) % 60);
+		long minute = (long) ((newTime/ 60000) % 60);
+		long hour = (long) ((newTime/ 3600000) % 24);
+		String timeString = String.format("%02d:%02d:%02d", hour, minute, second);
+		return timeString;
+    }
 }

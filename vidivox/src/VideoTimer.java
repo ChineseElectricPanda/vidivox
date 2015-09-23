@@ -26,12 +26,8 @@ public class VideoTimer extends SwingWorker<Void, Void>{
 		seekTimePercentage = controlsPanel.seekSlider.getValue();
 		newTime = seekTimePercentage * (controlsPanel.totalTime/100);
 		
-		// Formatting time to look better
-		long second = (long) ((newTime / 1000) % 60);
-       	long minute = (long) ((newTime/ 60000) % 60);
-       	long hour = (long) ((newTime/ 3600000) % 24);
-       	timeString = String.format("%02d:%02d:%02d", hour, minute, second);
-       	
+		timeString = controlsPanel.calculateTime(newTime);
+		
        	publish();
 		
 		return null;
@@ -44,7 +40,6 @@ public class VideoTimer extends SwingWorker<Void, Void>{
         if (controlsPanel.sliderCanMove) {
         	videoPlayer.getMediaPlayer().setPosition(seekTimePercentage/100);
 		}
-		
 	}
 	
 	
