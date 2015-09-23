@@ -1,8 +1,12 @@
+package vidivox.worker;
 import java.util.List;
 
 import javax.swing.SwingWorker;
 
-public class SkipVideo extends SwingWorker<Void, Integer> {
+import vidivox.ui.ControlsPanel;
+import vidivox.ui.VideoPlayerComponent;
+
+public class SkipVideoWorker extends SwingWorker<Void, Integer> {
 
 	private int skipValue = 0;
 	private VideoPlayerComponent videoPlayer = null;
@@ -12,7 +16,7 @@ public class SkipVideo extends SwingWorker<Void, Integer> {
 	private int time;
 	private String timeString; 
 	
-	public SkipVideo (VideoPlayerComponent videoPlayer, ControlsPanel controlsPanel) {
+	public SkipVideoWorker (VideoPlayerComponent videoPlayer, ControlsPanel controlsPanel) {
 		this.videoPlayer = videoPlayer;
 		this.controlsPanel = controlsPanel;
 	}

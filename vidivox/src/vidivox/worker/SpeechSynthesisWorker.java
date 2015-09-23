@@ -1,10 +1,11 @@
+package vidivox.worker;
 import javax.swing.*;
 import java.io.IOException;
 
 public class SpeechSynthesisWorker extends SwingWorker<Void,Void>{
     protected String text;
     protected Process synthesisProcess;
-    protected String filePath;
+    public String filePath;
 
     public SpeechSynthesisWorker(String text,String fileName){
         this.text=text;

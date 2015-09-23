@@ -1,3 +1,4 @@
+package vidivox.ui;
 import javax.swing.*;
 import java.awt.*;
 

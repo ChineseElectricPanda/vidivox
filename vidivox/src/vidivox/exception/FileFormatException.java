@@ -1,3 +1,4 @@
+package vidivox.exception;
 /**
  * Created by hamcake on 8/09/15.
  */

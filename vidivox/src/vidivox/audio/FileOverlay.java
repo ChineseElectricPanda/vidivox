@@ -1,3 +1,4 @@
+package vidivox.audio;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -96,7 +97,7 @@ public class FileOverlay extends AudioOverlay{
     }
 
     @Override
-    protected String getFilePath() {
+	public String getFilePath() {
         if(selectedFile==null){
             return "";
         }else {

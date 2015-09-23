@@ -1,11 +1,15 @@
+package vidivox.audio;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
+import vidivox.worker.SpeechSynthesisWorker;
+
 import java.awt.*;
 import java.io.IOException;
 
 public class CommentaryOverlay extends AudioOverlay{
-    protected String text;
+    public String text;
     private String filePath;
     private int position;
     private SpeechSynthesisWorker synthesisWorker;
@@ -109,7 +113,7 @@ public class CommentaryOverlay extends AudioOverlay{
     }
 
     @Override
-    protected String getFilePath() {
+	public String getFilePath() {
         return filePath;
     }
 

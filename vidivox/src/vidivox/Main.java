@@ -1,3 +1,4 @@
+package vidivox;
 import java.awt.Canvas;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -11,6 +12,7 @@ import com.sun.jna.NativeLibrary;
 import uk.co.caprica.vlcj.binding.LibVlc;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
+import vidivox.ui.MainFrame;
 
 public class Main {
 	

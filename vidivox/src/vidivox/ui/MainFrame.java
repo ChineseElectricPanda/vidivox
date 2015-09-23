@@ -1,4 +1,9 @@
+package vidivox.ui;
 import javax.swing.*;
+
+import vidivox.audio.AudioOverlay;
+import vidivox.exception.FileFormatException;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

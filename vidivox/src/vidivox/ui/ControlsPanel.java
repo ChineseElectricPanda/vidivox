@@ -1,6 +1,13 @@
+package vidivox.ui;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import vidivox.audio.AudioOverlay;
+import vidivox.audio.CommentaryOverlay;
+import vidivox.worker.AudioPlayWorker;
+import vidivox.worker.SkipVideoWorker;
+import vidivox.worker.VideoTimerWorker;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -12,7 +19,7 @@ public class ControlsPanel extends JPanel {
     private VideoPlayerComponent videoPlayer;
     protected JLabel currentTimeLabel;
     protected JLabel totalTimeLabel;
-    protected JSlider seekSlider;
+    public JSlider seekSlider;
     private JButton playButton;
     private JButton pauseButton;
     private JButton stopButton;
@@ -23,10 +30,10 @@ public class ControlsPanel extends JPanel {
     private JLabel volumeLevelLabel;
     private JButton skipForwardButton;
     private int volume = 50;
-    protected float totalTime = 0;
+    public float totalTime = 0;
     protected float currentTime = 0;
-    protected boolean sliderCanMove = false;
-    private SkipVideo skipVid = null;
+    public boolean sliderCanMove = false;
+    private SkipVideoWorker skipVid = null;
     private ArrayList<AudioPlayWorker> audioPlayWorkerList = new ArrayList<AudioPlayWorker>();
     
     public ControlsPanel(VideoPlayerComponent videoPlayer){
@@ -70,7 +77,7 @@ public class ControlsPanel extends JPanel {
         	@Override
 			public void stateChanged(ChangeEvent e) {
         		if (sliderCanMove) {
-        			VideoTimer videoTimeControl = new VideoTimer(controlsPanel);
+        			VideoTimerWorker videoTimeControl = new VideoTimerWorker(controlsPanel);
         			videoTimeControl.execute();
         		}
         	}
@@ -213,7 +220,7 @@ public class ControlsPanel extends JPanel {
         	public void actionPerformed(ActionEvent e) {
         		if (skipVid == null) {
         			videoPlayer.getMediaPlayer().mute(true);
-        			skipVid =  new SkipVideo(videoPlayer, controlsPanel);
+        			skipVid =  new SkipVideoWorker(videoPlayer, controlsPanel);
         			skipVid.setSkipValue(-1000);
         			skipVid.setIsSkipping(true);
         			skipVid.execute();
@@ -237,7 +244,7 @@ public class ControlsPanel extends JPanel {
         	public void actionPerformed(ActionEvent e) {
         		if (skipVid == null) {
         			videoPlayer.getMediaPlayer().mute(true);
-        			skipVid =  new SkipVideo(videoPlayer, controlsPanel);
+        			skipVid =  new SkipVideoWorker(videoPlayer, controlsPanel);
         			skipVid.setSkipValue(1000);
         			skipVid.setIsSkipping(true);
         			skipVid.execute();
