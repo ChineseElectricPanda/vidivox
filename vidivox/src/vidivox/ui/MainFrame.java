@@ -17,33 +17,90 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class MainFrame extends JFrame{
-    private VideoPlayerComponent videoPlayer;
-    private String videoPath;
-    private ControlsPanel controlsPanel;
-    private JMenuBar menuBar;
-    private JMenuItem openVideoButton;
-    private JMenuItem openProjectButton;
-    private JMenuItem saveProjectButton;
-    private JMenuItem exportButton;
-    private JMenuItem quitButton;
-    private JMenuItem commentaryButton;
+/**
+ * This is the main frame of the vidivox application
+ * Contains the components to allow for: viewing a video
+ * 										 opening a video
+ * 										 opening a project
+ * 										 saving a project
+ * 										 opening the commentary frame
+ * 										 quitting the application
+ * 
+ * @author Hanzhi Wang
+ * @author Ammar Bagasrawala
+ *
+ */
 
-    public MainFrame(){
+public class MainFrame extends JFrame{
+	
+	/**
+	 * Fields instantiated globally to be used by all methods in this class
+	 */
+	private VideoPlayerComponent videoPlayer;	// Video player object
+    private ControlsPanel controlsPanel;		// Reference to ControlsPanel class
+    private String videoPath;					// String containing the path to the video
+    private JMenuBar menuBar;					// Menu bar at the top of the application
+    private JMenuItem openVideoButton;			// Menu bar option for opening a video
+    private JMenuItem openProjectButton;		// Menu bar option for opening a project
+    private JMenuItem saveProjectButton;		// Menu bar option for saving a project
+    private JMenuItem exportButton;				// Menu bar option for exporting the project containing video + commentary
+    private JMenuItem quitButton;				// Menu bar option for closing the application
+    private JMenuItem commentaryButton;			// Menu bar option for adding commentary
+
+    /**
+     * Constructor used to call methods to set up the layout and listeners for 
+     * the menu bar options when this object is instantiated
+     */
+    public MainFrame() {
+    	
+    	// Naming the application VIDIVOX at the top of the frame
         super("VIDIVOX");
+        // Setting the default close operation
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        // Setting up the menu bar
         setupMenuBar();
+        // Setting up the layout of the application
         setupLayout(); 
+        // Setting up the listeners called when a mouse is clicked on specific components
         setupListeners();
+        // Setting up the minimum size to disallow distortion of the frame
         setMinimumSize(new Dimension(750,400));
         pack();
     }
+    
+    /**
+     * Getter for the instance of controlsPanel of type ControlsPanel
+     * 
+     * @return controlsPanel - returns type ControlsPanel
+     */
+	public ControlsPanel getControlsPanel() {
+		return controlsPanel;
+	}
 
+	/**
+	 * Setter for the instance of controlsPanel of type ControlsPanel
+	 * 
+	 * @param controlsPanel
+	 */
+	public void setControlsPanel(ControlsPanel controlsPanel) {
+		this.controlsPanel = controlsPanel;
+	}
+
+    /**
+     * Method called when main frame is instantiated to set up the listener for the option
+     * to create commentary for the application
+     */
     private void setupListeners() {
+    	
+    	// Adding listener to the add commentary button
         commentaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+            	// Creating an AudioOverlaysDialog that contains the options for adding commentary
+            	// to the video
                 new AudioOverlaysDialog().setVisible(true);
+                
+                // Stopping the video to allow commentary to be added to the starting scenes
                 videoPlayer.getMediaPlayer().stop();
             }
         });
@@ -54,106 +111,145 @@ public class MainFrame extends JFrame{
      */
     private void setupLayout(){
     	   	
-        Container contentPane=getContentPane();
+    	// Getting the content pane to add components to it
+        Container contentPane = getContentPane();
+        // Setting the layout to that of GridBagLayout
         contentPane.setLayout(new GridBagLayout());
-        GridBagConstraints gbc=new GridBagConstraints();
+        // Adding constraints to the grid bag layout to shape the panels in a neat format
+        GridBagConstraints gbc = new GridBagConstraints();
 
-        //set up the video player frame
-        videoPlayer=new VideoPlayerComponent();
+        // Setting up the video player frame by adding a video player component to it
+        videoPlayer = new VideoPlayerComponent();
+    	// Setting up size of the player
         videoPlayer.setPreferredSize(new Dimension(600, 480));
-        gbc.gridx=0;
-        gbc.gridy=0;
-        gbc.weightx=1.0f;
-        gbc.weighty=1.0f;
-        gbc.anchor= GridBagConstraints.NORTH;
-        gbc.fill= GridBagConstraints.BOTH;       
+        // Formatting the grid bag layout for the video player and adding it to the top of the frame
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0f;
+        gbc.weighty = 1.0f;
+        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.fill = GridBagConstraints.BOTH;       
+        // Adding the video player to the content pane
         contentPane.add(videoPlayer, gbc);
 
-        //set up the controls panel
+        // Setting up the controls panel which will contain all the buttons for playing the video, pausing etc
         setControlsPanel(new ControlsPanel(videoPlayer));
+        // Formatting the grid bag layout for the content pane and adding it to the bottom of the frame
         gbc.gridx=0;
         gbc.gridy=1;
         gbc.weightx=1.0f;
         gbc.weighty=0.0f;
         gbc.anchor= GridBagConstraints.SOUTH;
         gbc.fill= GridBagConstraints.HORIZONTAL;
-        contentPane.add(getControlsPanel(), gbc);
+        // Adding the controls panel to the content pane
+        contentPane.add(getControlsPanel(), gbc);  
     }
 
     /**
-     * Sets up the menu bar layout
+     * Method called when the main frame is instantiated to set up the menu bar 
+     * which contains options for opening a video, saving a project, adding commentary etc
      */
     private void setupMenuBar(){
-        menuBar=new JMenuBar();
-
-        //the file menu
-        JMenu fileMenu=new JMenu("File");
+    	
+        menuBar = new JMenuBar();
+        // Setting up the menu options for the menu bar item "File"
+        JMenu fileMenu = new JMenu("File");
+        // Adding a keyboard shortcut for opening the file menu by pressing "F"
         fileMenu.setMnemonic(KeyEvent.VK_F);
         
-        // Menu item choice to choose a video and play in the player
-        openVideoButton=new JMenuItem("Open Video");
+        // Menu item choice to choose a video and play in the video player component
+        openVideoButton = new JMenuItem("Open Video");
         openVideoButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	
                 // File chooser to allow user to select a video to open
                 JFileChooser fileChooser = new JFileChooser();
+                // Showing the dialog to allow a user to select a video to open and getting the return value
                 int returnValue = fileChooser.showOpenDialog(null);
-
+                
+                // Checking if the return value is equal to the approve option
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
+                	
+                	// Getting the file chosen and the location of where it is
                     File selectedFile = fileChooser.getSelectedFile();
-                    videoPath = selectedFile.getPath(); // Getting file path
+                    videoPath = selectedFile.getPath();
 
                     // Playing the video
                     videoPlayer.playVideo(videoPath);
 
-                    // Sleeping the thread to allow for the time to be gotten
+                    // Sleeping the thread for 50 milliseconds to allow enough time for the video
+                    // to be successfully loaded
                     try {
                         Thread.sleep(50);
                     } catch (InterruptedException e1) {
-                        System.out.println("Error while sleeping open video button thread");
+                        System.out.println("ERROR: While sleeping open video button thread");
                         e1.printStackTrace();
                     }
+                    
                     // Getting total length of video in milliseconds
                     long time = videoPlayer.getMediaPlayer().getLength();
-
-                    String totalTime = controlsPanel.calculateTime(time);
                     
-                    // Setting total time variable
+                    // Calculating the total length of the video and storing the output as a formatted string
+                    String totalTime = controlsPanel.calculateTime(time);
+
+                    // Setting total time label and variable
                     getControlsPanel().setTotalTime(totalTime, time);
                 }
             }
         });
+        // Adding the open video button to the file menu
         fileMenu.add(openVideoButton);
         
+        // Creating a button to allow the user to open a saved project
         openProjectButton=new JMenuItem("Open Project");
         openProjectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+            	
+            	// Creating a JFileChooser to allow the user to choose a project to open
                 JFileChooser fileChooser = new JFileChooser();
+                
+                // Opening a dialog to allow the user to choose a project to open up
                 if (fileChooser.showOpenDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
                     try {
-                        String[] options=new String[]{"Yes, Discard changes","No"};
+                    	// Adding warning messages to inform user whether changes to current project (if any) are to be deleted
+                        String[] options = new String[]{"Yes, Discard changes","No"};
                         String message="Opening another project will cause usaved changes to be discarded\n" +
                                 "Are you sure you want to do this?";
-                        int result=JOptionPane.showOptionDialog(MainFrame.this,message,"Warning",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE,null,options,options[1]);
+                        
+                        // Storing result of the user's choice on whether to discard changes and open new project or not
+                        int result = JOptionPane.showOptionDialog
+                        		(MainFrame.this,message,"Warning",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE,null,options,options[1]);
+                        
+                        // If the user does want to open a new project
                         if(result==JOptionPane.YES_OPTION) {
+                        	// Opening new project and getting the selected file
                             openProject(fileChooser.getSelectedFile());
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (FileFormatException e) {
+                    	// Informing user that an invalid project was chosen
                         JOptionPane.showMessageDialog(MainFrame.this,"Invalid or corrupted VIDIVOX project file","Invalid File",JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
         });
+        // Adding the open project button to the file menu
         fileMenu.add(openProjectButton);
-        saveProjectButton=new JMenuItem("Save Project");
+        
+        // Button to allow projects to be saved so that the user can come back and reopen it
+        saveProjectButton = new JMenuItem("Save Project");
         saveProjectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+            	
+            	// Allowing user to specify where to save the project
                 JFileChooser fileChooser = new JFileChooser();
                 if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
-                    try {
+                    // Allows the user to save the project by clicking on an existing file
+                	// or by typing it in and passing the file to the saveProject() method
+                	try {
                         saveProject(fileChooser.getSelectedFile());
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -162,11 +258,16 @@ public class MainFrame extends JFrame{
             }
         });
         fileMenu.add(saveProjectButton);
+        // Separator to increase neatness of GUI
         fileMenu.addSeparator();
-        exportButton=new JMenuItem("Export");
+        
+        // Export button to allow user to merge video and audio generated from comments into
+        // a single video file which can then be played and will contain both video and audio
+        exportButton = new JMenuItem("Export");
         exportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+            	// Allowing user to select destination of exported file
                 JFileChooser fileChooser = new JFileChooser();
                 if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
                     try {
@@ -180,122 +281,228 @@ public class MainFrame extends JFrame{
         fileMenu.add(exportButton);
         fileMenu.addSeparator();
         
-        quitButton=new JMenuItem("Quit");
+        // Adding a quit button to allow the user to quit the application cleanly
+        quitButton = new JMenuItem("Quit");
         quitButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		// Cleaning up - closing eveything
+        		// Cleaning up by disposing of the main frame and then exiting the application
         		dispose();
         		System.exit(0);
         	}
         });
         fileMenu.add(quitButton);
         
+        // Adding the fileMenu to the menu bar
         menuBar.add(fileMenu);
-
-        JMenu editMenu=new JMenu("Edit");
+        
+        // Adding another tab "Edit" to allow user to select the option of adding audio
+        // through the use of comments by opening the designated frame for those options
+        JMenu editMenu = new JMenu("Edit");
+        // Setting shortcut key to "E"
         editMenu.setMnemonic(KeyEvent.VK_E);
-        commentaryButton=new JMenuItem("Audio Overlays...");
+        
+        // Creating button to allow user to bring up the commentary option frame
+        commentaryButton = new JMenuItem("Audio Overlays...");
         editMenu.add(commentaryButton);
         menuBar.add(editMenu);
 
         setJMenuBar(menuBar);
     }
 
+    /**
+     * This method attempts to save the project by specifying a file to write to
+     * and then writing to it the video path as well as all the comments that
+     * were being edited in that project
+     * 
+     * @param file - File specified by the user to store the project information in
+     * @throws IOException - Throws an exception if there was an error when 
+     * 						 dealing with the input/output
+     */
     private void saveProject(File file) throws IOException {
-        BufferedWriter f=new BufferedWriter(new FileWriter(file));
-        if(videoPath==null){
-            f.write("\n");
-        }else {
-            f.write(videoPath + "\n");
+        
+    	// Creating file to write to
+    	BufferedWriter saveFile = new BufferedWriter(new FileWriter(file));
+        
+    	// Allowing option to save the project with no video playing
+    	// in other words, only audio being saved in the project
+    	if (videoPath == null) {
+    		// Writing new line so that it complies with the predetermined file structure
+    		// and does not crash or give any undesired exceptions
+    		saveFile.write("\n");
+        } else {
+        	// If there is a video, then saving the location of that video in the file
+        	saveFile.write(videoPath + "\n");
         }
-        for(AudioOverlay overlay:AudioOverlaysDialog.getOverlays()){
-            f.write(overlay.toString()+"\n");
+    	
+    	// Looking through all the comments being edited in the AudioOverlayDialog frame and storing
+    	// them into the file after the video path in order to bring them up in the future
+        for(AudioOverlay overlay : AudioOverlaysDialog.getOverlays()) {
+        	saveFile.write(overlay.toString()+"\n");
         }
-        f.close();
+        
+        // Closing the file in order to prevent errors
+        saveFile.close();
     }
 
+    /**
+     * This method is called when the user wants to open an existing project
+     * It does so by opening the file where the video file path is saved, reading the
+     * file path and the comments saved in the file and opening them into the application
+     * 
+     * @param file - File specified by the user on project to open up
+     * @throws IOException
+     * @throws FileFormatException
+     */
     private void openProject(File file) throws IOException, FileFormatException {
-        BufferedReader f=new BufferedReader(new FileReader(file));
-        String line=f.readLine();
-        String videoPath=null;
-        if(!line.equals("")) {
+    	
+    	// Creating file to read from
+        BufferedReader fileToOpen = new BufferedReader(new FileReader(file));
+        String line = fileToOpen.readLine();
+        String videoPath = null;
+        
+        // For when there was no video specified and only comments were saved
+        if (!line.equals("")) {
             videoPath = line;
         }
-        List<AudioOverlay> overlays=new ArrayList<>();
-        while((line=f.readLine())!=null){
+        
+        // Adding the comments from the file into a new array list to store for further editing
+        List<AudioOverlay> overlays = new ArrayList<>();
+        // Adding lines from the file where each line specifies a certain comment
+        while((line = fileToOpen.readLine()) != null){
             overlays.add(AudioOverlay.fromString(line));
         }
-        //only set the new variables after ALL lines have been read
-        this.videoPath=videoPath;
+        
+        // Setting the global variable for video path after all other variables have been assigned to
+        // prevent errors from occurring
+        this.videoPath = videoPath;
+        
+        // Checking if there was a video saved or not, and if there was then this causes the video to
+        // play immediately after opening the project
         if(videoPath!=null){
             videoPlayer.playVideo(videoPath);
         }
+        
+        // Setting the commentary overlays in the class AudioOverlaysDialog which handles them
         AudioOverlaysDialog.setOverlays(overlays);
 
     }
 
+    /**
+     * This method is called when the user wants to merge their video and the audio generated
+     * from the comments into one video file. It does so 
+     * 
+     * @param file
+     * @throws InterruptedException
+     * @throws IOException
+     */
     private void exportProject(final File file) throws InterruptedException, IOException {
-        final ProgressDialog progressDialog=new ProgressDialog();
+       
+    	// Creating progress dialog to show the user the progress of the export as it takes
+    	// some time
+    	final ProgressDialog progressDialog = new ProgressDialog();
         progressDialog.setVisible(true);
         
-        final List<AudioOverlay> overlays=AudioOverlaysDialog.getOverlays();
+        // Creating a list of the audio overlays generated from the comments
+        final List<AudioOverlay> overlays = AudioOverlaysDialog.getOverlays();
+        
+        // Setting the maximum length of the progress bar to the number of comments + 1
+        // so that after each comment is processed the progress bar can be incremented
         progressDialog.setOverallTotal(overlays.size()+1);
 
+        // Creating SwingWorker class to allow for multi-threading
+        new SwingWorker<Void,AudioOverlay>() {
+            
+        	// Initial progress
+        	int progress = 0;
 
-        new SwingWorker<Void,AudioOverlay>(){
-            int progress=0;
+        	/**
+        	 * The doInBackground method handles time consuming tasks in the background
+        	 * so as to not make the GUI freeze
+        	 * This method is used to merge the audio and video files together into one video file
+        	 * where the audio specified by the user overlaps the existing audio
+        	 */
+        	@Override
+        	protected Void doInBackground() throws Exception {
+        		
+        		// Processing all of the audio files
+        		List<String> audioPaths = new ArrayList<>();
+        		for (AudioOverlay overlay : overlays) {
+        			// Calling the process method to interact with the GUI
+        			publish(overlay);
+        			// Adding the file path of the audio files to the arraylist containing 
+        			// the paths of all audio files
+        			audioPaths.add(overlay.getProcessedFilePath());
+        		}
+
+        		// Combining all the audio files with the video files using an ffmpeg process
+        		publish((AudioOverlay) null);
+        		
+        		// Building the command to pass into the process builder
+        		StringBuilder cmd = new StringBuilder("ffmpeg -y -i " + videoPath);
+        		// Appending the audio path of each audio file to the command
+        		for (String audioPath : audioPaths) {
+        			cmd.append(" -i " + audioPath);
+        		}
+        		
+        		// Appending the options to disallow the overwriting of audio files on each
+        		// other after adding all desired audio paths to the command to merge video audio
+        		cmd.append(" -filter_complex amix -strict -2 " + file.getAbsolutePath());
+        		
+        		// Building process and process builder to run the command then starting it
+        		Process process = new ProcessBuilder("/bin/bash", "-c", cmd.toString()).start();
+//#################################################################################################################################        		
+        		System.out.println(cmd.toString());
+        		// Should this be here? Can't test it at the moment
+//#################################################################################################################################        		
+        		
+        		// Causes the current thread to wait if necessary
+        		process.waitFor();
+        		
+        		// Closing the progress dialog indicating how long merging video and audio will take
+        		progressDialog.close();
+        		return null;
+        	}
+        	
+        	/**
+        	 * Process method called when the GUI needs to be updated at stages of the doInBackground
+        	 * method
+        	 * This method is called by the publish() method
+        	 */
             @Override
             protected void process(List<AudioOverlay> chunks) {
-                if(chunks.size()==0){
+            	
+            	// Checking if the size of the list is 0 and returning if so
+                if (chunks.size() == 0) {
                     return;
                 }
-                progress+=chunks.size();
+                
+                // Adding the size of the audio list to the progress variable in order
+                // to inform user how much time is left
+                progress += chunks.size();
                 progressDialog.setOverallProgress(progress-1);
-                AudioOverlay currentlyProcessedOverlay=chunks.get(chunks.size()-1);
-                if(currentlyProcessedOverlay!=null){
-                    progressDialog.setTaskProgressNote("Processing "+currentlyProcessedOverlay.getFileName()+"...");
-                }else{
+                
+                // Informing the user as to which audio overlay is being processed at a given time
+                AudioOverlay currentlyProcessedOverlay = chunks.get(chunks.size()-1);
+                if (currentlyProcessedOverlay != null) {
+                    // If there is an audio file being processed at a certain time then informing the user
+                	// as to which file is being processed
+                	progressDialog.setTaskProgressNote("Processing " + currentlyProcessedOverlay.getFileName() + "...");
+                } else {
+                	// If there is no audio being processed then this message shows and informs the user that
+                	// they are in the final stages of exporting where the video and audio is being merged
                     progressDialog.setTaskProgressNote("Merging video with audio tracks...");
                 }
             }
 
-            @Override
-            protected Void doInBackground() throws Exception {
-                //process all of the audio files
-                List<String> audioPaths=new ArrayList<>();
-                for(AudioOverlay overlay:overlays){
-                    publish(overlay);
-                    audioPaths.add(overlay.getProcessedFilePath());
-                }
-
-                //combine all the audio files with the video file
-                publish((AudioOverlay) null);
-                StringBuilder cmd=new StringBuilder("ffmpeg -y -i "+videoPath);
-                for(String audioPath: audioPaths){
-                    cmd.append(" -i "+audioPath);
-                }
-                // Makes the audio not overwrite each other
-                cmd.append(" -filter_complex amix -strict -2 " + file.getAbsolutePath());
-                Process process=new ProcessBuilder("/bin/bash","-c",cmd.toString()).start();
-                System.out.println(cmd.toString());
-                process.waitFor();
-                progressDialog.close();
-                return null;
-            }
-
+            /**
+             * done() method which informs the user when the export is completed successfully
+             */
             @Override
             protected void done() {
-                JOptionPane.showMessageDialog(MainFrame.this,"Sucessfully exported project to "+file.getAbsolutePath(),"Success!",JOptionPane.INFORMATION_MESSAGE);
+            	// Dialog popup to inform user of successful export
+                JOptionPane.showMessageDialog(MainFrame.this,"Sucessfully exported project to "
+                					+ file.getAbsolutePath(), "Success!", JOptionPane.INFORMATION_MESSAGE);
             }
         }.execute();
     }
-
-	public ControlsPanel getControlsPanel() {
-		return controlsPanel;
-	}
-
-	public void setControlsPanel(ControlsPanel controlsPanel) {
-		this.controlsPanel = controlsPanel;
-	}
-    
 }
