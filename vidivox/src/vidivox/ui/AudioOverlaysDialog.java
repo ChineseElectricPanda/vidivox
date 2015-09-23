@@ -1,4 +1,10 @@
+package vidivox.ui;
 import javax.swing.*;
+
+import vidivox.audio.AudioOverlay;
+import vidivox.audio.CommentaryOverlay;
+import vidivox.audio.FileOverlay;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,7 +13,7 @@ import java.util.List;
 
 public class AudioOverlaysDialog extends JDialog {
     private static List<AudioOverlay> overlays=new ArrayList<>();
-    protected static List<CommentaryOverlay> commentaryOverlays = new ArrayList<>();
+    public static List<CommentaryOverlay> commentaryOverlays = new ArrayList<>();
     private List<JButton> deleteButtons;
     private JButton addCommentaryButton;
     private JButton addAudioButton;

@@ -1,4 +1,8 @@
+package vidivox;
 import javax.swing.SwingUtilities;
+
+import vidivox.ui.ControlsPanel;
+import vidivox.ui.VideoPlayerComponent;
 
 
 public class UpdateRunnable implements Runnable {

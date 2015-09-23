@@ -1,8 +1,14 @@
+package vidivox.audio;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
+import vidivox.exception.FileFormatException;
+import vidivox.ui.AudioOverlaysDialog;
+import vidivox.worker.AudioPlayWorker;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,7 +30,7 @@ public abstract class AudioOverlay {
     protected JSlider volumeSlider;
     protected JLabel volumeLevelLabel;
     protected JCheckBox previewCheckBox;
-    protected boolean showPreview = false;
+    public boolean showPreview = false;
     
     private ActionListener playActionListener;
     private ActionListener stopActionListener;
@@ -237,7 +243,7 @@ public abstract class AudioOverlay {
         return outFilePath;
     }
 
-    abstract protected String getFilePath();
+    abstract public String getFilePath();
 
     public String getFileName(){
         return getFilePath().split("/")[getFilePath().split("/").length-1];

@@ -1,3 +1,4 @@
+package vidivox.worker;
 import javax.swing.*;
 import java.io.IOException;
 import java.lang.reflect.Field;

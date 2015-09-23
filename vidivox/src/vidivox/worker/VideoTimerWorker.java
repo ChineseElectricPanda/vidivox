@@ -1,11 +1,15 @@
+package vidivox.worker;
 
 
 import java.util.List;
 
 import javax.swing.SwingWorker;
 
+import vidivox.ui.ControlsPanel;
+import vidivox.ui.VideoPlayerComponent;
 
-public class VideoTimer extends SwingWorker<Void, Void>{
+
+public class VideoTimerWorker extends SwingWorker<Void, Void>{
 
 	private ControlsPanel controlsPanel;
 	private VideoPlayerComponent videoPlayer = null;
@@ -13,7 +17,7 @@ public class VideoTimer extends SwingWorker<Void, Void>{
 	private float newTime;
 	private float seekTimePercentage; 
 	
-	public VideoTimer(ControlsPanel controlsPanel) {
+	public VideoTimerWorker(ControlsPanel controlsPanel) {
 		this.controlsPanel = controlsPanel;
 		videoPlayer = controlsPanel.getVideoPlayer();
 	}
@@ -37,7 +41,7 @@ public class VideoTimer extends SwingWorker<Void, Void>{
 		
 		controlsPanel.setCurrentTime(timeString, (long)newTime);
 		
-        if (controlsPanel.sliderCanMove) {
+        if (controlsPanel.getSliderStatus()) {
         	videoPlayer.getMediaPlayer().setPosition(seekTimePercentage/100);
 		}
 	}

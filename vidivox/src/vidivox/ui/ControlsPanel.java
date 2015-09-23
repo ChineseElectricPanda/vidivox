@@ -1,6 +1,13 @@
+package vidivox.ui;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import vidivox.audio.AudioOverlay;
+import vidivox.audio.CommentaryOverlay;
+import vidivox.worker.AudioPlayWorker;
+import vidivox.worker.SkipVideoWorker;
+import vidivox.worker.VideoTimerWorker;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -26,7 +33,8 @@ public class ControlsPanel extends JPanel {
     private float totalTime = 0;
     private float currentTime = 0;
     private boolean sliderCanMove = false;
-    private SkipVideo skipVid = null;
+    private SkipVideoWorker skipVid = null;
+
     private ArrayList<AudioPlayWorker> audioPlayWorkerList = new ArrayList<AudioPlayWorker>();
     
     public ControlsPanel(VideoPlayerComponent videoPlayer){
@@ -70,7 +78,7 @@ public class ControlsPanel extends JPanel {
         	@Override
 			public void stateChanged(ChangeEvent e) {
         		if (sliderCanMove) {
-        			VideoTimer videoTimeControl = new VideoTimer(controlsPanel);
+        			VideoTimerWorker videoTimeControl = new VideoTimerWorker(controlsPanel);
         			videoTimeControl.execute();
         		}
         	}
@@ -213,7 +221,7 @@ public class ControlsPanel extends JPanel {
         	public void actionPerformed(ActionEvent e) {
         		if (skipVid == null) {
         			videoPlayer.getMediaPlayer().mute(true);
-        			skipVid =  new SkipVideo(videoPlayer, controlsPanel);
+        			skipVid =  new SkipVideoWorker(videoPlayer, controlsPanel);
         			skipVid.setSkipValue(-1000);
         			skipVid.setIsSkipping(true);
         			skipVid.execute();
@@ -237,7 +245,7 @@ public class ControlsPanel extends JPanel {
         	public void actionPerformed(ActionEvent e) {
         		if (skipVid == null) {
         			videoPlayer.getMediaPlayer().mute(true);
-        			skipVid =  new SkipVideo(videoPlayer, controlsPanel);
+        			skipVid =  new SkipVideoWorker(videoPlayer, controlsPanel);
         			skipVid.setSkipValue(1000);
         			skipVid.setIsSkipping(true);
         			skipVid.execute();
@@ -358,6 +366,10 @@ public class ControlsPanel extends JPanel {
     
     public JSlider getSlider() {
     	return seekSlider;
+    }
+    
+    public boolean getSliderStatus() {
+    	return sliderCanMove;
     }
     
 }
