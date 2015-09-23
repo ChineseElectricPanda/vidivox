@@ -115,12 +115,8 @@ public class MainFrame extends JFrame{
                     // Getting total length of video in milliseconds
                     long time = videoPlayer.getMediaPlayer().getLength();
 
-                    // Converting millisecond time to preferred format
-                    long second = (time / 1000) % 60;
-                    long minute = (time / 60000) % 60;
-                    long hour = (time / 3600000) % 24;
-                    String totalTime = String.format("%02d:%02d:%02d", hour, minute, second);
-
+                    String totalTime = controlsPanel.calculateTime(time);
+                    
                     // Setting total time variable
                     getControlsPanel().setTotalTime(totalTime, time);
                 }

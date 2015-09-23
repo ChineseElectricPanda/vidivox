@@ -29,11 +29,8 @@ public class UpdateRunnable implements Runnable {
                 	updatePosition(position);
                      
                     int time = (Math.round(videoPlayer.getMediaPlayer().getTime()));
-             		long second = (long) ((time / 1000) % 60);
-                   	long minute = (long) ((time/ 60000) % 60);
-                   	long hour = (long) ((time/ 3600000) % 24);
-                   	String timeString = String.format("%02d:%02d:%02d", hour, minute, second);
-                    
+             		
+                   	String timeString = controlsPanel.calculateTime(time);
                    	controlsPanel.setCurrentTime(timeString, time);
                  }
              }

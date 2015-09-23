@@ -25,15 +25,17 @@ public class SkipVideoWorker extends SwingWorker<Void, Integer> {
 	protected Void doInBackground() throws Exception {
 		while (isSkipping == true) {
 			Thread.sleep(100);
-			
+						
 			pos = videoPlayer.getMediaPlayer().getPosition()*100;
 			time = (Math.round(videoPlayer.getMediaPlayer().getTime()));
-			long second = (long) ((time / 1000) % 60);
-			long minute = (long) ((time/ 60000) % 60);
-			long hour = (long) ((time/ 3600000) % 24);
-			timeString = String.format("%02d:%02d:%02d", hour, minute, second);
+			timeString = controlsPanel.calculateTime(time);
 			
-			publish(skipValue);
+			if (time > 0 && time < controlsPanel.totalTime) {
+				publish(skipValue);
+			} else {
+				// Stopping video when it reaches the end or beginning when the user was forwarding/rewinding
+				videoPlayer.getMediaPlayer().stop();
+			}
 			
 		}
 		
