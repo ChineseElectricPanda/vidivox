@@ -17,9 +17,9 @@ import java.util.ArrayList;
 public class ControlsPanel extends JPanel {
 	private ControlsPanel controlsPanel = this;
     private VideoPlayerComponent videoPlayer;
-    protected JLabel currentTimeLabel;
-    protected JLabel totalTimeLabel;
-    public JSlider seekSlider;
+    private JLabel currentTimeLabel;
+    private JLabel totalTimeLabel;
+    private JSlider seekSlider;
     private JButton playButton;
     private JButton pauseButton;
     private JButton stopButton;
@@ -30,10 +30,11 @@ public class ControlsPanel extends JPanel {
     private JLabel volumeLevelLabel;
     private JButton skipForwardButton;
     private int volume = 50;
-    public float totalTime = 0;
-    protected float currentTime = 0;
-    public boolean sliderCanMove = false;
+    private float totalTime = 0;
+    private float currentTime = 0;
+    private boolean sliderCanMove = false;
     private SkipVideoWorker skipVid = null;
+
     private ArrayList<AudioPlayWorker> audioPlayWorkerList = new ArrayList<AudioPlayWorker>();
     
     public ControlsPanel(VideoPlayerComponent videoPlayer){
@@ -123,11 +124,12 @@ public class ControlsPanel extends JPanel {
         playButton.addActionListener(new ActionListener() {
         	@Override
         	public void actionPerformed(ActionEvent e) {
+        		videoPlayer.getMediaPlayer().mute(false);
         		if (skipVid != null) {
         			skipVid.setIsSkipping(false);
         			skipVid.cancel(true);
         			skipVid = null;
-        			videoPlayer.getMediaPlayer().mute(false);
+        			
         		}      		
             	
 				if (Math.round(videoPlayer.getMediaPlayer().getTime()) < 100) {
@@ -135,9 +137,9 @@ public class ControlsPanel extends JPanel {
         		for (int i = 0; i < overlays.size(); i ++) {
         			if (overlays.get(i).showPreview == true) {
         				ArrayList<CommentaryOverlay> commentaryOverlays = (ArrayList<CommentaryOverlay>) AudioOverlaysDialog.commentaryOverlays;
-        				if (commentaryOverlays.get(i).text.length() > 20) {
+        				if (commentaryOverlays.get(i).text.length() >= 80) {
         					JOptionPane.showMessageDialog(null,
-        							"Must specify comment less than or equal 20 characters",
+        							"Must specify comment less than or equal 80 characters",
         							"Error",
         							JOptionPane.ERROR_MESSAGE);
         					return;
@@ -266,12 +268,14 @@ public class ControlsPanel extends JPanel {
         skipForwardButton.addActionListener(new ActionListener() {
         	@Override
         	public void actionPerformed(ActionEvent e) {        		
+        		videoPlayer.getMediaPlayer().mute(false);
+        		
         		if (skipVid != null) {
         			skipVid.setIsSkipping(false);
         			skipVid.cancel(true);
         			skipVid = null;
-        			videoPlayer.getMediaPlayer().mute(false);
         		}
+        		
         		// Forwarding the video
         		videoPlayer.getMediaPlayer().skip(10000);  
         	}
@@ -285,12 +289,14 @@ public class ControlsPanel extends JPanel {
         gbc.weighty=3.0f;
         skipBackButton.addActionListener(new ActionListener() {
         	@Override
-        	public void actionPerformed(ActionEvent e) {        		
+        	public void actionPerformed(ActionEvent e) {        	
+        		
+        		videoPlayer.getMediaPlayer().mute(false);
+        		System.out.println("heheheh");
         		if (skipVid != null) {
         			skipVid.setIsSkipping(false);
         			skipVid.cancel(true);
         			skipVid = null;
-        			videoPlayer.getMediaPlayer().mute(false);
         		}
         		// Rewinding the player
         		videoPlayer.getMediaPlayer().skip(-10000);
@@ -358,4 +364,17 @@ public class ControlsPanel extends JPanel {
 		String timeString = String.format("%02d:%02d:%02d", hour, minute, second);
 		return timeString;
     }
+    
+    public float getTotalTime() {
+    	return totalTime;
+    }
+    
+    public JSlider getSlider() {
+    	return seekSlider;
+    }
+    
+    public boolean getSliderStatus() {
+    	return sliderCanMove;
+    }
+    
 }
