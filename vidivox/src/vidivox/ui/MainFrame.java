@@ -102,6 +102,9 @@ public class MainFrame extends JFrame{
                 
                 // Stopping the video to allow commentary to be added to the starting scenes
                 videoPlayer.getMediaPlayer().stop();
+                
+                // Stopping all audio currently playing
+                controlsPanel.stopAudioPlayers();
             }
         });
     }
@@ -154,7 +157,7 @@ public class MainFrame extends JFrame{
         menuBar = new JMenuBar();
         // Setting up the menu options for the menu bar item "File"
         JMenu fileMenu = new JMenu("File");
-        // Adding a keyboard shortcut for opening the file menu by pressing "F"
+        // Adding a keyboard shortcut for opening the file menu by pressing "Alt + F"
         fileMenu.setMnemonic(KeyEvent.VK_F);
         
         // Menu item choice to choose a video and play in the video player component
@@ -295,7 +298,7 @@ public class MainFrame extends JFrame{
         // Adding another tab "Edit" to allow user to select the option of adding audio
         // through the use of comments by opening the designated frame for those options
         JMenu editMenu = new JMenu("Edit");
-        // Setting shortcut key to "E"
+        // Setting shortcut key to "Alt + E"
         editMenu.setMnemonic(KeyEvent.VK_E);
         
         // Creating button to allow user to bring up the commentary option frame
