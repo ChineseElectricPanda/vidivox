@@ -12,7 +12,6 @@ public class SkipVideoWorker extends SwingWorker<Void, Integer> {
 	private VideoPlayerComponent videoPlayer = null;
 	private boolean isSkipping = false;
 	private ControlsPanel controlsPanel;
-	private float pos;
 	private int time;
 	private String timeString; 
 	
@@ -25,8 +24,7 @@ public class SkipVideoWorker extends SwingWorker<Void, Integer> {
 	protected Void doInBackground() throws Exception {
 		while (isSkipping == true) {
 			Thread.sleep(100);
-						
-			pos = videoPlayer.getMediaPlayer().getPosition()*100;
+
 			time = (Math.round(videoPlayer.getMediaPlayer().getTime()));
 			timeString = controlsPanel.calculateTime(time);
 						
@@ -44,6 +42,7 @@ public class SkipVideoWorker extends SwingWorker<Void, Integer> {
 	
 	public void process (List<Integer> chunks) {
 		videoPlayer.getMediaPlayer().skip(skipValue);
+		long pos=videoPlayer.getMediaPlayer().getTime();
 		controlsPanel.getSlider().setValue((int)pos);
 		controlsPanel.setCurrentTime(timeString, time);
 	}
