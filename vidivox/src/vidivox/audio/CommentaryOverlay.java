@@ -29,7 +29,7 @@ public class CommentaryOverlay extends AudioOverlay {
     private int position;								// Position of the comment in the AudioOverlaysDialog
     private SpeechSynthesisWorker synthesisWorker;		// Reference to the class that creates the wav file
     private JTextField textField;						// Text field where user enters comment
-    private JButton saveToFileButton;
+    private JButton saveToFileButton;					// Button used to save commentary as mp3
 
     /**
      * Constructor which takes in only the position of the audio and initializes other fields
@@ -189,28 +189,38 @@ public class CommentaryOverlay extends AudioOverlay {
             	}
             }
         });
-
+        
+        // Adding action listener to button used to save a comment as a mp3 file
         saveToFileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                //make sure the commentary is not empty
-                if(getFilePath()==null){
-                    JOptionPane.showMessageDialog(contentPane,"Error: Cannot save empty commentary","Error saving file",JOptionPane.ERROR_MESSAGE);
+                
+            	// Making sure the commentary is not empty
+                if (getFilePath() == null) {
+                	// Error message disallowing user to save empty comment
+                    JOptionPane.showMessageDialog(contentPane,"Error: Cannot save empty commentary",
+                    		"Error saving file",JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                JFileChooser fileChooser=new JFileChooser();
+                
+                // Allowing user to choose a destination to save to
+                JFileChooser fileChooser = new JFileChooser();
                 if (fileChooser.showSaveDialog(contentPane) == JFileChooser.APPROVE_OPTION) {
-                    String fileName= fileChooser.getSelectedFile().getAbsolutePath();
-                    if(!fileName.endsWith(".mp3")){
-                        fileName=fileName+".mp3";
+                	
+                    String fileName = fileChooser.getSelectedFile().getAbsolutePath();
+                    
+                    // Adding .mp3 to the end of the filename if the user didn't
+                    if (!fileName.endsWith(".mp3")) {
+                        fileName = fileName + ".mp3";
                     }
+                    
+                    // Calling method to save the comment as an mp3 file
                     try {
                         saveToMp3(fileName);
-                        JOptionPane.showMessageDialog(contentPane,"Commentary sucessfully saved as "+fileName);
+                        JOptionPane.showMessageDialog(contentPane,"Commentary sucessfully saved as " + fileName);
                     } catch (IOException | InterruptedException e) {
-                        JOptionPane.showMessageDialog(contentPane,"Error saving commentary","Error saving file",JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(contentPane,"Error saving commentary","Error saving file", JOptionPane.ERROR_MESSAGE);
                     }
-
                 }
             }
         });
