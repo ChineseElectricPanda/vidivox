@@ -177,23 +177,20 @@ public class MainFrame extends JFrame{
                     // Playing the video
                     videoPlayer.playVideo(videoPath);
 
-                    // Sleeping the thread for 50 milliseconds to allow enough time for the video
-                    // to be successfully loaded
+                    int totalTime=0;
                     try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e1) {
-                        System.out.println("ERROR: While sleeping open video button thread");
+                        Process ffProbeProcess = new ProcessBuilder("/bin/bash", "-c", "ffprobe -i " + videoPath + " -show_entries format=duration 2>&1 | grep \"duration=\"").start();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(ffProbeProcess.getInputStream()));
+                        ffProbeProcess.waitFor();
+                        String durationLine = reader.readLine();
+                        if (durationLine != null) {
+                            totalTime = (int) Float.parseFloat(durationLine.split("=")[1])*1000;
+                        }
+                    } catch (InterruptedException | IOException e1) {
                         e1.printStackTrace();
+                        System.err.println("Failed to get video duration");
                     }
-                    
-                    // Getting total length of video in milliseconds
-                    long time = videoPlayer.getMediaPlayer().getLength();
-                    
-                    // Calculating the total length of the video and storing the output as a formatted string
-                    String totalTime = controlsPanel.calculateTime(time);
-
-                    // Setting total time label and variable
-                    getControlsPanel().setTotalTime(totalTime, time);
+                    getControlsPanel().setTotalTime(controlsPanel.calculateTime(totalTime),totalTime);
                 }
             }
         });
