@@ -27,7 +27,7 @@ public class ControlsPanel extends JPanel {
     private JSlider volumeSlider;
     private JLabel volumeLevelLabel;
     private JButton skipForwardButton;
-    private int volume = 50;
+    private int volume = 100;
     private float totalTime = 0;
     private float currentTime = 0;
     private boolean sliderCanMove = false;
@@ -343,6 +343,7 @@ public class ControlsPanel extends JPanel {
         gbc.weighty=1.0f;
         buttonsPanel.add(new JLabel("Volume"));
         volumeSlider=new JSlider();
+        volumeSlider.setValue(100);
         volumeSlider.setPreferredSize(new Dimension(100,25));
         gbc.gridx=8;
         gbc.gridy=0;
