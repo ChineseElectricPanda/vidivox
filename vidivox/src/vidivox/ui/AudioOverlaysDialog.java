@@ -11,13 +11,24 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This is the class for the Dialog which allows users to add and edit the audio tracks they wish to overlay onto their
+ * video. It consists of container components generated from AudioOverlay objects.
+ *
+ * @author Hanzhi Wang
+ * @author Ammar Bagasrawala
+ *
+ */
 public class AudioOverlaysDialog extends JDialog {
-    private static List<AudioOverlay> overlays=new ArrayList<>();
-    public static List<CommentaryOverlay> commentaryOverlays = new ArrayList<>();
-    private List<JButton> deleteButtons;
-    private JButton addCommentaryButton;
-    private JButton addAudioButton;
+    private static List<AudioOverlay> overlays=new ArrayList<>();                   // List of audio overlays added
+    public static List<CommentaryOverlay> commentaryOverlays = new ArrayList<>();   // List of overlays which are commentary
+    private List<JButton> deleteButtons;        // List of button for deleting each audio overlay track
+    private JButton addCommentaryButton;        // A button for adding a commentary overlay
+    private JButton addAudioButton;             // A button for adding an audio file (eg mp3) overlay
 
+    /**
+     * Initializes the Dialog with layout and listeners
+     */
     public AudioOverlaysDialog() {
         super((Dialog)null);
         setupLayout();
@@ -26,26 +37,38 @@ public class AudioOverlaysDialog extends JDialog {
         pack();
     }
 
+    /**
+     * Gets the list of audio overlays currently being added to the video
+     * @return the list of overlays
+     */
     public static List<AudioOverlay> getOverlays() {
         return overlays;
     }
 
+    /**
+     * Sets the list of audio overlays currently being added to the video
+     * @param overlays the list to set to
+     */
     public static void setOverlays(List<AudioOverlay> overlays){
         AudioOverlaysDialog.overlays=overlays;
     }
 
+    /**
+     * Sets up the listeners to respond to user input
+     */
     private void setupListeners() {
+        // Add commentary button creates a new commentary track and adds it to the dialog
         addCommentaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 CommentaryOverlay overlay=new CommentaryOverlay(overlays.size());
                 overlays.add(overlay);
                 commentaryOverlays.add(overlay);
-
                 setupLayout();
                 setupListeners();
             }
         });
+        // Add audio button creates a new audio track and adds it to the dialog
         addAudioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -56,6 +79,7 @@ public class AudioOverlaysDialog extends JDialog {
             }
         });
 
+        // Set the delete button next to each track to delete that track when clicked
         for(int i=0;i<deleteButtons.size();i++){
             final int position=i;
             deleteButtons.get(i).addActionListener(new ActionListener() {
@@ -69,6 +93,9 @@ public class AudioOverlaysDialog extends JDialog {
         }
     }
 
+    /**
+     * Set up the layout of the dialog using a GridBagLayout
+     */
     private void setupLayout(){
         getContentPane().removeAll();
         JScrollPane scrollPane=new JScrollPane();
@@ -80,6 +107,7 @@ public class AudioOverlaysDialog extends JDialog {
         contentPane.setLayout(new GridBagLayout());
         GridBagConstraints gbc=new GridBagConstraints();
 
+        //create a panel for holding the buttons at the top of the dialog
         JPanel buttonsPanel=new JPanel();
         buttonsPanel.setLayout(new FlowLayout());
         addCommentaryButton=new JButton("Add Commentary");
@@ -97,6 +125,8 @@ public class AudioOverlaysDialog extends JDialog {
         deleteButtons=new ArrayList<>();
 
         gbc.gridwidth=1;
+
+        //create a panel for holding the components to display the audio overlay tracks
         for(AudioOverlay overlay:overlays){
             Component overlayDisplay=overlay.getComponentView();
 
@@ -113,6 +143,7 @@ public class AudioOverlaysDialog extends JDialog {
             gbc.weightx=1.0f;
             gbc.anchor=GridBagConstraints.CENTER;
             contentPane.add(overlayDisplay,gbc);
+            //add a delete button for removing the track
             gbc.gridx=1;
             gbc.weightx=0.0f;
             gbc.anchor=GridBagConstraints.CENTER;
