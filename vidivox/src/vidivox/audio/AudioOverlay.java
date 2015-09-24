@@ -409,6 +409,11 @@ public abstract class AudioOverlay {
             throw new RuntimeException("This method must be called on a swingworker thread!");
         }
         
+        // Check that a file is actually selected before proceeding
+        if(getFilePath()==null || getFilePath().isEmpty()){
+        	return null;
+        }
+        
         // If the start time is 0 then no need to create an offset so returning the file path of the non
         // processed file
         if (startTime == 0) {

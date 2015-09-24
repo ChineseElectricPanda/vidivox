@@ -451,6 +451,9 @@ public class MainFrame extends JFrame{
         			cmd.append(" -filter_complex amix");
         		}
         		
+        		// Force output format to avi
+        		cmd.append(" -f avi");
+        		
         		// Append the option to allow ffmpeg to use support more formats, then append the output file path
         		cmd.append(" -strict -2 " + file.getAbsolutePath());
         		
