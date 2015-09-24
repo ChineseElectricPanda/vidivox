@@ -135,7 +135,7 @@ public class ControlsPanel extends JPanel {
 				if (Math.round(videoPlayer.getMediaPlayer().getTime()) < 100) {
         		ArrayList<AudioOverlay> overlays = (ArrayList<AudioOverlay>) AudioOverlaysDialog.getOverlays();
         		for (int i = 0; i < overlays.size(); i ++) {
-        			if (overlays.get(i).showPreview == true) {
+        			if (overlays.get(i).getShowPreview() == true) {
         				ArrayList<CommentaryOverlay> commentaryOverlays = (ArrayList<CommentaryOverlay>) AudioOverlaysDialog.commentaryOverlays;
         				if (commentaryOverlays.get(i).text.length() >= 80) {
         					JOptionPane.showMessageDialog(null,
