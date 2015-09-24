@@ -33,7 +33,7 @@ public class AudioOverlaysDialog extends JDialog {
         super((Dialog)null);
         setupLayout();
         setupListeners();
-        setMinimumSize(new Dimension(800, 400));
+        setMinimumSize(new Dimension(900, 400));
         pack();
     }
 
@@ -106,6 +106,7 @@ public class AudioOverlaysDialog extends JDialog {
 
         contentPane.setLayout(new GridBagLayout());
         GridBagConstraints gbc=new GridBagConstraints();
+        gbc.insets=new Insets(5,5,5,5);
 
         //create a panel for holding the buttons at the top of the dialog
         JPanel buttonsPanel=new JPanel();
@@ -143,6 +144,7 @@ public class AudioOverlaysDialog extends JDialog {
             gbc.weightx=1.0f;
             gbc.anchor=GridBagConstraints.CENTER;
             contentPane.add(overlayDisplay,gbc);
+
             //add a delete button for removing the track
             gbc.gridx=1;
             gbc.weightx=0.0f;
