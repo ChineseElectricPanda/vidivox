@@ -436,13 +436,23 @@ public class MainFrame extends JFrame{
         		// Building the command to pass into the process builder
         		StringBuilder cmd = new StringBuilder("ffmpeg -y -i " + videoPath);
         		// Appending the audio path of each audio file to the command
+        		// Keep count of the number of audio files added
+        		int audioTracksAdded=0;
         		for (String audioPath : audioPaths) {
-        			cmd.append(" -i " + audioPath);
+        			// Only add audio files which aren't empty
+        			if(audioPath!=null && !audioPath.isEmpty()){
+        				cmd.append(" -i " + audioPath);
+        				audioTracksAdded++;
+        			}
         		}
         		
-        		// Appending the options to disallow the overwriting of audio files on each
-        		// other after adding all desired audio paths to the command to merge video audio
-        		cmd.append(" -filter_complex amix -strict -2 " + file.getAbsolutePath());
+        		// If audio tracks have been added then append the command to mix them
+        		if(audioTracksAdded>0){
+        			cmd.append(" -filter_complex amix");
+        		}
+        		
+        		// Append the option to allow ffmpeg to use support more formats, then append the output file path
+        		cmd.append(" -strict -2 " + file.getAbsolutePath());
         		
         		// Building process and process builder to run the command then starting it
         		Process process = new ProcessBuilder("/bin/bash", "-c", cmd.toString()).start();
