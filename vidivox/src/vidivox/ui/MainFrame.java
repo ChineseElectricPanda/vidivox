@@ -105,20 +105,35 @@ public class MainFrame extends JFrame{
                     // Playing the video
                     videoPlayer.playVideo(videoPath);
 
-                    // Sleeping the thread to allow for the time to be gotten
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e1) {
-                        System.out.println("Error while sleeping open video button thread");
-                        e1.printStackTrace();
-                    }
-                    // Getting total length of video in milliseconds
-                    long time = videoPlayer.getMediaPlayer().getLength();
+//                    // Sleeping the thread to allow for the time to be gotten
+//                    try {
+//                        Thread.sleep(50);
+//                    } catch (InterruptedException e1) {
+//                        System.out.println("Error while sleeping open video button thread");
+//                        e1.printStackTrace();
+//                    }
+//                    // Getting total length of video in milliseconds
+//                    long time = videoPlayer.getMediaPlayer().getLength();
+//
+//                    String totalTime = controlsPanel.calculateTime(time);
+//
+//                    // Setting total time variable
+//                    getControlsPanel().setTotalTime(totalTime, time);
 
-                    String totalTime = controlsPanel.calculateTime(time);
-                    
-                    // Setting total time variable
-                    getControlsPanel().setTotalTime(totalTime, time);
+                    int totalTime=0;
+                    try {
+                        Process ffProbeProcess = new ProcessBuilder("/bin/bash", "-c", "ffprobe -i " + videoPath + " -show_entries format=duration 2>&1 | grep \"duration=\"").start();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(ffProbeProcess.getInputStream()));
+                        ffProbeProcess.waitFor();
+                        String durationLine = reader.readLine();
+                        if (durationLine != null) {
+                            totalTime = (int) Float.parseFloat(durationLine.split("=")[1])*1000;
+                        }
+                    } catch (InterruptedException | IOException e1) {
+                        e1.printStackTrace();
+                        System.err.println("Failed to get video duration");
+                    }
+                    getControlsPanel().setTotalTime(controlsPanel.calculateTime(totalTime),totalTime);
                 }
             }
         });
