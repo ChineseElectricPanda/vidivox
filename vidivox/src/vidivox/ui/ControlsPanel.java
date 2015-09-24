@@ -10,6 +10,7 @@ import vidivox.worker.SkipVideoWorker;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 import java.util.ArrayList;
 
 /**
@@ -127,6 +128,21 @@ public class ControlsPanel extends JPanel {
                     skipVid.cancel(true);
                     skipVid = null;
                 }
+    			
+                // Check through the commentaries to make sure they are all under 80 characters
+    			List<CommentaryOverlay> commentaryOverlays = AudioOverlaysDialog.commentaryOverlays;
+    			for(CommentaryOverlay overlay: commentaryOverlays){
+    				// Looking through the commentary overlays to check if the text is less than 80 characters
+					if (overlay.getText().length() >= 80) {
+						
+						// Showing error message to user informing them character limit is 80
+						JOptionPane.showMessageDialog(null,
+								"Must specify comment less than or equal 80 characters",
+								"Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					} 
+    			}
                 
                 // Starting the audio players
                 startAudioPlayers();
@@ -357,56 +373,6 @@ public class ControlsPanel extends JPanel {
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
-        // Adding an action listener to the play button to play the video when clicked on
-        playButton.addActionListener(new ActionListener() {
-        	@Override
-        	public void actionPerformed(ActionEvent e) {
-        		// Making sure the video is not muted
-        		videoPlayer.getMediaPlayer().mute(false);
-        		
-        		// Checking if the video is forwarding/rewinding and stopping it if it is
-        		if (skipVid != null) {
-        			skipVid.setIsSkipping(false);
-        			skipVid.cancel(true);
-        			skipVid = null;	
-        		}      		
- //##############################################################################################################################################################################################################           	
-        		// Checking if the video is near the start and starting the audio play back
-        		if (Math.round(videoPlayer.getMediaPlayer().getTime()) < 100) {
-        			
-        			ArrayList<AudioOverlay> overlays = (ArrayList<AudioOverlay>) AudioOverlaysDialog.getOverlays();
-        			
-        			// Looking through all audio overlays to check if the preview button is ticked
-        			for (int i = 0; i < overlays.size(); i ++) {
-        				if (overlays.get(i).isShowingPreview() == true) { // If preview is on
-        					
-        					ArrayList<CommentaryOverlay> commentaryOverlays = (ArrayList<CommentaryOverlay>) AudioOverlaysDialog.commentaryOverlays;
-        					
-        					// Looking through the commentary overlays to check if the text is less than 80 characters
-        					if (commentaryOverlays.get(i).getText().length() >= 80) {
-        						
-        						// Showing error message to user informing them character limit is 80
-        						JOptionPane.showMessageDialog(null,
-        								"Must specify comment less than or equal 80 characters",
-        								"Error",
-        								JOptionPane.ERROR_MESSAGE);
-        						return;
-        					} 
-        					
-        					// Getting the file path of each of the audio overlays
-        					String filePath = overlays.get(i).getFilePath();
-        					// Creating an audio play worker instance to play the audio file
-        					AudioPlayWorker audioPlayer = new AudioPlayWorker(filePath, 100);
-        					audioPlayWorkers.add(audioPlayer);
-        					audioPlayer.execute();
-        				}
-        			}
-        		}
-
-        		// Playing the video
-        		videoPlayer.getMediaPlayer().play();
-        	}
-        });
         buttonsPanel.add(playButton);
         
         // Creating pause button and adding it to the layout
