@@ -4,6 +4,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import vidivox.audio.AudioOverlay;
+import vidivox.audio.CommentaryOverlay;
 import vidivox.worker.AudioPlayWorker;
 import vidivox.worker.SkipVideoWorker;
 
@@ -249,6 +250,44 @@ public class ControlsPanel extends JPanel {
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
+
+        playButton.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		videoPlayer.getMediaPlayer().mute(false);
+        		if (skipVid != null) {
+        			skipVid.setIsSkipping(false);
+        			skipVid.cancel(true);
+        			skipVid = null;
+        			
+        		}      		
+            	
+				if (Math.round(videoPlayer.getMediaPlayer().getTime()) < 100) {
+        		ArrayList<AudioOverlay> overlays = (ArrayList<AudioOverlay>) AudioOverlaysDialog.getOverlays();
+        		for (int i = 0; i < overlays.size(); i ++) {
+        			if (overlays.get(i).isShowingPreview() == true) {
+        				ArrayList<CommentaryOverlay> commentaryOverlays = (ArrayList<CommentaryOverlay>) AudioOverlaysDialog.commentaryOverlays;
+        				if (commentaryOverlays.get(i).getText().length() >= 80) {
+        					JOptionPane.showMessageDialog(null,
+        							"Must specify comment less than or equal 80 characters",
+        							"Error",
+        							JOptionPane.ERROR_MESSAGE);
+        					return;
+        				} 
+
+        				String filePath = overlays.get(i).getFilePath();
+        				AudioPlayWorker audioPlayer = new AudioPlayWorker(filePath, 100);
+        				audioPlayWorkers.add(audioPlayer);
+        				audioPlayer.execute();
+        			}
+        		}
+				}
+        		
+        		// Playing the video
+        		videoPlayer.getMediaPlayer().play();
+        	}
+        });
+        
         buttonsPanel.add(playButton);
         pauseButton=new JButton("Pause");
         gbc.gridx=1;
