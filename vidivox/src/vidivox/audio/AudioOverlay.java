@@ -45,7 +45,7 @@ public abstract class AudioOverlay {
     protected JSlider volumeSlider;						// Slider to allow user to increase/decrease volume
     protected JLabel volumeLevelLabel;					// Label informing user of current volume level
     protected JCheckBox previewCheckBox;				// Check box allowing user to select audio to play with video
-    protected boolean showPreview = false;				// Field to determine whether audio should be played with video
+    protected boolean showPreview = true;				// Field to determine whether audio should be played with video
     
     /**
      * Fields initialized to be used by methods within this class
@@ -145,6 +145,7 @@ public abstract class AudioOverlay {
         // Instantiating check box user can click on to allow audio to be played when
         // the video plays and adds it to the properties panel
         previewCheckBox = new JCheckBox("Preview");
+        previewCheckBox.setSelected(true);
         gbc.gridx++;
         gbc.weightx=1.0f;
         propertiesPanel.add(previewCheckBox, gbc);

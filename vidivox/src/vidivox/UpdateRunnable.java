@@ -40,7 +40,7 @@ public class UpdateRunnable implements Runnable {
 		final VideoPlayerComponent videoPlayer = controlsPanel.getVideoPlayer();
 		
 		// Getting the position the video is currently at
-		final int position= (int) videoPlayer.getMediaPlayer().getTime();
+		final int position = (int) videoPlayer.getMediaPlayer().getTime();
 		
 		// Using SwingUtilities to create a thread which is invoked when it is possible to do so
 		// and thus enables the GUI to not freeze
@@ -56,6 +56,11 @@ public class UpdateRunnable implements Runnable {
 					// Getting the current time of the video
 					int time = Math.round(videoPlayer.getMediaPlayer().getTime());
 
+					// Stopping all audio playing when the video reaches the end
+					if (time >= controlsPanel.getTotalTime()) {
+						controlsPanel.stopAudioPlayers();
+					}
+					
 					// Calling method in the ControlsPanel class to format the time into hours, mins and secs
 					String timeString = controlsPanel.calculateTime(time);
 					
