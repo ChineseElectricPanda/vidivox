@@ -374,7 +374,12 @@ public abstract class AudioOverlay {
         return contentPane;
     }
 
-//##############################################################################################################    
+    /**
+     * Creates an AudioOverlay object from string arguments
+     * @param s the string input
+     * @return the created AudioOverlay object
+     * @throws FileFormatException if the string is formatted incorrectly
+     */
     public static AudioOverlay fromString(String s) throws FileFormatException {
         try {
             if (s.startsWith("F")) {
@@ -387,7 +392,6 @@ public abstract class AudioOverlay {
         }
         throw new FileFormatException();
     }
-//##############################################################################################################    
        
     /**
      * This method returns the file path of the file with both the silent audio and actual audio
@@ -398,15 +402,11 @@ public abstract class AudioOverlay {
      * @throws InterruptedException
      */
     public String getProcessedFilePath() throws IOException, InterruptedException {
-        
-//##########################################################################################################
-// do we need this??????????????????????????????????????????????????????
+        // Make sure this method is called on a SwingWorker thread so that it doesn't freeze the UI (for debug)
     	System.out.println(Thread.currentThread().getName());
         if (!Thread.currentThread().getName().startsWith("SwingWorker")) {
-            System.err.println("BIG RED LETTERS!");
             throw new RuntimeException("This method must be called on a swingworker thread!");
         }
-//###########################################################################################################
         
         // If the start time is 0 then no need to create an offset so returning the file path of the non
         // processed file
