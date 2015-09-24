@@ -3,9 +3,12 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import vidivox.ui.ProgressDialog;
 import vidivox.worker.SpeechSynthesisWorker;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 
 /**
@@ -26,6 +29,7 @@ public class CommentaryOverlay extends AudioOverlay {
     private int position;								// Position of the comment in the AudioOverlaysDialog
     private SpeechSynthesisWorker synthesisWorker;		// Reference to the class that creates the wav file
     private JTextField textField;						// Text field where user enters comment
+    private JButton saveToFileButton;
 
     /**
      * Constructor which takes in only the position of the audio and initializes other fields
@@ -101,7 +105,7 @@ public class CommentaryOverlay extends AudioOverlay {
     public JPanel getComponentView() {
     	
     	// Setting up the content pane by calling AudioOverlay's method
-        JPanel contentPane = super.getComponentView();
+        final JPanel contentPane = super.getComponentView();
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5,5,5,5);
 
@@ -113,6 +117,10 @@ public class CommentaryOverlay extends AudioOverlay {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.NORTH;
         contentPane.add(textField, gbc);
+        // Add button to save the commentary to an mp3 file
+        saveToFileButton=new JButton("Save to mp3");
+        gbc.gridx++;
+        contentPane.add(saveToFileButton);
 
         // Adding document listener to the text field to determine when the user has
         // typed something in and getting the text from the text field to store
@@ -181,6 +189,31 @@ public class CommentaryOverlay extends AudioOverlay {
             	}
             }
         });
+
+        saveToFileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                //make sure the commentary is not empty
+                if(getFilePath()==null){
+                    JOptionPane.showMessageDialog(contentPane,"Error: Cannot save empty commentary","Error saving file",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                JFileChooser fileChooser=new JFileChooser();
+                if (fileChooser.showSaveDialog(contentPane) == JFileChooser.APPROVE_OPTION) {
+                    String fileName= fileChooser.getSelectedFile().getAbsolutePath();
+                    if(!fileName.endsWith(".mp3")){
+                        fileName=fileName+".mp3";
+                    }
+                    try {
+                        saveToMp3(fileName);
+                        JOptionPane.showMessageDialog(contentPane,"Commentary sucessfully saved as "+fileName);
+                    } catch (IOException | InterruptedException e) {
+                        JOptionPane.showMessageDialog(contentPane,"Error saving commentary","Error saving file",JOptionPane.ERROR_MESSAGE);
+                    }
+
+                }
+            }
+        });
         
         // Checking if the text is not empty and setting the text in the text field
         if (text != null) {
@@ -188,6 +221,19 @@ public class CommentaryOverlay extends AudioOverlay {
         }
         
         return contentPane;
+    }
+
+    /**
+     * Saves this commentary to a mp3 file
+     * @param outputFilePath the file to save to
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private void saveToMp3(final String outputFilePath) throws IOException, InterruptedException {
+        //create a  ffmpeg process to process the commentary file to an mp3
+        //(note: this is fast enough to run on the main thread without noticible effect on UI)
+        String cmd="ffmpeg -y -i "+getFilePath()+" "+outputFilePath;
+        new ProcessBuilder("/bin/bash","-c",cmd).start().waitFor();
     }
 
     /**
