@@ -385,10 +385,9 @@ public class MainFrame extends JFrame{
     }
 
     /**
-     * This method is called when the user wants to merge their video and the audio generated
-     * from the comments into one video file. It does so 
+     * Merges the video and audio tracks into one file using ffmpeg by overlaying them
      * 
-     * @param file
+     * @param file the file to output
      * @throws InterruptedException
      * @throws IOException
      */
@@ -447,10 +446,9 @@ public class MainFrame extends JFrame{
         		
         		// Building process and process builder to run the command then starting it
         		Process process = new ProcessBuilder("/bin/bash", "-c", cmd.toString()).start();
-//#################################################################################################################################        		
+
+                //print the command that was executed (for debug)
         		System.out.println(cmd.toString());
-        		// Should this be here? Can't test it at the moment
-//#################################################################################################################################        		
         		
         		// Causes the current thread to wait if necessary
         		process.waitFor();

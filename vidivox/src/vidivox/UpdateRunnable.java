@@ -40,7 +40,7 @@ public class UpdateRunnable implements Runnable {
 		final VideoPlayerComponent videoPlayer = controlsPanel.getVideoPlayer();
 		
 		// Getting the position the video is currently at
-		final int position = (int) (videoPlayer.getMediaPlayer().getPosition() * 100);
+		final int position= (int) videoPlayer.getMediaPlayer().getTime();
 		
 		// Using SwingUtilities to create a thread which is invoked when it is possible to do so
 		// and thus enables the GUI to not freeze
