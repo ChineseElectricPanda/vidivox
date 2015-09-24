@@ -539,7 +539,7 @@ public class ControlsPanel extends JPanel {
     /**
      * Plays all of the overlaid audio tracks
      */
-    private void startAudioPlayers(){
+    public void startAudioPlayers(){
 
     	stopAudioPlayers();
     	
@@ -558,7 +558,7 @@ public class ControlsPanel extends JPanel {
     /**
      * Stops all the overlaid audio tracks currently playing
      */
-    private void stopAudioPlayers(){
+    public void stopAudioPlayers(){
         for(AudioPlayWorker player : audioPlayWorkers){
             player.kill();
         }
@@ -568,7 +568,7 @@ public class ControlsPanel extends JPanel {
     /**
      * Updates the currently playing audio tracks to synchronize them with the video
      */
-    private void updateAudioPlayers() {
+    public void updateAudioPlayers() {
         stopAudioPlayers();
         startAudioPlayers();
     }
