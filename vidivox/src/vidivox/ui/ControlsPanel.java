@@ -6,7 +6,6 @@ import javax.swing.event.ChangeListener;
 import vidivox.audio.AudioOverlay;
 import vidivox.worker.AudioPlayWorker;
 import vidivox.worker.SkipVideoWorker;
-import vidivox.worker.VideoTimerWorker;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -38,6 +37,7 @@ public class ControlsPanel extends JPanel {
     public ControlsPanel(VideoPlayerComponent videoPlayer){
         this.videoPlayer=videoPlayer;
         setupLayout();
+        setupListeners();
     }
     
     public VideoPlayerComponent getVideoPlayer() {
@@ -45,7 +45,164 @@ public class ControlsPanel extends JPanel {
     }
 
     /**
-     * Sets up the seek slider and buttons layoutideo skipV
+     * Sets up the listeners for the controls
+     */
+    private void setupListeners(){
+        // Seek slider change event to make video player to play at set time
+        seekSlider.addChangeListener(new ChangeListener()  {
+            // For when user drags the seek bar
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (sliderCanMove) {
+                    long currentTime=videoPlayer.getMediaPlayer().getTime();
+                    setCurrentTime(calculateTime(currentTime),currentTime);
+                    videoPlayer.getMediaPlayer().setTime(seekSlider.getValue());
+                    updateAudioPlayers();
+                }
+            }
+        });
+        seekSlider.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent arg0) {
+                sliderCanMove = true;
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent arg0) {
+                sliderCanMove = false;
+            }
+        });
+        playButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                videoPlayer.getMediaPlayer().mute(false);
+                if (skipVid != null) {
+                    skipVid.setIsSkipping(false);
+                    skipVid.cancel(true);
+                    skipVid = null;
+
+                }
+                startAudioPlayers();
+                // Playing the video
+                videoPlayer.getMediaPlayer().play();
+            }
+        });
+        pauseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (skipVid != null) {
+                    skipVid.setIsSkipping(false);
+                    skipVid.cancel(true);
+                    skipVid = null;
+                    videoPlayer.getMediaPlayer().mute(false);
+                }
+                stopAudioPlayers();
+                // Pausing the video player
+                videoPlayer.getMediaPlayer().pause();
+            }
+        });
+        stopButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (skipVid != null) {
+                    skipVid.setIsSkipping(false);
+                    skipVid.cancel(true);
+                    skipVid = null;
+                    videoPlayer.getMediaPlayer().mute(false);
+                }
+                stopAudioPlayers();
+                videoPlayer.getMediaPlayer().stop();
+                seekSlider.setValue(0);
+                setCurrentTime("00:00:00", 0);
+            }
+        });
+        fastForwardButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (skipVid == null) {
+                    stopAudioPlayers();
+                    videoPlayer.getMediaPlayer().mute(true);
+                    skipVid =  new SkipVideoWorker(videoPlayer, controlsPanel);
+                    skipVid.setSkipValue(1000);
+                    skipVid.setIsSkipping(true);
+                    skipVid.execute();
+
+                } else {
+                    startAudioPlayers();
+                    videoPlayer.getMediaPlayer().mute(false);
+                    skipVid.setIsSkipping(false);
+                    skipVid.cancel(true);
+                    skipVid = null;
+                }
+            }
+        });
+        rewindButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (skipVid == null) {
+                    stopAudioPlayers();
+                    videoPlayer.getMediaPlayer().mute(true);
+                    skipVid = new SkipVideoWorker(videoPlayer, controlsPanel);
+                    skipVid.setSkipValue(-1000);
+                    skipVid.setIsSkipping(true);
+                    skipVid.execute();
+
+                } else {
+                    startAudioPlayers();
+                    videoPlayer.getMediaPlayer().mute(false);
+                    skipVid.setIsSkipping(false);
+                    skipVid.cancel(true);
+                    skipVid = null;
+                }
+            }
+        });
+        skipForwardButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                videoPlayer.getMediaPlayer().mute(false);
+
+                if (skipVid != null) {
+                    skipVid.setIsSkipping(false);
+                    skipVid.cancel(true);
+                    skipVid = null;
+                }
+
+                // Forwarding the video
+                videoPlayer.getMediaPlayer().skip(10000);
+                updateAudioPlayers();
+            }
+        });
+        skipBackButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                videoPlayer.getMediaPlayer().mute(false);
+                System.out.println("heheheh");
+                if (skipVid != null) {
+                    skipVid.setIsSkipping(false);
+                    skipVid.cancel(true);
+                    skipVid = null;
+                }
+                // Rewinding the player
+                videoPlayer.getMediaPlayer().skip(-10000);
+                updateAudioPlayers();
+            }
+        });
+        volumeSlider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                // Getting current volume user has set
+                volume = volumeSlider.getValue();
+                // Updating the audio in the video player to the selected volume
+                videoPlayer.getMediaPlayer().setVolume(volume);
+                // Updating the label for the volume to show current volume level
+                volumeLevelLabel.setText(volume + "%");
+            }
+        });
+    }
+
+    /**
+     * Sets up the seek slider and buttons
      */
     private void setupLayout(){
         setLayout(new GridBagLayout());
@@ -70,34 +227,6 @@ public class ControlsPanel extends JPanel {
         seekSlider.setMaximum(100);
         seekSlider.setMinimum(0);
         seekSlider.setValue(0);
-        // Seek slider change event to make video player to play at set time
-        seekSlider.addChangeListener(new ChangeListener()  {
-			// For when user drags the seek bar
-        	@Override
-			public void stateChanged(ChangeEvent e) {
-        		if (sliderCanMove) {
-        			VideoTimerWorker videoTimeControl = new VideoTimerWorker(controlsPanel);
-        			videoTimeControl.execute();
-                    updateAudioPlayers();
-        		}
-        	}
-        });
-        seekSlider.addMouseListener(new MouseListener() {
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				sliderCanMove = true;
-			}
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-				sliderCanMove = false;
-			}
-			@Override
-			public void mouseClicked(MouseEvent e) {}
-			@Override
-			public void mouseEntered(MouseEvent e) {}
-			@Override
-			public void mouseExited(MouseEvent e) {}     	
-        });
         sliderPanel.add(seekSlider,gbc);        
         totalTimeLabel=new JLabel("00:00:00");
         gbc.gridx=2;
@@ -120,62 +249,18 @@ public class ControlsPanel extends JPanel {
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
-        playButton.addActionListener(new ActionListener() {
-        	@Override
-        	public void actionPerformed(ActionEvent e) {
-        		videoPlayer.getMediaPlayer().mute(false);
-        		if (skipVid != null) {
-        			skipVid.setIsSkipping(false);
-        			skipVid.cancel(true);
-        			skipVid = null;
-        			
-        		}
-				playAudioTracks();
-        		// Playing the video
-        		videoPlayer.getMediaPlayer().play();
-        	}
-        });
         buttonsPanel.add(playButton);
         pauseButton=new JButton("Pause");
         gbc.gridx=1;
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
-        pauseButton.addActionListener(new ActionListener() {
-        	@Override
-        	public void actionPerformed(ActionEvent e) {
-        		if (skipVid != null) {
-        			skipVid.setIsSkipping(false);
-        			skipVid.cancel(true);
-        			skipVid = null;
-        			videoPlayer.getMediaPlayer().mute(false);
-        		}
-                stopAudioTracks();
-        		// Pausing the video player
-        		videoPlayer.getMediaPlayer().pause();
-        	}
-        });
         buttonsPanel.add(pauseButton,gbc);
         stopButton=new JButton("Stop");
         gbc.gridx=2;
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
-        stopButton.addActionListener(new ActionListener() {
-        	@Override
-        	public void actionPerformed(ActionEvent e) {
-        		if (skipVid != null) {
-        			skipVid.setIsSkipping(false);
-        			skipVid.cancel(true);
-        			skipVid = null;
-        			videoPlayer.getMediaPlayer().mute(false);
-        		}
-        		stopAudioTracks();
-        		videoPlayer.getMediaPlayer().stop();
-        		seekSlider.setValue(0);
-        		setCurrentTime("00:00:00", 0);
-        	}
-        });
         buttonsPanel.add(stopButton,gbc);
         gbc.gridx=3;
         gbc.gridy=0;
@@ -187,74 +272,18 @@ public class ControlsPanel extends JPanel {
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
-        rewindButton.addActionListener(new ActionListener() {
-        	@Override
-        	public void actionPerformed(ActionEvent e) {
-        		if (skipVid == null) {
-                    stopAudioTracks();
-        			videoPlayer.getMediaPlayer().mute(true);
-        			skipVid =  new SkipVideoWorker(videoPlayer, controlsPanel);
-        			skipVid.setSkipValue(-1000);
-        			skipVid.setIsSkipping(true);
-        			skipVid.execute();
-        			
-        		} else {
-                    playAudioTracks();
-        			videoPlayer.getMediaPlayer().mute(false);
-        			skipVid.setIsSkipping(false);
-        			skipVid.cancel(true);
-        			skipVid = null;
-        		}
-        	}
-        });
         buttonsPanel.add(rewindButton,gbc);
         fastForwardButton=new JButton(">>");
         gbc.gridx=5;
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
-        fastForwardButton.addActionListener(new ActionListener() {
-        	@Override
-        	public void actionPerformed(ActionEvent e) {
-        		if (skipVid == null) {
-                    stopAudioTracks();
-        			videoPlayer.getMediaPlayer().mute(true);
-        			skipVid =  new SkipVideoWorker(videoPlayer, controlsPanel);
-        			skipVid.setSkipValue(1000);
-        			skipVid.setIsSkipping(true);
-        			skipVid.execute();
-        			
-        		} else {
-                    playAudioTracks();
-        			videoPlayer.getMediaPlayer().mute(false);
-        			skipVid.setIsSkipping(false);
-        			skipVid.cancel(true);
-        			skipVid = null;
-        		}
-        	}
-        });
         buttonsPanel.add(fastForwardButton,gbc);
         skipForwardButton = new JButton(">");
         gbc.gridx = 7;
         gbc.gridy = 0;
         gbc.weightx=0.0f;videoPlayer.getMediaPlayer().mute(false);
         gbc.weighty=3.0f;
-        skipForwardButton.addActionListener(new ActionListener() {
-        	@Override
-        	public void actionPerformed(ActionEvent e) {        		
-        		videoPlayer.getMediaPlayer().mute(false);
-        		
-        		if (skipVid != null) {
-        			skipVid.setIsSkipping(false);
-        			skipVid.cancel(true);
-        			skipVid = null;
-        		}
-        		
-        		// Forwarding the video
-        		videoPlayer.getMediaPlayer().skip(10000);
-                updateAudioPlayers();
-        	}
-        });
         buttonsPanel.add(skipForwardButton, gbc);
         
         skipBackButton = new JButton("<");
@@ -262,22 +291,6 @@ public class ControlsPanel extends JPanel {
         gbc.gridy = 0;
         gbc.weightx=0.0f;
         gbc.weighty=3.0f;
-        skipBackButton.addActionListener(new ActionListener() {
-        	@Override
-        	public void actionPerformed(ActionEvent e) {        	
-        		
-        		videoPlayer.getMediaPlayer().mute(false);
-        		System.out.println("heheheh");
-        		if (skipVid != null) {
-        			skipVid.setIsSkipping(false);
-        			skipVid.cancel(true);
-        			skipVid = null;
-        		}
-        		// Rewinding the player
-        		videoPlayer.getMediaPlayer().skip(-10000);
-                updateAudioPlayers();
-        	}
-        });
         buttonsPanel.add(skipBackButton, gbc);
         
         gbc.gridx=8;
@@ -296,17 +309,6 @@ public class ControlsPanel extends JPanel {
         gbc.gridy=0;
         gbc.weightx=1.0f;
         gbc.weighty=1.0f;
-        volumeSlider.addChangeListener(new ChangeListener()  {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				// Getting current volume user has set
-				volume = volumeSlider.getValue();
-				// Updating the audio in the video player to the selected volume
-				videoPlayer.getMediaPlayer().setVolume(volume);
-				// Updating the label for the volume to show current volume level
-				volumeLevelLabel.setText(volume + "%");
-			}
-        });
         buttonsPanel.add(volumeSlider);
         volumeLevelLabel=new JLabel(volume + "%");
         gbc.gridx=9;
@@ -325,6 +327,7 @@ public class ControlsPanel extends JPanel {
     public void setTotalTime(String timeString, long time) {
     	totalTimeLabel.setText(timeString);
     	totalTime = time;
+        seekSlider.setMaximum((int)time);
     }
     
     public void setCurrentTime(String timeString, long time) {
@@ -356,8 +359,8 @@ public class ControlsPanel extends JPanel {
     /**
      * Plays all of the overlaid audio tracks
      */
-    private void playAudioTracks(){
-        stopAudioTracks();
+    private void startAudioPlayers(){
+        stopAudioPlayers();
         for(AudioOverlay overlay: AudioOverlaysDialog.getOverlays()){
             // Only play the overlay tracks with "preview" ticked
             if(overlay.isShowingPreview()) {
@@ -373,7 +376,7 @@ public class ControlsPanel extends JPanel {
     /**
      * Stops all the overlaid audio tracks currently playing
      */
-    private void stopAudioTracks(){
+    private void stopAudioPlayers(){
         for(AudioPlayWorker player: audioPlayWorkers){
             player.kill();
         }
@@ -384,7 +387,7 @@ public class ControlsPanel extends JPanel {
      * Updates the currently playing audio tracks to synchronise them with the video
      */
     private void updateAudioPlayers() {
-        stopAudioTracks();
-        playAudioTracks();
+        stopAudioPlayers();
+        startAudioPlayers();
     }
 }
