@@ -297,7 +297,7 @@ public abstract class AudioOverlay {
             	for (int i = 0; i < overlays.size(); i++) {
             		
             		// Checking number of characters in the text fields
-            		if (overlays.get(i).text.length() >= 80) {
+            		if (overlays.get(i).getText().length() >= 80) {
             			// If the length is over 80 this message will pop up notifying the user they
             			// cannot play the audio file unless its under this limit
             			JOptionPane.showMessageDialog(null,

@@ -137,7 +137,7 @@ public class ControlsPanel extends JPanel {
         		for (int i = 0; i < overlays.size(); i ++) {
         			if (overlays.get(i).getShowPreview() == true) {
         				ArrayList<CommentaryOverlay> commentaryOverlays = (ArrayList<CommentaryOverlay>) AudioOverlaysDialog.commentaryOverlays;
-        				if (commentaryOverlays.get(i).text.length() >= 80) {
+        				if (commentaryOverlays.get(i).getText().length() >= 80) {
         					JOptionPane.showMessageDialog(null,
         							"Must specify comment less than or equal 80 characters",
         							"Error",
