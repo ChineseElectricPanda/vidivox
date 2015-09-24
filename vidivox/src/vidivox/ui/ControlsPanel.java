@@ -88,8 +88,6 @@ public class ControlsPanel extends JPanel {
                     // Setting the position of the video to that of the seek slider
                     videoPlayer.getMediaPlayer().setTime(seekSlider.getValue());
                     
-                    // Updating the audio players
-                    updateAudioPlayers();
                 }
             }
         });
@@ -103,6 +101,9 @@ public class ControlsPanel extends JPanel {
         	@Override
             public void mousePressed(MouseEvent arg0) {
                 sliderCanMove = true;
+                // Mute the audio when the slider is being moved
+                videoPlayer.getMediaPlayer().mute(true);
+                stopAudioPlayers();
             }
         		
         	// Setting the sliderCanMove field to false when the user releases
@@ -111,6 +112,11 @@ public class ControlsPanel extends JPanel {
             @Override
             public void mouseReleased(MouseEvent arg0) {
                 sliderCanMove = false;
+                // Unmute the audio when the seek slider is released
+                videoPlayer.getMediaPlayer().mute(false);
+                if(videoPlayer.getMediaPlayer().isPlaying()){
+                	startAudioPlayers();
+                }
             }
         });
         
@@ -224,7 +230,9 @@ public class ControlsPanel extends JPanel {
 
                 } else {
                 	// If there is an already running skipping function then stopping it
-                    startAudioPlayers();
+                	if(videoPlayer.getMediaPlayer().isPlaying()){
+                		startAudioPlayers();
+                	}
                     videoPlayer.getMediaPlayer().mute(false);
                     skipVid.setIsSkipping(false);
                     skipVid.cancel(true);
@@ -252,7 +260,9 @@ public class ControlsPanel extends JPanel {
                 } else {
                 	// If the video is skipping then the following will un-mute the video
                 	// and stop it from skipping
-                    startAudioPlayers();
+                	if(videoPlayer.getMediaPlayer().isPlaying()){
+                		startAudioPlayers();
+                	}
                     videoPlayer.getMediaPlayer().mute(false);
                     skipVid.setIsSkipping(false);
                     skipVid.cancel(true);
@@ -278,6 +288,7 @@ public class ControlsPanel extends JPanel {
 
                 // Skipping the video ahead and updating the audio
                 videoPlayer.getMediaPlayer().skip(10000);
+                seekSlider.setValue(seekSlider.getValue()+10000);
                 updateAudioPlayers();
             }
         });
@@ -297,6 +308,7 @@ public class ControlsPanel extends JPanel {
                 }
                 // RSkipping backwards by a set amount and updating the audio players
                 videoPlayer.getMediaPlayer().skip(-10000);
+                seekSlider.setValue(seekSlider.getValue()-10000);
                 updateAudioPlayers();
             }
         });
@@ -340,6 +352,8 @@ public class ControlsPanel extends JPanel {
         
         // Creating and adding the seek slider to the slider panel
         seekSlider = new JSlider();
+        seekSlider.setMinorTickSpacing(1000);
+        seekSlider.setMajorTickSpacing(1000);
         gbc.gridx=1;
         gbc.gridy=0;
         gbc.weightx=1.0f;
@@ -570,6 +584,8 @@ public class ControlsPanel extends JPanel {
      */
     public void updateAudioPlayers() {
         stopAudioPlayers();
-        startAudioPlayers();
+        if(videoPlayer.getMediaPlayer().isPlaying()){
+        	startAudioPlayers();
+        }
     }
 }
