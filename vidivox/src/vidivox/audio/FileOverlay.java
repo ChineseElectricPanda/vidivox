@@ -1,5 +1,7 @@
 package vidivox.audio;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -99,6 +101,13 @@ public class FileOverlay extends AudioOverlay{
             	chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             	// Only allowing one file to be chosen
             	chooser.setMultiSelectionEnabled(false);
+            	
+            	// Allowing user to only select mp3 and wav files to open
+            	chooser.setAcceptAllFileFilterUsed(false);
+                FileNameExtensionFilter mp3Filter = new FileNameExtensionFilter("mp3 files", "mp3");
+                FileNameExtensionFilter wavFilter = new FileNameExtensionFilter("wav files", "wav");
+                chooser.addChoosableFileFilter(mp3Filter);
+                chooser.addChoosableFileFilter(wavFilter);
             	
             	// Obtaining the file selected by the user
             	if (chooser.showOpenDialog(contentPane) == JFileChooser.APPROVE_OPTION) {

@@ -43,6 +43,7 @@ public class Main {
 		mainFrame.setVisible(true);
 		
 		// Instantiating a UpdateRunnable class to update specific components every 500 milliseconds
+		// Source: https://github.com/caprica/vlcj/blob/master/src/test/java/uk/co/caprica/vlcj/test/basic/PlayerControlsPanel.java
 		executorService.scheduleAtFixedRate(new UpdateRunnable(mainFrame.getControlsPanel()), 0L, 500L, TimeUnit.MILLISECONDS);
     }
 }

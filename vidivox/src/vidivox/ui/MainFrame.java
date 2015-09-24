@@ -1,5 +1,6 @@
 package vidivox.ui;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import vidivox.audio.AudioOverlay;
 import vidivox.exception.FileFormatException;
@@ -167,6 +168,14 @@ public class MainFrame extends JFrame{
             	
                 // File chooser to allow user to select a video to open
                 JFileChooser fileChooser = new JFileChooser();
+                
+                // Allowing user to only select mp4 and avi video files to open
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                FileNameExtensionFilter mp4Filter = new FileNameExtensionFilter("mp4 videos", "mp4");
+                FileNameExtensionFilter aviFilter = new FileNameExtensionFilter("avi videos", "avi");
+                fileChooser.addChoosableFileFilter(mp4Filter);
+                fileChooser.addChoosableFileFilter(aviFilter);
+                
                 // Showing the dialog to allow a user to select a video to open and getting the return value
                 int returnValue = fileChooser.showOpenDialog(null);
                 
@@ -208,7 +217,7 @@ public class MainFrame extends JFrame{
             	
             	// Creating a JFileChooser to allow the user to choose a project to open
                 JFileChooser fileChooser = new JFileChooser();
-                
+                                
                 // Opening a dialog to allow the user to choose a project to open up
                 if (fileChooser.showOpenDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
                     try {
