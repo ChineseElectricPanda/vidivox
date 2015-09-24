@@ -511,7 +511,15 @@ public abstract class AudioOverlay {
      * This method serves as a getter for the boolean showPreview variable
      * @return returns showPreview
      */
-    public boolean getShowPreview() {
+    public boolean isShowingPreview() {
     	return showPreview;
+    }
+
+    public int getVolume() {
+        return volume;
+    }
+
+    public double getStartTime() {
+        return startTime;
     }
 }

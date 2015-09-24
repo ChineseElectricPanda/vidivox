@@ -4,14 +4,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import vidivox.audio.AudioOverlay;
-import vidivox.audio.CommentaryOverlay;
 import vidivox.worker.AudioPlayWorker;
 import vidivox.worker.SkipVideoWorker;
 import vidivox.worker.VideoTimerWorker;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class ControlsPanel extends JPanel {
@@ -35,7 +33,7 @@ public class ControlsPanel extends JPanel {
     private boolean sliderCanMove = false;
     private SkipVideoWorker skipVid = null;
 
-    private ArrayList<AudioPlayWorker> audioPlayWorkerList = new ArrayList<AudioPlayWorker>();
+    private ArrayList<AudioPlayWorker> audioPlayWorkers = new ArrayList<AudioPlayWorker>();
     
     public ControlsPanel(VideoPlayerComponent videoPlayer){
         this.videoPlayer=videoPlayer;
@@ -80,6 +78,7 @@ public class ControlsPanel extends JPanel {
         		if (sliderCanMove) {
         			VideoTimerWorker videoTimeControl = new VideoTimerWorker(controlsPanel);
         			videoTimeControl.execute();
+                    updateAudioPlayers();
         		}
         	}
         });
@@ -130,29 +129,8 @@ public class ControlsPanel extends JPanel {
         			skipVid.cancel(true);
         			skipVid = null;
         			
-        		}      		
-            	
-				if (Math.round(videoPlayer.getMediaPlayer().getTime()) < 100) {
-        		ArrayList<AudioOverlay> overlays = (ArrayList<AudioOverlay>) AudioOverlaysDialog.getOverlays();
-        		for (int i = 0; i < overlays.size(); i ++) {
-        			if (overlays.get(i).getShowPreview() == true) {
-        				ArrayList<CommentaryOverlay> commentaryOverlays = (ArrayList<CommentaryOverlay>) AudioOverlaysDialog.commentaryOverlays;
-        				if (commentaryOverlays.get(i).text.length() >= 80) {
-        					JOptionPane.showMessageDialog(null,
-        							"Must specify comment less than or equal 80 characters",
-        							"Error",
-        							JOptionPane.ERROR_MESSAGE);
-        					return;
-        				} 
-
-        				String filePath = overlays.get(i).getFilePath();
-        				AudioPlayWorker audioPlayer = new AudioPlayWorker(filePath, 100);
-        				audioPlayWorkerList.add(audioPlayer);
-        				audioPlayer.execute();
-        			}
         		}
-				}
-        		
+				playAudioTracks();
         		// Playing the video
         		videoPlayer.getMediaPlayer().play();
         	}
@@ -172,13 +150,7 @@ public class ControlsPanel extends JPanel {
         			skipVid = null;
         			videoPlayer.getMediaPlayer().mute(false);
         		}
-        		for (int i = 0; i < audioPlayWorkerList.size(); i++) {
-        			try {
-						audioPlayWorkerList.get(i).pause();
-					} catch (IOException | InterruptedException e1) {
-						e1.printStackTrace();
-					}
-        		}
+                stopAudioTracks();
         		// Pausing the video player
         		videoPlayer.getMediaPlayer().pause();
         	}
@@ -198,9 +170,7 @@ public class ControlsPanel extends JPanel {
         			skipVid = null;
         			videoPlayer.getMediaPlayer().mute(false);
         		}
-        		for (int i = 0; i < audioPlayWorkerList.size(); i++) {
-        			audioPlayWorkerList.get(i).kill();
-        		}
+        		stopAudioTracks();
         		videoPlayer.getMediaPlayer().stop();
         		seekSlider.setValue(0);
         		setCurrentTime("00:00:00", 0);
@@ -221,13 +191,15 @@ public class ControlsPanel extends JPanel {
         	@Override
         	public void actionPerformed(ActionEvent e) {
         		if (skipVid == null) {
+                    stopAudioTracks();
         			videoPlayer.getMediaPlayer().mute(true);
         			skipVid =  new SkipVideoWorker(videoPlayer, controlsPanel);
         			skipVid.setSkipValue(-1000);
         			skipVid.setIsSkipping(true);
         			skipVid.execute();
         			
-        		} else if (skipVid != null) {
+        		} else {
+                    playAudioTracks();
         			videoPlayer.getMediaPlayer().mute(false);
         			skipVid.setIsSkipping(false);
         			skipVid.cancel(true);
@@ -245,13 +217,15 @@ public class ControlsPanel extends JPanel {
         	@Override
         	public void actionPerformed(ActionEvent e) {
         		if (skipVid == null) {
+                    stopAudioTracks();
         			videoPlayer.getMediaPlayer().mute(true);
         			skipVid =  new SkipVideoWorker(videoPlayer, controlsPanel);
         			skipVid.setSkipValue(1000);
         			skipVid.setIsSkipping(true);
         			skipVid.execute();
         			
-        		} else if (skipVid != null) {
+        		} else {
+                    playAudioTracks();
         			videoPlayer.getMediaPlayer().mute(false);
         			skipVid.setIsSkipping(false);
         			skipVid.cancel(true);
@@ -277,7 +251,8 @@ public class ControlsPanel extends JPanel {
         		}
         		
         		// Forwarding the video
-        		videoPlayer.getMediaPlayer().skip(10000);  
+        		videoPlayer.getMediaPlayer().skip(10000);
+                updateAudioPlayers();
         	}
         });
         buttonsPanel.add(skipForwardButton, gbc);
@@ -300,6 +275,7 @@ public class ControlsPanel extends JPanel {
         		}
         		// Rewinding the player
         		videoPlayer.getMediaPlayer().skip(-10000);
+                updateAudioPlayers();
         	}
         });
         buttonsPanel.add(skipBackButton, gbc);
@@ -345,7 +321,7 @@ public class ControlsPanel extends JPanel {
         gbc.weighty=0.0;
         add(buttonsPanel,gbc);
     }
-    
+
     public void setTotalTime(String timeString, long time) {
     	totalTimeLabel.setText(timeString);
     	totalTime = time;
@@ -376,5 +352,39 @@ public class ControlsPanel extends JPanel {
     public boolean getSliderStatus() {
     	return sliderCanMove;
     }
-    
+
+    /**
+     * Plays all of the overlaid audio tracks
+     */
+    private void playAudioTracks(){
+        stopAudioTracks();
+        for(AudioOverlay overlay: AudioOverlaysDialog.getOverlays()){
+            // Only play the overlay tracks with "preview" ticked
+            if(overlay.isShowingPreview()) {
+                long currentPositionMillis = videoPlayer.getMediaPlayer().getTime();
+                double currentPositionSeconds = ((double) currentPositionMillis) / 1000;
+                AudioPlayWorker player = new AudioPlayWorker(overlay, currentPositionSeconds);
+                player.execute();
+                audioPlayWorkers.add(player);
+            }
+        }
+    }
+
+    /**
+     * Stops all the overlaid audio tracks currently playing
+     */
+    private void stopAudioTracks(){
+        for(AudioPlayWorker player: audioPlayWorkers){
+            player.kill();
+        }
+        audioPlayWorkers=new ArrayList<>();
+    }
+
+    /**
+     * Updates the currently playing audio tracks to synchronise them with the video
+     */
+    private void updateAudioPlayers() {
+        stopAudioTracks();
+        playAudioTracks();
+    }
 }
