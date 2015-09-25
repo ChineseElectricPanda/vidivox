@@ -34,7 +34,7 @@ public class SpeechSynthesisWorker extends SwingWorker<Void,Void> {
         // Creating process to convert text file into the audio file
         try {
             synthesisProcess = new ProcessBuilder("/bin/bash", "-c", 
-            									  "echo \"" + text + "\" | text2wave -o " + filePath).start();
+            									  "echo \"" + text + "\" | text2wave -o \"" + filePath+"\"").start();
         } catch (IOException e) {
             e.printStackTrace();
         }

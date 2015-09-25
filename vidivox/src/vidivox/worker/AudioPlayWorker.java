@@ -69,10 +69,10 @@ public class AudioPlayWorker extends SwingWorker<Void,Void>{
             Thread.sleep((long) (startTimeOffset *1000));
             // Building the process to play the audio and starting it
             playerProcess = new ProcessBuilder("/bin/bash","-c",
-            		"ffplay -nodisp -autoexit -af volume=" + (((float)volume)/100) + " " + filePath).start();
+            		"ffplay -nodisp -autoexit -af volume=" + (((float)volume)/100) + " \"" + filePath+"\"").start();
         } else {
         	// Building the process to play the audio and starting it
-            playerProcess=new ProcessBuilder("/bin/bash","-c","ffplay -nodisp -autoexit -af volume="+(((float)volume)/100)+" -ss "+(-startTimeOffset)+" "+filePath).start();
+            playerProcess=new ProcessBuilder("/bin/bash","-c","ffplay -nodisp -autoexit -af volume="+(((float)volume)/100)+" -ss "+(-startTimeOffset)+" \""+filePath+"\"").start();
         }
         
         playerProcess.waitFor();

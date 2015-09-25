@@ -242,7 +242,7 @@ public class CommentaryOverlay extends AudioOverlay {
     private void saveToMp3(final String outputFilePath) throws IOException, InterruptedException {
         //create a  ffmpeg process to process the commentary file to an mp3
         //(note: this is fast enough to run on the main thread without noticible effect on UI)
-        String cmd="ffmpeg -y -i "+getFilePath()+" "+outputFilePath;
+        String cmd="ffmpeg -y -i \""+getFilePath()+"\" \""+outputFilePath+"\"";
         new ProcessBuilder("/bin/bash","-c",cmd).start().waitFor();
     }
 

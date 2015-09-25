@@ -191,7 +191,7 @@ public class MainFrame extends JFrame{
 
                     int totalTime=0;
                     try {
-                        Process ffProbeProcess = new ProcessBuilder("/bin/bash", "-c", "ffprobe -i " + videoPath + " -show_entries format=duration 2>&1 | grep \"duration=\"").start();
+                        Process ffProbeProcess = new ProcessBuilder("/bin/bash", "-c", "ffprobe -i \"" + videoPath + "\" -show_entries format=duration 2>&1 | grep \"duration=\"").start();
                         BufferedReader reader = new BufferedReader(new InputStreamReader(ffProbeProcess.getInputStream()));
                         ffProbeProcess.waitFor();
                         String durationLine = reader.readLine();
@@ -446,14 +446,14 @@ public class MainFrame extends JFrame{
         		publish((AudioOverlay) null);
         		
         		// Building the command to pass into the process builder
-        		StringBuilder cmd = new StringBuilder("ffmpeg -y -i " + videoPath);
+        		StringBuilder cmd = new StringBuilder("ffmpeg -y -i \"" + videoPath+"\"");
         		// Appending the audio path of each audio file to the command
         		// Keep count of the number of audio files added
         		int audioTracksAdded=0;
         		for (String audioPath : audioPaths) {
         			// Only add audio files which aren't empty
         			if(audioPath!=null && !audioPath.isEmpty()){
-        				cmd.append(" -i " + audioPath);
+        				cmd.append(" -i \"" + audioPath+"\"");
         				audioTracksAdded++;
         			}
         		}
@@ -467,7 +467,7 @@ public class MainFrame extends JFrame{
         		cmd.append(" -f avi");
         		
         		// Append the option to allow ffmpeg to use support more formats, then append the output file path
-        		cmd.append(" -strict -2 " + file.getAbsolutePath());
+        		cmd.append(" -strict -2 \"" + file.getAbsolutePath()+"\"");
         		
         		// Building process and process builder to run the command then starting it
         		Process process = new ProcessBuilder("/bin/bash", "-c", cmd.toString()).start();

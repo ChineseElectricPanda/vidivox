@@ -433,9 +433,9 @@ public abstract class AudioOverlay {
         // Concatenating the silent file before the actual file and adjusting the volume
         //(reference: http://superuser.com/questions/587511/concatenate-multiple-wav-files-using-single-command-without-extra-file)
         String outFilePath = "/tmp/" + getFileName() + ".mp3";
-        String concatCommand = "ffmpeg -y -i " + silenceFilePath + " -i " + getFilePath()
-        						+ " -filter_complex '[0:0][1:0]concat=n=2:v=0:a=1[combined];[combined]volume=" + 
-        						(((float)volume)/100) + "[out]' -map '[out]' " + outFilePath;
+        String concatCommand = "ffmpeg -y -i " + silenceFilePath + " -i \"" + getFilePath()
+        						+ "\" -filter_complex '[0:0][1:0]concat=n=2:v=0:a=1[combined];[combined]volume=" + 
+        						(((float)volume)/100) + "[out]' -map '[out]' \"" + outFilePath+"\"";
         
         // Starting process to concatenate the silent and audio files
         process = new ProcessBuilder("/bin/bash", "-c", concatCommand).start();
@@ -470,8 +470,8 @@ public abstract class AudioOverlay {
     protected float getDuration(String filePath) throws IOException, InterruptedException {
 
     	// Creating and starting process to obtain duration of file
-    	Process ffProbeProcess = new ProcessBuilder("/bin/bash", "-c", "ffprobe -i " + filePath +
-    					" -show_entries format=duration 2>&1 | grep \"duration=\"").start();
+    	Process ffProbeProcess = new ProcessBuilder("/bin/bash", "-c", "ffprobe -i \"" + filePath +
+    					"\" -show_entries format=duration 2>&1 | grep \"duration=\"").start();
     	
     	// Creating buffered reader to read in the output from the bash process
     	BufferedReader reader = new BufferedReader(new InputStreamReader(ffProbeProcess.getInputStream()));
