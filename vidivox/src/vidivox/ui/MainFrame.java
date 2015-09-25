@@ -460,7 +460,7 @@ public class MainFrame extends JFrame{
         		
         		// If audio tracks have been added then append the command to mix them
         		if(audioTracksAdded>0){
-        			cmd.append(" -filter_complex amix");
+        			cmd.append(" -filter_complex amix="+(audioTracksAdded+1));
         		}
         		
         		// Force output format to avi
