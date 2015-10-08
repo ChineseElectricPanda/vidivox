@@ -21,7 +21,6 @@ import java.util.List;
  */
 public class AudioOverlaysDialog extends JDialog {
     private static List<AudioOverlay> overlays = new ArrayList<>();                   // List of audio overlays added
-    public static List<CommentaryOverlay> commentaryOverlays = new ArrayList<>();   // List of overlays which are commentary
     private List<JButton> deleteButtons;        // List of button for deleting each audio overlay track
     private JButton addCommentaryButton;        // A button for adding a commentary overlay
     private JButton addAudioButton;             // A button for adding an audio file (eg mp3) overlay
@@ -63,7 +62,6 @@ public class AudioOverlaysDialog extends JDialog {
             public void actionPerformed(ActionEvent actionEvent) {
                 CommentaryOverlay overlay=new CommentaryOverlay(overlays.size());
                 overlays.add(overlay);
-                commentaryOverlays.add(overlay);
                 setupLayout();
                 setupListeners();
             }

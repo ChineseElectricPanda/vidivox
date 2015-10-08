@@ -134,21 +134,6 @@ public class ControlsPanel extends JPanel {
                     skipVid.cancel(true);
                     skipVid = null;
                 }
-    			
-                // Check through the commentaries to make sure they are all under 80 characters
-    			List<CommentaryOverlay> commentaryOverlays = AudioOverlaysDialog.commentaryOverlays;
-    			for(CommentaryOverlay overlay: commentaryOverlays){
-    				// Looking through the commentary overlays to check if the text is less than 80 characters
-					if (overlay.getText().length() >= 80) {
-						
-						// Showing error message to user informing them character limit is 80
-						JOptionPane.showMessageDialog(null,
-								"Must specify comment less than or equal 80 characters",
-								"Error",
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					} 
-    			}
                 
                 // Starting the audio players
                 startAudioPlayers();

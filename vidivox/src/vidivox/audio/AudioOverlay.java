@@ -289,27 +289,6 @@ public abstract class AudioOverlay {
         	// Method called whenever button is clicked
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-            	
-            	// Getting the commentary overlays to check
-            	ArrayList<CommentaryOverlay> overlays = 
-            			(ArrayList<CommentaryOverlay>) AudioOverlaysDialog.commentaryOverlays;
-            	
-            	// Looking through all entered commentaries to check whether the text entered
-            	// is within the limit of 80 characters
-            	for (int i = 0; i < overlays.size(); i++) {
-            		
-            		// Checking number of characters in the text fields
-            		if (overlays.get(i).getText().length() >= 80) {
-            			// If the length is over 80 this message will pop up notifying the user they
-            			// cannot play the audio file unless its under this limit
-            			JOptionPane.showMessageDialog(null,
-                    		    "Must specify comment less than or equal 80 characters",
-                    		    "Error",
-                    		    JOptionPane.ERROR_MESSAGE);
-            			return;
-            		} 
-            	}
-            	
             	// Modifying the text "Play" to "Stop"
                 playButton.setText("Stop");
                 // Removing the action listener for the play functionality

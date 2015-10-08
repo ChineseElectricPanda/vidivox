@@ -143,51 +143,39 @@ public class CommentaryOverlay extends AudioOverlay {
             public void changedUpdate(DocumentEvent documentEvent) {
             	//Storing text
             	text = textField.getText();
+                // Checking if the synthesis worker thread needs to be killed since
+                // text is being updated
+                if (synthesisWorker != null && !synthesisWorker.isDone()) {
+                    synthesisWorker.kill();
+                }
 
-            	// Checking if the length of the string is greater than 80 characters
-            	if (text.length() >= 80) {
-            		// If it is greater than 80 characters then showing a pop up error
-            		// message to the user notifying them of limit
-            		JOptionPane.showMessageDialog(null,
-            				"Must specify comment less than or equal 80 characters",
-            				"Error",
-            				JOptionPane.ERROR_MESSAGE);
-            	} else {
-            		
-            		// Checking if the synthesis worker thread needs to be killed since 
-            		// text is being updated
-            		if (synthesisWorker != null && !synthesisWorker.isDone()) {
-            			synthesisWorker.kill();
-            		}
-            		
-            		// Creating new synthesis worker to convert the text file into a wav file 
-            		synthesisWorker = new SpeechSynthesisWorker(text, "commentary" + position) {
-            			@Override
-            			protected void done() {
-            				
-            				super.done();
-            				// Allowing the play button to be clicked
-            				playButton.setEnabled(true);
-            				// Getting the file path of the wav file
-            				CommentaryOverlay.this.filePath = synthesisWorker.filePath;
-            				
-            				// Getting the duration of the audio and storing it
-            				try {
-            					float duration = getDuration(filePath);
-                                int minutes = (int)(duration / 60);
-                                int seconds = (int)(duration % 60);
-                                int milliseconds = (int)((duration - seconds - minutes*60) * 1000);
-                                String durationText=String.format("%02d", minutes)+":"+String.format("%02d", seconds)+":"+String.format("%03d", milliseconds);
-            					// Setting the text in the label to the duration value
-            					durationLabel.setText(durationText);
-            				} catch (IOException | InterruptedException e) {
-            					// Error handling if there was a problem while getting duration
-            					durationLabel.setText("???");
-            				}
-            			}
-            		};
-            		synthesisWorker.execute(); // Executing the process
-            	}
+                // Creating new synthesis worker to convert the text file into a wav file
+                synthesisWorker = new SpeechSynthesisWorker(text, "commentary" + position) {
+                    @Override
+                    protected void done() {
+
+                        super.done();
+                        // Allowing the play button to be clicked
+                        playButton.setEnabled(true);
+                        // Getting the file path of the wav file
+                        CommentaryOverlay.this.filePath = synthesisWorker.filePath;
+
+                        // Getting the duration of the audio and storing it
+                        try {
+                            float duration = getDuration(filePath);
+                            int minutes = (int)(duration / 60);
+                            int seconds = (int)(duration % 60);
+                            int milliseconds = (int)((duration - seconds - minutes*60) * 1000);
+                            String durationText=String.format("%02d", minutes)+":"+String.format("%02d", seconds)+":"+String.format("%03d", milliseconds);
+                            // Setting the text in the label to the duration value
+                            durationLabel.setText(durationText);
+                        } catch (IOException | InterruptedException e) {
+                            // Error handling if there was a problem while getting duration
+                            durationLabel.setText("???");
+                        }
+                    }
+                };
+                synthesisWorker.execute(); // Executing the process
             }
         });
         
