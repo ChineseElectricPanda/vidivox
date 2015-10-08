@@ -3,6 +3,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import vidivox.ui.JTextFieldWithCharacterLimit;
 import vidivox.ui.ProgressDialog;
 import vidivox.worker.SpeechSynthesisWorker;
 
@@ -24,11 +25,12 @@ public class CommentaryOverlay extends AudioOverlay {
 	/**
 	 * Fields initialized to be used by methods in this class and other packages
 	 */
+    private final int CHARACTER_LIMIT=75;              // Character limit for the commentary
 	private String text;								// String storing the user's comment
     private String filePath;							// File path of created wav file
     private int position;								// Position of the comment in the AudioOverlaysDialog
     private SpeechSynthesisWorker synthesisWorker;		// Reference to the class that creates the wav file
-    private JTextField textField;						// Text field where user enters comment
+    private JTextFieldWithCharacterLimit textField;						// Text field where user enters comment
     private JButton saveToFileButton;					// Button used to save commentary as mp3
 
     /**
@@ -110,7 +112,7 @@ public class CommentaryOverlay extends AudioOverlay {
         gbc.insets = new Insets(5,5,5,5);
 
         // Adding text field where user will enter their text to turn into audio
-        textField = new JTextField();
+        textField = new JTextFieldWithCharacterLimit(CHARACTER_LIMIT);
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0f;
