@@ -174,9 +174,10 @@ public class CommentaryOverlay extends AudioOverlay {
             				// Getting the duration of the audio and storing it
             				try {
             					float duration = getDuration(filePath);
-            					String durationText = (int) (duration / 60) + ":" + (int) (duration % 60) + 
-            											"." + (int) ((duration - (int) duration)*1000);
-            					
+                                int minutes = (int)(duration / 60);
+                                int seconds = (int)(duration % 60);
+                                int milliseconds = (int)((duration - seconds - minutes*60) * 1000);
+                                String durationText=String.format("%02d", minutes)+":"+String.format("%02d", seconds)+":"+String.format("%03d", milliseconds);
             					// Setting the text in the label to the duration value
             					durationLabel.setText(durationText);
             				} catch (IOException | InterruptedException e) {

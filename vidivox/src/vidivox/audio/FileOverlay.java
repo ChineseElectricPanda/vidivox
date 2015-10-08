@@ -124,8 +124,11 @@ public class FileOverlay extends AudioOverlay{
             			try {
             				float duration = getDuration(selectedFile);
             				// Formatting the duration string
-            				String durationText = (int) (duration / 60) + ":" + (int) (duration % 60) 
-            									  + "." + (int) ((duration - (int) duration)*1000);
+                            int minutes = (int)(duration / 60);
+                            int seconds = (int)(duration % 60);
+                            int milliseconds = (int)((duration - seconds - minutes*60) * 1000);
+                            String durationText=String.format("%02d", minutes)+":"+String.format("%02d", seconds)+":"+String.format("%03d", milliseconds);
+
             				durationLabel.setText(durationText);
             			} catch (InterruptedException | IOException e) {
             				durationLabel.setText("????");

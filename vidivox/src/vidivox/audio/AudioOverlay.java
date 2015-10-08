@@ -124,7 +124,7 @@ public abstract class AudioOverlay {
         
         // Instantiating label which will inform the user of how long the commentary is when converted into audio
         // and adding it to the properties panel
-        durationLabel = new JLabel("00:00");
+        durationLabel = new JLabel("00:00.000");
         durationLabel.setPreferredSize(new Dimension(100,24));
         gbc.gridx++;
         gbc.weightx=0;
@@ -361,10 +361,11 @@ public abstract class AudioOverlay {
         	// Getting the duration of the file and setting the label to show the duration
             try {
                 float duration = getDuration(getFilePath());
-                
-                // Calculating the duration and formatting it into a string
-                String durationText = (int) (duration / 60) + ":" + (int) (duration % 60) 
-                						+ "." + (int) ((duration - (int) duration)*1000);
+
+                int minutes = (int)(duration / 60);
+                int seconds = (int)(duration % 60);
+                int milliseconds = (int)((duration - seconds - minutes*60) * 1000);
+                String durationText=String.format("%02d", minutes)+":"+String.format("%02d", seconds)+":"+String.format("%03d", milliseconds);
                 
                 // Setting the label to show the duration of the audio
                 durationLabel.setText(durationText);
