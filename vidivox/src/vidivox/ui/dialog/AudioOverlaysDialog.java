@@ -46,6 +46,7 @@ public class AudioOverlaysDialog extends JDialog {
     private AudioOverlaysDialog() {
         super(MainFrame.getInstance());
         this.mainFrame=MainFrame.getInstance();
+        setTitle("Audio Overlays");
         setupLayout();
         setupListeners();
         setMinimumSize(new Dimension(900, 400));
