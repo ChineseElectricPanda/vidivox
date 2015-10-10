@@ -17,7 +17,6 @@ import java.util.Random;
  */
 public class AudioTimelineDisplay extends JPanel{
     private JPanel canvas;
-    private static double videoLength=0;
 
     /**
      * Create a timeline display for the given audio overlay
@@ -40,8 +39,8 @@ public class AudioTimelineDisplay extends JPanel{
                 super.paintComponent(g);
                 //get the start and end position of where to draw the block based on
                 //the audio start position and duration
-                int startPosition=(int)(overlay.getStartTime()* AudioTimelinesPanel.scale);
-                int length=(int)(overlay.getDuration()* AudioTimelinesPanel.scale);
+                int startPosition=(int)(overlay.getStartTime()* AudioTimelinesPanel.getScale());
+                int length=(int)(overlay.getDuration()* AudioTimelinesPanel.getScale());
 
                 //generate the block's display color based on the file's path
                 Random r=new Random();
@@ -55,6 +54,8 @@ public class AudioTimelineDisplay extends JPanel{
                 }
                 Color blockColor=new Color(100 + r.nextInt(150), 100 + r.nextInt(150), 100 + r.nextInt(150));
                 g.setColor(blockColor);
+
+                //draw the block to represent the timeline
                 g.fillRoundRect(startPosition, 0, length, 35, 5, 5);
 
                 //draw the name of the file
@@ -64,16 +65,17 @@ public class AudioTimelineDisplay extends JPanel{
 
                 //draw a line where the current play position is
                 g.setColor(new Color(255, 0, 0));
-                int x= (int) (AudioTimelinesPanel.getPosition()* AudioTimelinesPanel.scale);
+                int x= (int) (AudioTimelinesPanel.getPosition()* AudioTimelinesPanel.getScale());
                 g.drawLine(x, 0, x, 35);
 
                 //draw a line where the end of the video is (only if video length is not 0)
                 g.setColor(new Color(0,0,255));
-                x= (int) (videoLength* AudioTimelinesPanel.scale);
+                x= (int) (AudioTimelinesPanel.getVideoLength()* AudioTimelinesPanel.getScale());
                 if(x>0) {
                     g.drawLine(x, 0, x, 35);
                 }
 
+                //grey out the timeline after the end of the video
                 g.setColor(blockColor);
                 g.setClip(new RoundRectangle2D.Double(startPosition, 0, length, 35, 5, 5));
                 g.setXORMode(new Color(100, 100, 100));
@@ -81,6 +83,8 @@ public class AudioTimelineDisplay extends JPanel{
 
             }
         };
+
+        // Create a listener to listen for clicks and drags on the timeline
         MouseAdapter adapter=new MouseAdapter() {
             boolean mouseDown=false;
             int startPosition=0;
@@ -102,7 +106,7 @@ public class AudioTimelineDisplay extends JPanel{
             public void mouseDragged(MouseEvent e) {
                 //when the audio track is dragged on the timeline, change the starting time accordingly
                 int offset=e.getX()-startPosition;
-                double newStartTime=initialTime+((double)offset)/ AudioTimelinesPanel.scale;
+                double newStartTime=initialTime+((double)offset)/ AudioTimelinesPanel.getScale();
 
                 // Make the start position snap to 0 or the current play position
                 if(Math.abs(newStartTime-AudioTimelinesPanel.getPosition())<0.5){
@@ -133,13 +137,5 @@ public class AudioTimelineDisplay extends JPanel{
         super.invalidate();
         canvas.revalidate();
         canvas.repaint();
-    }
-
-    /**
-     * Set the length of the video
-     * @param length the length of the video
-     */
-    public static void setVideoLength(double length){
-        AudioTimelineDisplay.videoLength=length;
     }
 }

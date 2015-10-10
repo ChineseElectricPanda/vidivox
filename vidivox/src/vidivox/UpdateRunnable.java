@@ -77,7 +77,7 @@ public class UpdateRunnable implements Runnable {
 			 */
 			private void updatePosition(int position) {
 				controlsPanel.getSlider().setValue(position);
-				audioTimelinesPanel.updatePosition(position);
+				audioTimelinesPanel.updatePosition(((double)position)/1000);
 			}
 		});
 	}

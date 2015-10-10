@@ -214,7 +214,7 @@ public class MainFrame extends JFrame{
                         System.err.println("Failed to get video duration");
                     }
                     getControlsPanel().setTotalTime(controlsPanel.calculateTime(totalTime),totalTime);
-                    AudioTimelineDisplay.setVideoLength(((double) totalTime) / 1000);
+                    audioTimelinesPanel.setVideoLength(((double) totalTime) / 1000);
                 }
             }
         });

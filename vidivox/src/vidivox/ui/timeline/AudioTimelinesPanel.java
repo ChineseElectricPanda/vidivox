@@ -5,6 +5,8 @@ import vidivox.ui.dialog.AudioOverlaysDialog;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +18,9 @@ public class AudioTimelinesPanel extends JPanel {
     private JPanel contentPane=new JPanel();
     private List<AudioTimelineDisplay> displays=new ArrayList<>();
 
-    public static double scale=10;
-    private static int playPosition=0;
+    private static double scale=10;
+    private static double playPosition=0;
+    private static double videoLength=0;
 
     /**
      * Creates a panel to hold audio track timelines
@@ -33,9 +36,19 @@ public class AudioTimelinesPanel extends JPanel {
         JScrollPane scrollPane=new JScrollPane();
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setViewportView(contentPane);
-        scrollPane.setMinimumSize(new Dimension(500,100));
+        scrollPane.setMinimumSize(new Dimension(500, 100));
         setMinimumSize(new Dimension(500, 100));
         add(scrollPane, gbc);
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                if(videoLength!=0){
+                    setVideoLength(videoLength);
+                }
+            }
+        });
     }
 
     /**
@@ -43,7 +56,23 @@ public class AudioTimelinesPanel extends JPanel {
      * @return the current position of the video, in seconds
      */
     public static double getPosition() {
-        return ((double)playPosition)/1000;
+        return playPosition;
+    }
+
+    public static double getScale() {
+        return scale;
+    }
+
+    public static double getVideoLength() {
+        return videoLength;
+    }
+
+    public void setVideoLength(double length) {
+        AudioTimelinesPanel.videoLength=length;
+        scale=((double)getWidth())/length;
+        for(AudioTimelineDisplay display:displays){
+            display.revalidate();
+        }
     }
 
     /**
@@ -82,7 +111,7 @@ public class AudioTimelinesPanel extends JPanel {
      * Update the playing position in the video
      * @param position the current play position
      */
-    public void updatePosition(int position) {
+    public void updatePosition(double position) {
         playPosition=position;
         revalidate();
         for(AudioTimelineDisplay display:displays){
