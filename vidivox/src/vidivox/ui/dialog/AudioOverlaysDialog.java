@@ -1,9 +1,10 @@
-package vidivox.ui;
+package vidivox.ui.dialog;
 import javax.swing.*;
 
 import vidivox.audio.AudioOverlay;
 import vidivox.audio.CommentaryOverlay;
 import vidivox.audio.FileOverlay;
+import vidivox.ui.MainFrame;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -20,6 +21,7 @@ import java.util.List;
  *
  */
 public class AudioOverlaysDialog extends JDialog {
+    private MainFrame mainFrame;
     private static List<AudioOverlay> overlays = new ArrayList<>();                   // List of audio overlays added
     private List<JButton> deleteButtons;        // List of button for deleting each audio overlay track
     private JButton addCommentaryButton;        // A button for adding a commentary overlay
@@ -28,8 +30,9 @@ public class AudioOverlaysDialog extends JDialog {
     /**
      * Initializes the Dialog with layout and listeners
      */
-    public AudioOverlaysDialog() {
+    public AudioOverlaysDialog(MainFrame mainFrame) {
         super((Dialog)null);
+        this.mainFrame=mainFrame;
         setupLayout();
         setupListeners();
         setMinimumSize(new Dimension(900, 400));
@@ -64,6 +67,7 @@ public class AudioOverlaysDialog extends JDialog {
                 overlays.add(overlay);
                 setupLayout();
                 setupListeners();
+                mainFrame.updateAudioDisplays();
             }
         });
         // Add audio button creates a new audio track and adds it to the dialog
@@ -74,6 +78,7 @@ public class AudioOverlaysDialog extends JDialog {
                 overlays.add(overlay);
                 setupLayout();
                 setupListeners();
+                mainFrame.updateAudioDisplays();
             }
         });
 
@@ -86,6 +91,7 @@ public class AudioOverlaysDialog extends JDialog {
                     overlays.remove(position);
                     setupLayout();
                     setupListeners();
+                    mainFrame.updateAudioDisplays();
                 }
             });
         }
@@ -158,5 +164,11 @@ public class AudioOverlaysDialog extends JDialog {
         
         doLayout();
         revalidate();
+    }
+
+    public static void updateStartTimeFields(){
+        for(AudioOverlay overlay:overlays){
+            overlay.updateStartTimeFields();
+        }
     }
 }

@@ -4,13 +4,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import vidivox.audio.AudioOverlay;
-import vidivox.audio.CommentaryOverlay;
+import vidivox.ui.dialog.AudioOverlaysDialog;
 import vidivox.worker.AudioPlayWorker;
 import vidivox.worker.SkipVideoWorker;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.List;
 import java.util.ArrayList;
 
 /**
@@ -517,6 +516,14 @@ public class ControlsPanel extends JPanel {
      */
     public float getTotalTime() {
     	return totalTime;
+    }
+
+    /**
+     * Getter for the current play time
+     * @return
+     */
+    public float getCurrentTime(){
+        return currentTime;
     }
     
     /**

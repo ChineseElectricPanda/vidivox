@@ -4,7 +4,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import vidivox.ui.JTextFieldWithCharacterLimit;
-import vidivox.ui.ProgressDialog;
 import vidivox.worker.SpeechSynthesisWorker;
 
 import java.awt.*;
@@ -164,7 +163,7 @@ public class CommentaryOverlay extends AudioOverlay {
 
                         // Getting the duration of the audio and storing it
                         try {
-                            float duration = getDuration(filePath);
+                            duration = getDuration(filePath);
                             int minutes = (int)(duration / 60);
                             int seconds = (int)(duration % 60);
                             int milliseconds = (int)((duration - seconds - minutes*60) * 1000);

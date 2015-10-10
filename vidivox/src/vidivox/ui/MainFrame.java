@@ -2,16 +2,18 @@ package vidivox.ui;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import vidivox.UpdateRunnable;
 import vidivox.audio.AudioOverlay;
 import vidivox.exception.FileFormatException;
+import vidivox.ui.dialog.AudioOverlaysDialog;
+import vidivox.ui.dialog.ProgressDialog;
+import vidivox.ui.displaypanel.AudioOverlaysPanel;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -39,6 +41,7 @@ public class MainFrame extends JFrame{
 	 */
 	private VideoPlayerComponent videoPlayer;	// Video player object
     private ControlsPanel controlsPanel;		// Reference to ControlsPanel class
+    private AudioOverlaysPanel audioOverlaysPanel;
     private String videoPath;					// String containing the path to the video
     private JMenuBar menuBar;					// Menu bar at the top of the application
     private JMenuItem openVideoButton;			// Menu bar option for opening a video
@@ -67,6 +70,11 @@ public class MainFrame extends JFrame{
         // Setting up the minimum size to disallow distortion of the frame
         setMinimumSize(new Dimension(750,400));
         pack();
+
+        // Instantiating a UpdateRunnable class to update specific components every 500 milliseconds
+        // Source: https://github.com/caprica/vlcj/blob/master/src/test/java/uk/co/caprica/vlcj/test/basic/PlayerControlsPanel.java
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(new UpdateRunnable(controlsPanel, audioOverlaysPanel), 0L, 500L, TimeUnit.MILLISECONDS);
     }
     
     /**
@@ -99,7 +107,7 @@ public class MainFrame extends JFrame{
             public void actionPerformed(ActionEvent actionEvent) {
             	// Creating an AudioOverlaysDialog that contains the options for adding commentary
             	// to the video
-                new AudioOverlaysDialog().setVisible(true);
+                new AudioOverlaysDialog(MainFrame.this).setVisible(true);
                 
                 // Stopping the video to allow commentary to be added to the starting scenes
                 videoPlayer.getMediaPlayer().stop();
@@ -146,7 +154,15 @@ public class MainFrame extends JFrame{
         gbc.anchor= GridBagConstraints.SOUTH;
         gbc.fill= GridBagConstraints.HORIZONTAL;
         // Adding the controls panel to the content pane
-        contentPane.add(getControlsPanel(), gbc);  
+        contentPane.add(getControlsPanel(), gbc);
+
+        // Setting up the display which will show all the audio tracks
+        audioOverlaysPanel=new AudioOverlaysPanel(this);
+        gbc.fill= GridBagConstraints.BOTH;
+        gbc.gridy++;
+        gbc.weighty=1;
+        contentPane.add(audioOverlaysPanel,gbc);
+
     }
 
     /**
@@ -316,6 +332,10 @@ public class MainFrame extends JFrame{
         menuBar.add(editMenu);
 
         setJMenuBar(menuBar);
+    }
+
+    public void updateAudioDisplays(){
+        audioOverlaysPanel.updateComponents();
     }
 
     /**

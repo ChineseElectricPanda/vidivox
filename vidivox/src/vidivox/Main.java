@@ -24,11 +24,6 @@ import vidivox.ui.MainFrame;
  *
  */
 public class Main {
-	
-	/** Creating a ScheduledExecutorService to call a specific update class at given intervals
-	*/
-	private static ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-	
 	/**
 	 * Main method for the vidivox application
 	 * @param args
@@ -41,9 +36,5 @@ public class Main {
     	
     	// Setting the visibility of the frame to true
 		mainFrame.setVisible(true);
-		
-		// Instantiating a UpdateRunnable class to update specific components every 500 milliseconds
-		// Source: https://github.com/caprica/vlcj/blob/master/src/test/java/uk/co/caprica/vlcj/test/basic/PlayerControlsPanel.java
-		executorService.scheduleAtFixedRate(new UpdateRunnable(mainFrame.getControlsPanel()), 0L, 500L, TimeUnit.MILLISECONDS);
     }
 }

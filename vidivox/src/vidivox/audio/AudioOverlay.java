@@ -6,7 +6,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import vidivox.exception.FileFormatException;
-import vidivox.ui.AudioOverlaysDialog;
+import vidivox.ui.displaypanel.AudioDisplayPanel;
 import vidivox.worker.AudioPlayWorker;
 
 import java.awt.*;
@@ -17,8 +17,6 @@ import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This abstract class is instantiated whenever the user wants to add a comment in the AudioOverlaysDialog
@@ -34,6 +32,7 @@ public abstract class AudioOverlay {
 	/**
 	 * Fields initialized to be used by other packages and methods in the project
 	 */
+    protected AudioDisplayPanel displayPanel;
     protected double startTime = 0;						// Setting the default start time of the audio to 0
     protected int volume = 100;							// Setting the default volume to 100
     protected CommentaryOverlay commentary;				// Reference to the CommentaryOverlay object
@@ -53,7 +52,8 @@ public abstract class AudioOverlay {
     private ActionListener playActionListener;			// Listener for the play button in this overlay	
     private ActionListener stopActionListener;			// Listener for the play button in this overlay
     private AudioPlayWorker audioPlayWorker;			// Reference to the AudioPlayWorker object which plays audio
-    
+    protected float duration;
+
     /**
      * Method which sets up the layout of the components in this class
      * through the use of the grid bag layout and returns the formatted
@@ -224,6 +224,8 @@ public abstract class AudioOverlay {
         		
         		// Specifying the start time
         		startTime = minutes*60 + seconds + ((float)milliseconds)/1000;
+
+                updateDisplayPanel();
         	}
         };
         	
@@ -334,12 +336,12 @@ public abstract class AudioOverlay {
         // Setting the initial volume
         volumeSlider.setValue(volume);
         
-        // If there is text in the text field for the commentary then getting the path to it
+        // If there is a file already selected then get and display its duration
         if (getFilePath() != null) {
         	
         	// Getting the duration of the file and setting the label to show the duration
             try {
-                float duration = getDuration(getFilePath());
+                duration = getDuration(getFilePath());
 
                 int minutes = (int)(duration / 60);
                 int seconds = (int)(duration % 60);
@@ -423,6 +425,12 @@ public abstract class AudioOverlay {
         return outFilePath;
     }
 
+    protected void updateDisplayPanel(){
+        if(displayPanel!=null) {
+            displayPanel.invalidate();
+        }
+    }
+
     /**
      * Abstract method defined so that sub classes must implement method to get the file path
      */
@@ -484,7 +492,7 @@ public abstract class AudioOverlay {
      * This method updates the start time fields which the user specifies in an
      * appropriate format
      */
-    private void updateStartTimeFields() {
+    public void updateStartTimeFields() {
     	
     	int minutes = (int)(startTime / 60);
     	int seconds = (int)(startTime % 60);
@@ -516,5 +524,13 @@ public abstract class AudioOverlay {
      */
     public double getStartTime() {
         return startTime;
+    }
+
+    public float getDuration() {
+        return duration;
+    }
+
+    public void setStartTime(double startTime) {
+        this.startTime = startTime;
     }
 }

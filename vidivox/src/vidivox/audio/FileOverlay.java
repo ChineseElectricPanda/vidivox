@@ -1,4 +1,6 @@
 package vidivox.audio;
+import vidivox.ui.displaypanel.AudioDisplayPanel;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -122,7 +124,7 @@ public class FileOverlay extends AudioOverlay{
             			
             			// Getting the duration of the audio file and setting the label accordingly
             			try {
-            				float duration = getDuration(selectedFile);
+            				duration = getDuration(selectedFile);
             				// Formatting the duration string
                             int minutes = (int)(duration / 60);
                             int seconds = (int)(duration % 60);
@@ -138,6 +140,7 @@ public class FileOverlay extends AudioOverlay{
             			playButton.setEnabled(false);
             		}
             	}
+                updateDisplayPanel();
             }
         });
         
