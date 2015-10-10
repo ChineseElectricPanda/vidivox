@@ -6,7 +6,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import vidivox.exception.FileFormatException;
-import vidivox.ui.displaypanel.AudioDisplayPanel;
+import vidivox.ui.timeline.AudioTimelineDisplay;
 import vidivox.worker.AudioPlayWorker;
 
 import java.awt.*;
@@ -32,7 +32,7 @@ public abstract class AudioOverlay {
 	/**
 	 * Fields initialized to be used by other packages and methods in the project
 	 */
-    protected AudioDisplayPanel displayPanel;
+    protected AudioTimelineDisplay displayPanel;
     protected double startTime = 0;						// Setting the default start time of the audio to 0
     protected int volume = 100;							// Setting the default volume to 100
     protected CommentaryOverlay commentary;				// Reference to the CommentaryOverlay object
@@ -535,8 +535,8 @@ public abstract class AudioOverlay {
         this.startTime = startTime;
     }
 
-    public AudioDisplayPanel getDisplayPanel(){
-        displayPanel=new AudioDisplayPanel(this);
+    public AudioTimelineDisplay getDisplayPanel(){
+        displayPanel=new AudioTimelineDisplay(this);
         return displayPanel;
     }
 

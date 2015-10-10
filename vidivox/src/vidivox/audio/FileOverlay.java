@@ -1,5 +1,4 @@
 package vidivox.audio;
-import vidivox.ui.displaypanel.AudioDisplayPanel;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;

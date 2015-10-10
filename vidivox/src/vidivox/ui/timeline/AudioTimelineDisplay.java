@@ -1,4 +1,4 @@
-package vidivox.ui.displaypanel;
+package vidivox.ui.timeline;
 
 import vidivox.audio.AudioOverlay;
 import vidivox.audio.CommentaryOverlay;
@@ -12,10 +12,10 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.util.Random;
 
-public class AudioDisplayPanel extends JPanel{
+public class AudioTimelineDisplay extends JPanel{
     private JPanel canvas;
     private static double videoLength=0;
-    public AudioDisplayPanel(final AudioOverlay overlay){
+    public AudioTimelineDisplay(final AudioOverlay overlay){
         setMinimumSize(new Dimension(100, 75));
         setLayout(new GridBagLayout());
         GridBagConstraints gbc=new GridBagConstraints();
@@ -32,8 +32,8 @@ public class AudioDisplayPanel extends JPanel{
                 super.paintComponent(g);
                 //get the start and end position of where to draw the block based on
                 //the audio start position and duration
-                int startPosition=(int)(overlay.getStartTime()*AudioOverlaysPanel.scale);
-                int length=(int)(overlay.getDuration()*AudioOverlaysPanel.scale);
+                int startPosition=(int)(overlay.getStartTime()* AudioTimelinesPanel.scale);
+                int length=(int)(overlay.getDuration()* AudioTimelinesPanel.scale);
 
                 //generate the block's display color based on the file's path
                 Random r=new Random();
@@ -56,12 +56,12 @@ public class AudioDisplayPanel extends JPanel{
 
                 //draw a line where the current play position is
                 g.setColor(new Color(255, 0, 0));
-                int x= (int) (AudioOverlaysPanel.getPosition()*AudioOverlaysPanel.scale);
+                int x= (int) (AudioTimelinesPanel.getPosition()* AudioTimelinesPanel.scale);
                 g.drawLine(x, 0, x, 35);
 
                 //draw a line where the end of the video is (only if video length is not 0)
                 g.setColor(new Color(0,0,255));
-                x= (int) (videoLength*AudioOverlaysPanel.scale);
+                x= (int) (videoLength* AudioTimelinesPanel.scale);
                 if(x>0) {
                     g.drawLine(x, 0, x, 35);
                 }
@@ -92,7 +92,7 @@ public class AudioDisplayPanel extends JPanel{
             @Override
             public void mouseDragged(MouseEvent e) {
                 int offset=e.getX()-startPosition;
-                overlay.setStartTime(initialTime+((double)offset)/AudioOverlaysPanel.scale);
+                overlay.setStartTime(initialTime+((double)offset)/ AudioTimelinesPanel.scale);
                 AudioOverlaysDialog.updateStartTimeFields();
                 canvas.revalidate();
             }
@@ -118,6 +118,6 @@ public class AudioDisplayPanel extends JPanel{
     }
 
     public static void setVideoLength(double length){
-        AudioDisplayPanel.videoLength=length;
+        AudioTimelineDisplay.videoLength=length;
     }
 }

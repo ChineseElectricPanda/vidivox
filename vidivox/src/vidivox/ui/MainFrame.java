@@ -7,8 +7,8 @@ import vidivox.audio.AudioOverlay;
 import vidivox.exception.FileFormatException;
 import vidivox.ui.dialog.AudioOverlaysDialog;
 import vidivox.ui.dialog.ProgressDialog;
-import vidivox.ui.displaypanel.AudioDisplayPanel;
-import vidivox.ui.displaypanel.AudioOverlaysPanel;
+import vidivox.ui.timeline.AudioTimelineDisplay;
+import vidivox.ui.timeline.AudioTimelinesPanel;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -42,7 +42,7 @@ public class MainFrame extends JFrame{
 	 */
 	private VideoPlayerComponent videoPlayer;	// Video player object
     private ControlsPanel controlsPanel;		// Reference to ControlsPanel class
-    private AudioOverlaysPanel audioOverlaysPanel;
+    private AudioTimelinesPanel audioTimelinesPanel;
     private String videoPath;					// String containing the path to the video
     private JMenuBar menuBar;					// Menu bar at the top of the application
     private JMenuItem openVideoButton;			// Menu bar option for opening a video
@@ -75,7 +75,7 @@ public class MainFrame extends JFrame{
         // Instantiating a UpdateRunnable class to update specific components every 500 milliseconds
         // Source: https://github.com/caprica/vlcj/blob/master/src/test/java/uk/co/caprica/vlcj/test/basic/PlayerControlsPanel.java
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(new UpdateRunnable(controlsPanel, audioOverlaysPanel), 0L, 500L, TimeUnit.MILLISECONDS);
+        executorService.scheduleAtFixedRate(new UpdateRunnable(controlsPanel, audioTimelinesPanel), 0L, 500L, TimeUnit.MILLISECONDS);
     }
     
     /**
@@ -158,11 +158,11 @@ public class MainFrame extends JFrame{
         contentPane.add(getControlsPanel(), gbc);
 
         // Setting up the display which will show all the audio tracks
-        audioOverlaysPanel=new AudioOverlaysPanel(this);
+        audioTimelinesPanel =new AudioTimelinesPanel(this);
         gbc.fill= GridBagConstraints.BOTH;
         gbc.gridy++;
         gbc.weighty=1;
-        contentPane.add(audioOverlaysPanel,gbc);
+        contentPane.add(audioTimelinesPanel,gbc);
 
     }
 
@@ -220,7 +220,7 @@ public class MainFrame extends JFrame{
                         System.err.println("Failed to get video duration");
                     }
                     getControlsPanel().setTotalTime(controlsPanel.calculateTime(totalTime),totalTime);
-                    AudioDisplayPanel.setVideoLength(((double)totalTime)/1000);
+                    AudioTimelineDisplay.setVideoLength(((double) totalTime) / 1000);
                 }
             }
         });
@@ -337,7 +337,7 @@ public class MainFrame extends JFrame{
     }
 
     public void updateAudioDisplays(){
-        audioOverlaysPanel.updateComponents();
+        audioTimelinesPanel.updateComponents();
     }
 
     /**

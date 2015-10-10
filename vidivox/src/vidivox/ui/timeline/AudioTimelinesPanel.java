@@ -1,25 +1,22 @@
-package vidivox.ui.displaypanel;
+package vidivox.ui.timeline;
 
 import vidivox.audio.AudioOverlay;
-import vidivox.audio.FileOverlay;
 import vidivox.ui.dialog.AudioOverlaysDialog;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AudioOverlaysPanel extends JPanel {
+public class AudioTimelinesPanel extends JPanel {
     private JPanel contentPane=new JPanel();
     private JFrame container;
-    private List<AudioDisplayPanel> displays=new ArrayList<>();
+    private List<AudioTimelineDisplay> displays=new ArrayList<>();
 
     public static double scale=10;
     private static int playPosition=0;
 
-    public AudioOverlaysPanel(JFrame container){
+    public AudioTimelinesPanel(JFrame container){
         this.container=container;
         contentPane.setLayout(new GridBagLayout());
         setLayout(new GridBagLayout());
@@ -52,7 +49,7 @@ public class AudioOverlaysPanel extends JPanel {
         for(AudioOverlay overlay: AudioOverlaysDialog.getOverlays()){
             contentPane.add(new JSeparator(JSeparator.HORIZONTAL), gbc);
             gbc.gridy++;
-            AudioDisplayPanel display=overlay.getDisplayPanel();
+            AudioTimelineDisplay display=overlay.getDisplayPanel();
             displays.add(display);
             contentPane.add(display, gbc);
             gbc.gridy++;
@@ -69,7 +66,7 @@ public class AudioOverlaysPanel extends JPanel {
     public void updatePosition(int position) {
         playPosition=position;
         revalidate();
-        for(AudioDisplayPanel display:displays){
+        for(AudioTimelineDisplay display:displays){
             display.revalidate();
         }
     }

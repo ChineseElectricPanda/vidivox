@@ -3,7 +3,7 @@ import javax.swing.SwingUtilities;
 
 import vidivox.ui.ControlsPanel;
 import vidivox.ui.VideoPlayerComponent;
-import vidivox.ui.displaypanel.AudioOverlaysPanel;
+import vidivox.ui.timeline.AudioTimelinesPanel;
 
 /**
  * This class is instantiated every 500 milliseconds and is used to set the time label and the slider
@@ -20,11 +20,11 @@ public class UpdateRunnable implements Runnable {
 	 * of the time label and slider contained within that class
 	 */
 	private ControlsPanel controlsPanel;
-	private AudioOverlaysPanel audioOverlaysPanel;
+	private AudioTimelinesPanel audioTimelinesPanel;
 
-	public UpdateRunnable(ControlsPanel controlsPanel, AudioOverlaysPanel audioOverlaysPanel) {
+	public UpdateRunnable(ControlsPanel controlsPanel, AudioTimelinesPanel audioTimelinesPanel) {
 		this.controlsPanel = controlsPanel;
-		this.audioOverlaysPanel=audioOverlaysPanel;
+		this.audioTimelinesPanel = audioTimelinesPanel;
 	}
 	
 	/**
@@ -77,7 +77,7 @@ public class UpdateRunnable implements Runnable {
 			 */
 			private void updatePosition(int position) {
 				controlsPanel.getSlider().setValue(position);
-				audioOverlaysPanel.updatePosition(position);
+				audioTimelinesPanel.updatePosition(position);
 			}
 		});
 	}
