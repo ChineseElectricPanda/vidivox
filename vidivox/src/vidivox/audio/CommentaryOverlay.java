@@ -174,6 +174,8 @@ public class CommentaryOverlay extends AudioOverlay {
                             // Error handling if there was a problem while getting duration
                             durationLabel.setText("???");
                         }
+                        // Update the display on the timeline
+                        displayPanel.revalidate();
                     }
                 };
                 synthesisWorker.execute(); // Executing the process
