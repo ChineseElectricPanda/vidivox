@@ -27,6 +27,7 @@ public class ControlsPanel extends JPanel {
 	/**
 	 * Declaring fields to be used within this class and the project
 	 */
+    private MainFrame mainFrame;                    // A reference to the main frame
 	private ArrayList<AudioPlayWorker> audioPlayWorkers = new ArrayList<AudioPlayWorker>(); // List of audio workers
 	private ControlsPanel controlsPanel = this;		// Reference to the only instance of this class
     private VideoPlayerComponent videoPlayer;		// Reference to the video player component 
@@ -39,6 +40,7 @@ public class ControlsPanel extends JPanel {
     private JButton stopButton;						// Button to stop the video
     private JButton rewindButton;					// Button to rewind the video
     private JButton fastForwardButton;				// Button to fast forward the video
+    private JButton audioOverlaysButton;            // Button to open the audio overlays dialog
     private JSlider volumeSlider;					// Slider used to control volume
     private JLabel volumeLevelLabel;				// Label showing user current volume level
     private int volume = 100;						// Integer representing volume level
@@ -51,7 +53,8 @@ public class ControlsPanel extends JPanel {
      * and initialize the video player component
      * @param videoPlayer - the media play component which allows the video to played
      */
-    public ControlsPanel(VideoPlayerComponent videoPlayer){
+    public ControlsPanel(MainFrame mainFrame,VideoPlayerComponent videoPlayer){
+        this.mainFrame=mainFrame;
         this.videoPlayer = videoPlayer;
         setupLayout();
         setupListeners();
@@ -70,21 +73,21 @@ public class ControlsPanel extends JPanel {
      */
     private void setupListeners(){
         // Seek slider change event to make video player to play at set time
-        seekSlider.addChangeListener(new ChangeListener()  {
+        seekSlider.addChangeListener(new ChangeListener() {
             // For when user drags the seek bar
             @Override
             public void stateChanged(ChangeEvent e) {
-                
-            	// Updating the video to play from where the user dragged the 
-            	// slider to and updating the current time label accordingly
-            	if (sliderCanMove) {
-            		// Updating current time
+
+                // Updating the video to play from where the user dragged the
+                // slider to and updating the current time label accordingly
+                if (sliderCanMove) {
+                    // Updating current time
                     long currentTime = videoPlayer.getMediaPlayer().getTime();
                     setCurrentTime(calculateTime(currentTime), currentTime);
-                    
+
                     // Setting the position of the video to that of the seek slider
                     videoPlayer.getMediaPlayer().setTime(seekSlider.getValue());
-                    
+
                 }
             }
         });
@@ -92,27 +95,27 @@ public class ControlsPanel extends JPanel {
         // Adding a mouse listener to the slider so that the boolean sliderCanMove
         // can be changed to true or false accordingly
         seekSlider.addMouseListener(new MouseAdapter() {
-            
-        	// Setting the sliderCanMove field to true when the user clicks
-        	// on the slider so that they can drag the slider and update the video
-        	@Override
+
+            // Setting the sliderCanMove field to true when the user clicks
+            // on the slider so that they can drag the slider and update the video
+            @Override
             public void mousePressed(MouseEvent arg0) {
                 sliderCanMove = true;
                 // Mute the audio when the slider is being moved
                 videoPlayer.getMediaPlayer().mute(true);
                 stopAudioPlayers();
             }
-        		
-        	// Setting the sliderCanMove field to false when the user releases
-        	// the click from the slider so that the state changed listener doesn't
-        	// cause frame lags
+
+            // Setting the sliderCanMove field to false when the user releases
+            // the click from the slider so that the state changed listener doesn't
+            // cause frame lags
             @Override
             public void mouseReleased(MouseEvent arg0) {
                 sliderCanMove = false;
                 // Unmute the audio when the seek slider is released
                 videoPlayer.getMediaPlayer().mute(false);
-                if(videoPlayer.getMediaPlayer().isPlaying()){
-                	startAudioPlayers();
+                if (videoPlayer.getMediaPlayer().isPlaying()) {
+                    startAudioPlayers();
                 }
             }
         });
@@ -252,6 +255,14 @@ public class ControlsPanel extends JPanel {
                 }
             }
         });
+
+        audioOverlaysButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                // Open the audio overlays dialog
+                new AudioOverlaysDialog(mainFrame).setVisible(true);
+            }
+        });
         
         // Adding a listener to the volume slider in order to change the volume of the video accordingly
         volumeSlider.addChangeListener(new ChangeListener() {
@@ -315,7 +326,7 @@ public class ControlsPanel extends JPanel {
         gbc.gridy=0;
         gbc.weightx=1.0;
         gbc.weighty=0.0;
-        add(sliderPanel,gbc);
+        add(sliderPanel, gbc);
         
         // Creating a buttons panel to contain all the controls for the video
         JPanel buttonsPanel = new JPanel();
@@ -367,6 +378,14 @@ public class ControlsPanel extends JPanel {
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
         buttonsPanel.add(fastForwardButton,gbc);
+
+        // Create button for opening AudioOverlays dislog
+        audioOverlaysButton=new JButton("Add Audio");
+        gbc.gridx=6;
+        gbc.gridy=0;
+        gbc.weightx=0.0f;
+        gbc.weighty=1.0f;
+        buttonsPanel.add(audioOverlaysButton,gbc);
         
         // Adding space between GUI components
         gbc.gridx=7;

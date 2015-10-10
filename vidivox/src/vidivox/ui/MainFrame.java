@@ -146,7 +146,7 @@ public class MainFrame extends JFrame{
         contentPane.add(videoPlayer, gbc);
 
         // Setting up the controls panel which will contain all the buttons for playing the video, pausing etc
-        setControlsPanel(new ControlsPanel(videoPlayer));
+        setControlsPanel(new ControlsPanel(this,videoPlayer));
         // Formatting the grid bag layout for the content pane and adding it to the bottom of the frame
         gbc.gridx=0;
         gbc.gridy=1;
