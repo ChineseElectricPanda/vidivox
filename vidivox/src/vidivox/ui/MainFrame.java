@@ -109,12 +109,6 @@ public class MainFrame extends JFrame{
             	// Creating an AudioOverlaysDialog that contains the options for adding commentary
             	// to the video
                 new AudioOverlaysDialog(MainFrame.this).setVisible(true);
-                
-                // Stopping the video to allow commentary to be added to the starting scenes
-                videoPlayer.getMediaPlayer().stop();
-                
-                // Stopping all audio currently playing
-                controlsPanel.stopAudioPlayers();
             }
         });
     }
