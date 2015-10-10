@@ -110,11 +110,129 @@ public class MainFrame extends JFrame{
 	}
 
     /**
-     * Method called when main frame is instantiated to set up the listener for the option
-     * to create commentary for the application
+     * Method called when main frame is instantiated to set up the action listeners
      */
     private void setupListeners() {
-    	
+        openVideoButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                // File chooser to allow user to select a video to open
+                JFileChooser fileChooser = new JFileChooser();
+
+                // Allowing user to only select mp4 and avi video files to open
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                FileNameExtensionFilter mp4Filter = new FileNameExtensionFilter("mp4 videos", "mp4");
+                FileNameExtensionFilter aviFilter = new FileNameExtensionFilter("avi videos", "avi");
+                fileChooser.addChoosableFileFilter(mp4Filter);
+                fileChooser.addChoosableFileFilter(aviFilter);
+
+                // Showing the dialog to allow a user to select a video to open and getting the return value
+                int returnValue = fileChooser.showOpenDialog(null);
+
+                // Checking if the return value is equal to the approve option
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+
+                    // Getting the file chosen and the location of where it is
+                    File selectedFile = fileChooser.getSelectedFile();
+                    videoPath = selectedFile.getPath();
+
+                    // Playing the video
+                    videoPlayer.playVideo(videoPath);
+
+                    int totalTime=0;
+                    try {
+                        Process ffProbeProcess = new ProcessBuilder("/bin/bash", "-c", "ffprobe -i \"" + videoPath + "\" -show_entries format=duration 2>&1 | grep \"duration=\"").start();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(ffProbeProcess.getInputStream()));
+                        ffProbeProcess.waitFor();
+                        String durationLine = reader.readLine();
+                        if (durationLine != null) {
+                            totalTime = (int) Float.parseFloat(durationLine.split("=")[1])*1000;
+                        }
+                    } catch (InterruptedException | IOException e1) {
+                        e1.printStackTrace();
+                        System.err.println("Failed to get video duration");
+                    }
+                    getControlsPanel().setTotalTime(controlsPanel.calculateTime(totalTime),totalTime);
+                    audioTimelinesPanel.setVideoLength(((double) totalTime) / 1000);
+                }
+            }
+        });
+
+        openProjectButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
+                // Creating a JFileChooser to allow the user to choose a project to open
+                JFileChooser fileChooser = new JFileChooser();
+
+                // Opening a dialog to allow the user to choose a project to open up
+                if (fileChooser.showOpenDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        // Adding warning messages to inform user whether changes to current project (if any) are to be deleted
+                        String[] options = new String[]{"Yes, Discard changes","No"};
+                        String message="Opening another project will cause usaved changes to be discarded\n" +
+                                "Are you sure you want to do this?";
+
+                        // Storing result of the user's choice on whether to discard changes and open new project or not
+                        int result = JOptionPane.showOptionDialog
+                                (MainFrame.this,message,"Warning",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE,null,options,options[1]);
+
+                        // If the user does want to open a new project
+                        if(result==JOptionPane.YES_OPTION) {
+                            // Opening new project and getting the selected file
+                            openProject(fileChooser.getSelectedFile());
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (FileFormatException e) {
+                        // Informing user that an invalid project was chosen
+                        JOptionPane.showMessageDialog(MainFrame.this,"Invalid or corrupted VIDIVOX project file","Invalid File",JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        saveProjectButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
+                // Allowing user to specify where to save the project
+                JFileChooser fileChooser = new JFileChooser();
+                if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
+                    // Allows the user to save the project by clicking on an existing file
+                    // or by typing it in and passing the file to the saveProject() method
+                    try {
+                        saveProject(fileChooser.getSelectedFile());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        exportButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                // Allowing user to select destination of exported file
+                JFileChooser fileChooser = new JFileChooser();
+                if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        exportProject(fileChooser.getSelectedFile());
+                    } catch (IOException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        quitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Cleaning up by disposing of the main frame and then exiting the application
+                dispose();
+                System.exit(0);
+            }
+        });
+
     	// Adding listener to the add commentary button
         commentaryButton.addActionListener(new ActionListener() {
             @Override
@@ -187,110 +305,16 @@ public class MainFrame extends JFrame{
         
         // Menu item choice to choose a video and play in the video player component
         openVideoButton = new JMenuItem("Open Video");
-        openVideoButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            	
-                // File chooser to allow user to select a video to open
-                JFileChooser fileChooser = new JFileChooser();
-                
-                // Allowing user to only select mp4 and avi video files to open
-                fileChooser.setAcceptAllFileFilterUsed(false);
-                FileNameExtensionFilter mp4Filter = new FileNameExtensionFilter("mp4 videos", "mp4");
-                FileNameExtensionFilter aviFilter = new FileNameExtensionFilter("avi videos", "avi");
-                fileChooser.addChoosableFileFilter(mp4Filter);
-                fileChooser.addChoosableFileFilter(aviFilter);
-                
-                // Showing the dialog to allow a user to select a video to open and getting the return value
-                int returnValue = fileChooser.showOpenDialog(null);
-                
-                // Checking if the return value is equal to the approve option
-                if (returnValue == JFileChooser.APPROVE_OPTION) {
-                	
-                	// Getting the file chosen and the location of where it is
-                    File selectedFile = fileChooser.getSelectedFile();
-                    videoPath = selectedFile.getPath();
-
-                    // Playing the video
-                    videoPlayer.playVideo(videoPath);
-
-                    int totalTime=0;
-                    try {
-                        Process ffProbeProcess = new ProcessBuilder("/bin/bash", "-c", "ffprobe -i \"" + videoPath + "\" -show_entries format=duration 2>&1 | grep \"duration=\"").start();
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(ffProbeProcess.getInputStream()));
-                        ffProbeProcess.waitFor();
-                        String durationLine = reader.readLine();
-                        if (durationLine != null) {
-                            totalTime = (int) Float.parseFloat(durationLine.split("=")[1])*1000;
-                        }
-                    } catch (InterruptedException | IOException e1) {
-                        e1.printStackTrace();
-                        System.err.println("Failed to get video duration");
-                    }
-                    getControlsPanel().setTotalTime(controlsPanel.calculateTime(totalTime),totalTime);
-                    audioTimelinesPanel.setVideoLength(((double) totalTime) / 1000);
-                }
-            }
-        });
         // Adding the open video button to the file menu
         fileMenu.add(openVideoButton);
         
         // Creating a button to allow the user to open a saved project
         openProjectButton=new JMenuItem("Open Project");
-        openProjectButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-            	
-            	// Creating a JFileChooser to allow the user to choose a project to open
-                JFileChooser fileChooser = new JFileChooser();
-                                
-                // Opening a dialog to allow the user to choose a project to open up
-                if (fileChooser.showOpenDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
-                    try {
-                    	// Adding warning messages to inform user whether changes to current project (if any) are to be deleted
-                        String[] options = new String[]{"Yes, Discard changes","No"};
-                        String message="Opening another project will cause usaved changes to be discarded\n" +
-                                "Are you sure you want to do this?";
-                        
-                        // Storing result of the user's choice on whether to discard changes and open new project or not
-                        int result = JOptionPane.showOptionDialog
-                        		(MainFrame.this,message,"Warning",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE,null,options,options[1]);
-                        
-                        // If the user does want to open a new project
-                        if(result==JOptionPane.YES_OPTION) {
-                        	// Opening new project and getting the selected file
-                            openProject(fileChooser.getSelectedFile());
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (FileFormatException e) {
-                    	// Informing user that an invalid project was chosen
-                        JOptionPane.showMessageDialog(MainFrame.this,"Invalid or corrupted VIDIVOX project file","Invalid File",JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
-        });
         // Adding the open project button to the file menu
         fileMenu.add(openProjectButton);
         
         // Button to allow projects to be saved so that the user can come back and reopen it
         saveProjectButton = new JMenuItem("Save Project");
-        saveProjectButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-            	
-            	// Allowing user to specify where to save the project
-                JFileChooser fileChooser = new JFileChooser();
-                if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
-                    // Allows the user to save the project by clicking on an existing file
-                	// or by typing it in and passing the file to the saveProject() method
-                	try {
-                        saveProject(fileChooser.getSelectedFile());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
         fileMenu.add(saveProjectButton);
         // Separator to increase neatness of GUI
         fileMenu.addSeparator();
@@ -298,32 +322,11 @@ public class MainFrame extends JFrame{
         // Export button to allow user to merge video and audio generated from comments into
         // a single video file which can then be played and will contain both video and audio
         exportButton = new JMenuItem("Export");
-        exportButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-            	// Allowing user to select destination of exported file
-                JFileChooser fileChooser = new JFileChooser();
-                if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        exportProject(fileChooser.getSelectedFile());
-                    } catch (IOException|InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
         fileMenu.add(exportButton);
         fileMenu.addSeparator();
         
         // Adding a quit button to allow the user to quit the application cleanly
         quitButton = new JMenuItem("Quit");
-        quitButton.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		// Cleaning up by disposing of the main frame and then exiting the application
-        		dispose();
-        		System.exit(0);
-        	}
-        });
         fileMenu.add(quitButton);
         
         // Adding the fileMenu to the menu bar
