@@ -493,13 +493,14 @@ public abstract class AudioOverlay {
      * appropriate format
      */
     public void updateStartTimeFields() {
-    	
+
     	int minutes = (int)(startTime / 60);
     	int seconds = (int)(startTime % 60);
     	int milliseconds = (int)((startTime - seconds - minutes*60) * 1000);
     	startTimeMinutesField.setText(String.format("%02d", minutes));
     	startTimeSecondsField.setText(String.format("%02d", seconds));
     	startTimeMillisecondsField.setText(String.format("%03d", milliseconds));
+        updateDisplayPanel();
     }
     
     /**
@@ -533,4 +534,10 @@ public abstract class AudioOverlay {
     public void setStartTime(double startTime) {
         this.startTime = startTime;
     }
+
+    public AudioDisplayPanel getDisplayPanel(){
+        displayPanel=new AudioDisplayPanel(this);
+        return displayPanel;
+    }
+
 }

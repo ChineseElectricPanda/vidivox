@@ -52,7 +52,7 @@ public class AudioOverlaysPanel extends JPanel {
         for(AudioOverlay overlay: AudioOverlaysDialog.getOverlays()){
             contentPane.add(new JSeparator(JSeparator.HORIZONTAL), gbc);
             gbc.gridy++;
-            AudioDisplayPanel display=new AudioDisplayPanel(overlay);
+            AudioDisplayPanel display=overlay.getDisplayPanel();
             displays.add(display);
             contentPane.add(display, gbc);
             gbc.gridy++;
