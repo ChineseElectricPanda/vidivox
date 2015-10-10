@@ -24,10 +24,12 @@ public class AudioTimelinesPanel extends JPanel {
         GridBagConstraints gbc=new GridBagConstraints();
         gbc.fill=GridBagConstraints.BOTH;
         gbc.weightx=1;
+        gbc.weighty=1;
         JScrollPane scrollPane=new JScrollPane();
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setViewportView(contentPane);
-        setMinimumSize(new Dimension(500, 35));
+        scrollPane.setMinimumSize(new Dimension(500,100));
+        setMinimumSize(new Dimension(500, 100));
         add(scrollPane, gbc);
     }
 
@@ -42,8 +44,9 @@ public class AudioTimelinesPanel extends JPanel {
 
         GridBagConstraints gbc=new GridBagConstraints();
         gbc.weightx=1;
-        gbc.weighty=1;
+        gbc.weighty=0;
         gbc.gridy=0;
+        gbc.anchor= GridBagConstraints.NORTH;
         gbc.fill=GridBagConstraints.BOTH;
 
         for(AudioOverlay overlay: AudioOverlaysDialog.getOverlays()){
@@ -54,6 +57,8 @@ public class AudioTimelinesPanel extends JPanel {
             contentPane.add(display, gbc);
             gbc.gridy++;
         }
+        gbc.weighty=1;
+        contentPane.add(new JPanel(),gbc);
 
         revalidate();
         doLayout();

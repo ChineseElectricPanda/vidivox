@@ -161,7 +161,7 @@ public class MainFrame extends JFrame{
         audioTimelinesPanel =new AudioTimelinesPanel(this);
         gbc.fill= GridBagConstraints.BOTH;
         gbc.gridy++;
-        gbc.weighty=1;
+        gbc.weighty=0;
         contentPane.add(audioTimelinesPanel,gbc);
 
     }
