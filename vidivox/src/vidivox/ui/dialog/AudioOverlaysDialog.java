@@ -31,11 +31,12 @@ public class AudioOverlaysDialog extends JDialog {
      * Initializes the Dialog with layout and listeners
      */
     public AudioOverlaysDialog(MainFrame mainFrame) {
-        super((Dialog)null);
+        super(mainFrame);
         this.mainFrame=mainFrame;
         setupLayout();
         setupListeners();
         setMinimumSize(new Dimension(900, 400));
+        setLocation(mainFrame.getX()+mainFrame.getWidth(), mainFrame.getY());
         pack();
     }
 
