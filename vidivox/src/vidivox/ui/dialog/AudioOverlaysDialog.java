@@ -21,6 +21,8 @@ import java.util.List;
  *
  */
 public class AudioOverlaysDialog extends JDialog {
+    private static AudioOverlaysDialog instance;    // Singleton instance of this class
+
     private MainFrame mainFrame;
     private static List<AudioOverlay> overlays = new ArrayList<>();                   // List of audio overlays added
     private List<JButton> deleteButtons;        // List of button for deleting each audio overlay track
@@ -28,11 +30,22 @@ public class AudioOverlaysDialog extends JDialog {
     private JButton addAudioButton;             // A button for adding an audio file (eg mp3) overlay
 
     /**
+     * Gets the singleton instance of this class
+     * @return the AudioOverlaysDialog singleton
+     */
+    public static AudioOverlaysDialog getInstance(){
+        if(instance==null){
+            instance=new AudioOverlaysDialog();
+        }
+        return instance;
+    }
+
+    /**
      * Initializes the Dialog with layout and listeners
      */
-    public AudioOverlaysDialog(MainFrame mainFrame) {
-        super(mainFrame);
-        this.mainFrame=mainFrame;
+    private AudioOverlaysDialog() {
+        super(MainFrame.getInstance());
+        this.mainFrame=MainFrame.getInstance();
         setupLayout();
         setupListeners();
         setMinimumSize(new Dimension(900, 400));

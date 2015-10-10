@@ -32,7 +32,7 @@ public class Main {
  
     	// Creating the main frame which contains functionality for opening a video, playing
     	// the video etc.
-    	MainFrame mainFrame = new MainFrame();
+    	MainFrame mainFrame = MainFrame.getInstance();
     	
     	// Setting the visibility of the frame to true
 		mainFrame.setVisible(true);

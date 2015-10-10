@@ -40,6 +40,8 @@ public class MainFrame extends JFrame{
 	/**
 	 * Fields instantiated globally to be used by all methods in this class
 	 */
+    private static MainFrame instance;          // Singleton instance of the MainFrame
+
 	private VideoPlayerComponent videoPlayer;	// Video player object
     private ControlsPanel controlsPanel;		// Reference to ControlsPanel class
     private AudioTimelinesPanel audioTimelinesPanel;
@@ -53,10 +55,21 @@ public class MainFrame extends JFrame{
     private JMenuItem commentaryButton;			// Menu bar option for adding commentary
 
     /**
+     * Gets the singleton instance of this class
+     * @return the MainFrame
+     */
+    public static MainFrame getInstance(){
+        if(instance==null){
+            instance=new MainFrame();
+        }
+        return instance;
+    }
+
+    /**
      * Constructor used to call methods to set up the layout and listeners for 
      * the menu bar options when this object is instantiated
      */
-    public MainFrame() {
+    private MainFrame() {
     	
     	// Naming the application VIDIVOX at the top of the frame
         super("VIDIVOX");
@@ -108,7 +121,7 @@ public class MainFrame extends JFrame{
             public void actionPerformed(ActionEvent actionEvent) {
             	// Creating an AudioOverlaysDialog that contains the options for adding commentary
             	// to the video
-                new AudioOverlaysDialog(MainFrame.this).setVisible(true);
+                AudioOverlaysDialog.getInstance().setVisible(true);
             }
         });
     }
@@ -140,7 +153,7 @@ public class MainFrame extends JFrame{
         contentPane.add(videoPlayer, gbc);
 
         // Setting up the controls panel which will contain all the buttons for playing the video, pausing etc
-        setControlsPanel(new ControlsPanel(this,videoPlayer));
+        setControlsPanel(new ControlsPanel(videoPlayer));
         // Formatting the grid bag layout for the content pane and adding it to the bottom of the frame
         gbc.gridx=0;
         gbc.gridy=1;

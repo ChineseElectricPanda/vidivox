@@ -27,7 +27,6 @@ public class ControlsPanel extends JPanel {
 	/**
 	 * Declaring fields to be used within this class and the project
 	 */
-    private MainFrame mainFrame;                    // A reference to the main frame
 	private ArrayList<AudioPlayWorker> audioPlayWorkers = new ArrayList<AudioPlayWorker>(); // List of audio workers
 	private ControlsPanel controlsPanel = this;		// Reference to the only instance of this class
     private VideoPlayerComponent videoPlayer;		// Reference to the video player component 
@@ -53,8 +52,7 @@ public class ControlsPanel extends JPanel {
      * and initialize the video player component
      * @param videoPlayer - the media play component which allows the video to played
      */
-    public ControlsPanel(MainFrame mainFrame,VideoPlayerComponent videoPlayer){
-        this.mainFrame=mainFrame;
+    public ControlsPanel(VideoPlayerComponent videoPlayer){
         this.videoPlayer = videoPlayer;
         setupLayout();
         setupListeners();
@@ -260,7 +258,7 @@ public class ControlsPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 // Open the audio overlays dialog
-                new AudioOverlaysDialog(mainFrame).setVisible(true);
+                AudioOverlaysDialog.getInstance().setVisible(true);
             }
         });
         
