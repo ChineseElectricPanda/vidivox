@@ -158,7 +158,7 @@ public class MainFrame extends JFrame{
         contentPane.add(getControlsPanel(), gbc);
 
         // Setting up the display which will show all the audio tracks
-        audioTimelinesPanel =new AudioTimelinesPanel(this);
+        audioTimelinesPanel =new AudioTimelinesPanel();
         gbc.fill= GridBagConstraints.BOTH;
         gbc.gridy++;
         gbc.weighty=0;

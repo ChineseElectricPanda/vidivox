@@ -12,9 +12,17 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.util.Random;
 
+/**
+ * This class is for the timeline display for a single audio track
+ */
 public class AudioTimelineDisplay extends JPanel{
     private JPanel canvas;
     private static double videoLength=0;
+
+    /**
+     * Create a timeline display for the given audio overlay
+     * @param overlay the audio overlay to display
+     */
     public AudioTimelineDisplay(final AudioOverlay overlay){
         setMinimumSize(new Dimension(100, 75));
         setLayout(new GridBagLayout());
@@ -79,6 +87,7 @@ public class AudioTimelineDisplay extends JPanel{
             double initialTime=overlay.getStartTime();
             @Override
             public void mousePressed(MouseEvent e) {
+                //start tracking mouse movement when it is pressed down on the timeline
                 mouseDown=true;
                 startPosition=e.getX();
                 initialTime=overlay.getStartTime();
@@ -91,6 +100,7 @@ public class AudioTimelineDisplay extends JPanel{
 
             @Override
             public void mouseDragged(MouseEvent e) {
+                //when the audio track is dragged on the timeline, change the starting time accordingly
                 int offset=e.getX()-startPosition;
                 double newStartTime=initialTime+((double)offset)/ AudioTimelinesPanel.scale;
 
@@ -125,6 +135,10 @@ public class AudioTimelineDisplay extends JPanel{
         canvas.repaint();
     }
 
+    /**
+     * Set the length of the video
+     * @param length the length of the video
+     */
     public static void setVideoLength(double length){
         AudioTimelineDisplay.videoLength=length;
     }
