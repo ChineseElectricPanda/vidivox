@@ -39,8 +39,6 @@ public class ControlsPanel extends JPanel {
     private JButton stopButton;						// Button to stop the video
     private JButton rewindButton;					// Button to rewind the video
     private JButton fastForwardButton;				// Button to fast forward the video
-    private JButton skipBackButton;					// Button to skip backwards
-    private JButton skipForwardButton;				// Button to skip forwards
     private JSlider volumeSlider;					// Slider used to control volume
     private JLabel volumeLevelLabel;				// Label showing user current volume level
     private int volume = 100;						// Integer representing volume level
@@ -255,48 +253,6 @@ public class ControlsPanel extends JPanel {
             }
         });
         
-        // Adding action listener for the skip ahead one large frame at a time button aka skip forward
-        skipForwardButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	
-            	// Making sure the video is not muted
-                videoPlayer.getMediaPlayer().mute(false);
-
-                // Checking if the video is being forwarded or is rewinding and stopping that process if it is
-                if (skipVid != null) {
-                    skipVid.setIsSkipping(false);
-                    skipVid.cancel(true);
-                    skipVid = null;
-                }
-
-                // Skipping the video ahead and updating the audio
-                videoPlayer.getMediaPlayer().skip(10000);
-                seekSlider.setValue(seekSlider.getValue()+10000);
-                updateAudioPlayers();
-            }
-        });
-        
-        // Adding action listener for the skip backward one large frame at a time button aka skip back
-        skipBackButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	// Making sure the video is not mute
-                videoPlayer.getMediaPlayer().mute(false);
-
-                // Checking if the video is currently forwarding/rewinding and stopping the process if it is
-                if (skipVid != null) {
-                    skipVid.setIsSkipping(false);
-                    skipVid.cancel(true);
-                    skipVid = null;
-                }
-                // RSkipping backwards by a set amount and updating the audio players
-                videoPlayer.getMediaPlayer().skip(-10000);
-                seekSlider.setValue(seekSlider.getValue()-10000);
-                updateAudioPlayers();
-            }
-        });
-        
         // Adding a listener to the volume slider in order to change the volume of the video accordingly
         volumeSlider.addChangeListener(new ChangeListener() {
             @Override
@@ -412,24 +368,8 @@ public class ControlsPanel extends JPanel {
         gbc.weighty=1.0f;
         buttonsPanel.add(fastForwardButton,gbc);
         
-        // Creating skip forward button and adding it to the layout
-        skipForwardButton = new JButton(">");
-        gbc.gridx = 7;
-        gbc.gridy = 0;
-        gbc.weightx=0.0f;
-        gbc.weighty=3.0f;
-        buttonsPanel.add(skipForwardButton, gbc);
-        
-        // Creating skip back button and adding it to the layout
-        skipBackButton = new JButton("<");
-        gbc.gridx = 6;
-        gbc.gridy = 0;
-        gbc.weightx=0.0f;
-        gbc.weighty=3.0f;
-        buttonsPanel.add(skipBackButton, gbc);
-        
         // Adding space between GUI components
-        gbc.gridx=8;
+        gbc.gridx=7;
         gbc.gridy=0;
         gbc.weightx=0.5f;
         gbc.weighty=1.0f;
