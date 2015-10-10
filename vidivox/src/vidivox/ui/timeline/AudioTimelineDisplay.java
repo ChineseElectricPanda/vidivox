@@ -92,7 +92,15 @@ public class AudioTimelineDisplay extends JPanel{
             @Override
             public void mouseDragged(MouseEvent e) {
                 int offset=e.getX()-startPosition;
-                overlay.setStartTime(initialTime+((double)offset)/ AudioTimelinesPanel.scale);
+                double newStartTime=initialTime+((double)offset)/ AudioTimelinesPanel.scale;
+
+                // Make the start position snap to 0 or the current play position
+                if(Math.abs(newStartTime-AudioTimelinesPanel.getPosition())<0.5){
+                    newStartTime=AudioTimelinesPanel.getPosition();
+                }else if(Math.abs(newStartTime)<0.5){
+                    newStartTime=0;
+                }
+                overlay.setStartTime(newStartTime);
                 AudioOverlaysDialog.updateStartTimeFields();
                 canvas.revalidate();
             }
