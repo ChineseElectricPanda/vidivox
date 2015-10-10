@@ -7,6 +7,7 @@ import vidivox.audio.AudioOverlay;
 import vidivox.exception.FileFormatException;
 import vidivox.ui.dialog.AudioOverlaysDialog;
 import vidivox.ui.dialog.ProgressDialog;
+import vidivox.ui.displaypanel.AudioDisplayPanel;
 import vidivox.ui.displaypanel.AudioOverlaysPanel;
 
 import java.awt.*;
@@ -219,6 +220,7 @@ public class MainFrame extends JFrame{
                         System.err.println("Failed to get video duration");
                     }
                     getControlsPanel().setTotalTime(controlsPanel.calculateTime(totalTime),totalTime);
+                    AudioDisplayPanel.setVideoLength(((double)totalTime)/1000);
                 }
             }
         });

@@ -9,10 +9,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.RoundRectangle2D;
 import java.util.Random;
 
 public class AudioDisplayPanel extends JPanel{
     private JPanel canvas;
+    private static double videoLength=0;
     public AudioDisplayPanel(final AudioOverlay overlay){
         setMinimumSize(new Dimension(100, 75));
         setLayout(new GridBagLayout());
@@ -43,7 +45,8 @@ public class AudioDisplayPanel extends JPanel{
                     r=new Random(((CommentaryOverlay)overlay).getPosition());
                     text=((CommentaryOverlay)overlay).getText();
                 }
-                g.setColor(new Color(100 + r.nextInt(150), 100 + r.nextInt(150), 100 + r.nextInt(150)));
+                Color blockColor=new Color(100 + r.nextInt(150), 100 + r.nextInt(150), 100 + r.nextInt(150));
+                g.setColor(blockColor);
                 g.fillRoundRect(startPosition, 0, length, 35, 5, 5);
 
                 //draw the name of the file
@@ -54,7 +57,19 @@ public class AudioDisplayPanel extends JPanel{
                 //draw a line where the current play position is
                 g.setColor(new Color(255, 0, 0));
                 int x= (int) (AudioOverlaysPanel.getPosition()*AudioOverlaysPanel.scale);
-                g.drawLine(x,0,x,35);
+                g.drawLine(x, 0, x, 35);
+
+                //draw a line where the end of the video is (only if video length is not 0)
+                g.setColor(new Color(0,0,255));
+                x= (int) (videoLength*AudioOverlaysPanel.scale);
+                if(x>0) {
+                    g.drawLine(x, 0, x, 35);
+                }
+
+                g.setColor(blockColor);
+                g.setClip(new RoundRectangle2D.Double(startPosition, 0, length, 35, 5, 5));
+                g.setXORMode(new Color(100, 100, 100));
+                g.fillRect(x+1,0,999999,35);
 
             }
         };
@@ -100,5 +115,9 @@ public class AudioDisplayPanel extends JPanel{
         super.invalidate();
         canvas.revalidate();
         canvas.repaint();
+    }
+
+    public static void setVideoLength(double length){
+        AudioDisplayPanel.videoLength=length;
     }
 }
