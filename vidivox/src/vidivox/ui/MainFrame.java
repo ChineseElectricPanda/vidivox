@@ -554,4 +554,8 @@ public class MainFrame extends JFrame{
             }
         }.execute();
     }
+
+    public VideoPlayerComponent getVideoPlayer() {
+        return videoPlayer;
+    }
 }

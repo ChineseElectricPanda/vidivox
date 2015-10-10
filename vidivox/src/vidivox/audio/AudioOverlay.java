@@ -6,16 +6,12 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import vidivox.exception.FileFormatException;
+import vidivox.ui.MainFrame;
 import vidivox.ui.timeline.AudioTimelineDisplay;
 import vidivox.worker.AudioPlayWorker;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.io.*;
 
 /**
@@ -538,6 +534,31 @@ public abstract class AudioOverlay {
     public AudioTimelineDisplay getDisplayPanel(){
         displayPanel=new AudioTimelineDisplay(this);
         return displayPanel;
+    }
+
+    public void startAudioPlayer(){
+        stopAudioPlayer();
+
+        if(showPreview){
+            long currentPositionMillis = MainFrame.getInstance().getVideoPlayer().getMediaPlayer().getTime();
+            double currentPositionSeconds = ((double) currentPositionMillis) / 1000;
+            audioPlayWorker = new AudioPlayWorker(this, currentPositionSeconds);
+            audioPlayWorker.execute();
+        }
+    }
+
+    public void stopAudioPlayer(){
+        if(audioPlayWorker!=null) {
+            audioPlayWorker.kill();
+            audioPlayWorker=null;
+        }
+    }
+
+    public void updateAudioPlayer(){
+        stopAudioPlayer();
+        if(MainFrame.getInstance().getVideoPlayer().getMediaPlayer().isPlaying()){
+            startAudioPlayer();
+        }
     }
 
 }

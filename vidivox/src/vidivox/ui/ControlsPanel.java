@@ -507,14 +507,7 @@ public class ControlsPanel extends JPanel {
     	stopAudioPlayers();
     	
     	for(AudioOverlay overlay: AudioOverlaysDialog.getOverlays()){
-    		// Only play the overlay tracks with "preview" ticked
-    		if(overlay.isShowingPreview()) {
-    			long currentPositionMillis = videoPlayer.getMediaPlayer().getTime();
-    			double currentPositionSeconds = ((double) currentPositionMillis) / 1000;
-    			AudioPlayWorker player = new AudioPlayWorker(overlay, currentPositionSeconds);
-    			player.execute();
-    			audioPlayWorkers.add(player);
-    		}
+    		overlay.startAudioPlayer();
     	}
     }
 
@@ -522,10 +515,9 @@ public class ControlsPanel extends JPanel {
      * Stops all the overlaid audio tracks currently playing
      */
     public void stopAudioPlayers(){
-        for(AudioPlayWorker player : audioPlayWorkers){
-            player.kill();
+        for(AudioOverlay overlay: AudioOverlaysDialog.getOverlays()){
+            overlay.stopAudioPlayer();
         }
-        audioPlayWorkers = new ArrayList<>();
     }
 
     /**

@@ -3,6 +3,7 @@ package vidivox.ui.timeline;
 import vidivox.audio.AudioOverlay;
 import vidivox.audio.CommentaryOverlay;
 import vidivox.audio.FileOverlay;
+import vidivox.ui.MainFrame;
 import vidivox.ui.dialog.AudioOverlaysDialog;
 
 import javax.swing.*;
@@ -100,6 +101,9 @@ public class AudioTimelineDisplay extends JPanel{
             @Override
             public void mouseReleased(MouseEvent e) {
                 mouseDown=false;
+
+                //update the audio player to reflect changes made to timeline
+                overlay.updateAudioPlayer();
             }
 
             @Override
