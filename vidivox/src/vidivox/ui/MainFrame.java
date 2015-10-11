@@ -497,6 +497,9 @@ public class MainFrame extends JFrame{
         		
         		// Force output format to avi
         		cmd.append(" -f avi");
+
+                // End the output when the video ends
+                cmd.append(" -t "+((double)controlsPanel.getTotalTime())/1000);
         		
         		// Append the option to allow ffmpeg to use support more formats, then append the output file path
         		cmd.append(" -strict -2 \"" + file.getAbsolutePath()+"\"");
