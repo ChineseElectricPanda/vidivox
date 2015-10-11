@@ -2,6 +2,10 @@ package vidivox.ui;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import uk.co.caprica.vlcj.player.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.embedded.DefaultFullScreenStrategy;
+import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+import uk.co.caprica.vlcj.player.embedded.FullScreenStrategy;
 import vidivox.UpdateRunnable;
 import vidivox.audio.AudioOverlay;
 import vidivox.exception.FileFormatException;
@@ -53,6 +57,7 @@ public class MainFrame extends JFrame{
     private JMenuItem exportButton;				// Menu bar option for exporting the project containing video + commentary
     private JMenuItem quitButton;				// Menu bar option for closing the application
     private JMenuItem commentaryButton;			// Menu bar option for adding commentary
+    private JMenuItem asciiOutputButton;
 
     /**
      * Gets the singleton instance of this class
@@ -242,6 +247,20 @@ public class MainFrame extends JFrame{
                 AudioOverlaysDialog.getInstance().setVisible(true);
             }
         });
+
+        asciiOutputButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                String[] args={"--vout=caca"};
+
+                MediaPlayerFactory factory=new MediaPlayerFactory(args);
+
+                EmbeddedMediaPlayer player=factory.newEmbeddedMediaPlayer();
+                player.playMedia(videoPath);
+
+                player.release();
+            }
+        });
     }
 
     /**
@@ -342,6 +361,13 @@ public class MainFrame extends JFrame{
         commentaryButton = new JMenuItem("Audio Overlays...");
         editMenu.add(commentaryButton);
         menuBar.add(editMenu);
+
+        JMenu outputMenu=new JMenu("Output");
+
+        asciiOutputButton=new JMenuItem("ASCII");
+        outputMenu.add(asciiOutputButton);
+
+        menuBar.add(outputMenu);
 
         setJMenuBar(menuBar);
     }
