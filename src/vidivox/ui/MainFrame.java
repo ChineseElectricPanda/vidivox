@@ -296,7 +296,8 @@ public class MainFrame extends JFrame{
      * which contains options for opening a video, saving a project, adding commentary etc
      */
     private void setupMenuBar(){
-    	
+        // Set the JMenuBar to use heavyweight so that it shows over the videoplayer
+    	JPopupMenu.setDefaultLightWeightPopupEnabled(false);
         menuBar = new JMenuBar();
         // Setting up the menu options for the menu bar item "File"
         JMenu fileMenu = new JMenu("File");
