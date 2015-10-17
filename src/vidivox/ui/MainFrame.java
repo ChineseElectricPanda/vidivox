@@ -157,7 +157,7 @@ public class MainFrame extends JFrame{
                         e1.printStackTrace();
                         System.err.println("Failed to get video duration");
                     }
-                    getControlsPanel().setTotalTime(controlsPanel.calculateTime(totalTime),totalTime);
+                    getControlsPanel().setTotalTime(totalTime);
                     audioTimelinesPanel.setVideoLength(((double) totalTime) / 1000);
                 }
             }
@@ -315,7 +315,8 @@ public class MainFrame extends JFrame{
      * which contains options for opening a video, saving a project, adding commentary etc
      */
     private void setupMenuBar(){
-    	
+        // Set the JMenuBar to use heavyweight so that it shows over the videoplayer
+    	JPopupMenu.setDefaultLightWeightPopupEnabled(false);
         menuBar = new JMenuBar();
         // Setting up the menu options for the menu bar item "File"
         JMenu fileMenu = new JMenu("File");
@@ -523,6 +524,9 @@ public class MainFrame extends JFrame{
         		
         		// Force output format to avi
         		cmd.append(" -f avi");
+
+                // End the output when the video ends
+                cmd.append(" -t "+((double)controlsPanel.getTotalTime())/1000);
         		
         		// Append the option to allow ffmpeg to use support more formats, then append the output file path
         		cmd.append(" -strict -2 \"" + file.getAbsolutePath()+"\"");

@@ -59,12 +59,9 @@ public class UpdateRunnable implements Runnable {
 						controlsPanel.stopAudioPlayers();
 					}
 					
-					// Calling method in the ControlsPanel class to format the time into hours, mins and secs
-					String timeString = controlsPanel.calculateTime(time);
-					
 					// Calling method in the ControlsPanel class to set the time label indicating the time-stamp
 					// of the video
-					controlsPanel.setCurrentTime(timeString, time);
+					controlsPanel.setCurrentTime(time);
 				}
 			}
 

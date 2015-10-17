@@ -1,3 +1,12 @@
+TL;DR:
+Run VIDIVOX with java -jar vidivox.jar.
+Open videos with File -> Open video.
+Add audio tracks by clicking Edit -> Audio Overlays... or click Add Audio button.
+Adjust audio offsets by dragging them on the timeline or entering a time
+(note: negative offsets probably won't work)
+Export videos with File -> Export. Format defaults to avi.
+
+Detailed manual below
 
 ======================================================================================
 				Welcome to Vidivox!!
@@ -30,13 +39,13 @@ Manual Contents:
 	OR
 	In the terminal, while in the directory the jar file
 	is in, enter the following command:
-	sudo chmod a+x vidivox.jar
+	chmod u+x vidivox.jar
 	
 	Opening through eclipse:
 	Open up eclipse and when prompted select the
-	working directory as "   "
+	working directory as "vidivox"
 	To run application click on the green play button
-	and run from Main 
+	and run from the Main class 
 
 --------------------------------------------------------------------------------------
 

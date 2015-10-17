@@ -25,7 +25,6 @@ public class SkipVideoWorker extends SwingWorker<Void, Integer> {
 	private boolean isSkipping = false;					// Boolean to allow skipping
 	private int skipValue = 0;							// Value to skip by
 	private int time;									// Current time of the video
-	private String timeString; 							// Stores current time of video in specific format
 	
 	/**
 	 * Constructor called to set references for fields declared
@@ -51,8 +50,6 @@ public class SkipVideoWorker extends SwingWorker<Void, Integer> {
 
 			// Obtaining the current time of the video 
 			time = Math.round(videoPlayer.getMediaPlayer().getTime());
-			// Formatting the time and storing in the string
-			timeString = controlsPanel.calculateTime(time);
 						
 			// Disabling the users ability to rewind at the 0th second of the video and 
 			// to forward at the end of the video
@@ -81,7 +78,7 @@ public class SkipVideoWorker extends SwingWorker<Void, Integer> {
 		controlsPanel.getSlider().setValue((int)pos);
 		
 		// Setting the time label in the GUI
-		controlsPanel.setCurrentTime(timeString, time);
+		controlsPanel.setCurrentTime(time);
 	}
 	
 	/**

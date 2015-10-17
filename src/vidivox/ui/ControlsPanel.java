@@ -81,7 +81,7 @@ public class ControlsPanel extends JPanel {
                 if (sliderCanMove) {
                     // Updating current time
                     long currentTime = videoPlayer.getMediaPlayer().getTime();
-                    setCurrentTime(calculateTime(currentTime), currentTime);
+                    setCurrentTime(currentTime);
 
                     // Setting the position of the video to that of the seek slider
                     videoPlayer.getMediaPlayer().setTime(seekSlider.getValue());
@@ -188,7 +188,7 @@ public class ControlsPanel extends JPanel {
   
                 // Resetting the slider and the time label to their initial states
                 seekSlider.setValue(0);
-                setCurrentTime("00:00:00", 0);
+                setCurrentTime(0);
             }
         });
         
@@ -292,7 +292,7 @@ public class ControlsPanel extends JPanel {
         sliderPanel.setLayout(new GridBagLayout());
         
         // Creating and adding current time label to the slider panel
-        currentTimeLabel = new JLabel("00:00:00");
+        currentTimeLabel = new JLabel("00:00.000");
         gbc.gridx=0;
         gbc.gridy=0;
         gbc.weightx=0.0f;
@@ -314,7 +314,7 @@ public class ControlsPanel extends JPanel {
         sliderPanel.add(seekSlider,gbc);    
         
         // Creating and adding the total video time label to the slider panel
-        totalTimeLabel=new JLabel("00:00:00");
+        totalTimeLabel=new JLabel("00:00.000");
         gbc.gridx=2;
         gbc.gridy=0;
         gbc.weightx=0.0f;
@@ -427,12 +427,11 @@ public class ControlsPanel extends JPanel {
 
     /**
      * Method which sets the total time variable as well as the label in the GUI
-     * 
-     * @param timeString -  the formatted string containing the total length of the video
+     *
      * @param time - the total length of the video
      */
-    public void setTotalTime(String timeString, long time) {
-    	totalTimeLabel.setText(timeString);
+    public void setTotalTime(long time) {
+    	totalTimeLabel.setText(formatTime(time));
     	totalTime = time;
     	// Setting the maximum value of the progress slider to the total time of the video
         seekSlider.setMaximum((int)time);
@@ -440,12 +439,11 @@ public class ControlsPanel extends JPanel {
     
     /**
      * Method which sets the current time variable as well as the label in the GUI
-     * 
-     * @param timeString - formatted string containing the current time of the video
+     *
      * @param time - the current time of the video
      */
-    public void setCurrentTime(String timeString, long time) {
-    	currentTimeLabel.setText(timeString);
+    public void setCurrentTime(long time) {
+    	currentTimeLabel.setText(formatTime(time));
     	currentTime = time;
     }
     
@@ -453,18 +451,24 @@ public class ControlsPanel extends JPanel {
      * This method calculates the hours, minutes and seconds of a given time and formats
      * it into a string to be shown on the GUI
      * 
-     * @param newTime - the time to convert into seconds, minutes and hours
+     * @param time - the time to convert into seconds, minutes and hours
      * @return timeString - returns the formatted string
      */
-    public String calculateTime(float newTime) {
-    	
-    	long second = (long) ((newTime / 1000) % 60);
-		long minute = (long) ((newTime/ 60000) % 60);
-		long hour = (long) ((newTime/ 3600000) % 24);
+    private static String formatTime(long time) {
+        // Ensure time is non-negative
+        time=Math.max(time,0);
+
+    	int millisecond= (int) (time % 1000);
+    	int second = (int) ((time / 1000) % 60);
+		int minute = (int) ((time/ 60000) % 60);
+		int hour = (int) ((time/ 3600000) % 24);
 		
 		// Storing the formatted string
-		String timeString = String.format("%02d:%02d:%02d", hour, minute, second);
-		return timeString;
+        if(hour>0) {
+            return String.format("%d:%02d:%02d.%03d", hour, minute, second, millisecond);
+        }else{
+            return String.format("%02d:%02d.%03d", minute, second, millisecond);
+        }
     }
     
     /**
