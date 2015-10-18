@@ -33,14 +33,14 @@ public class ControlsPanel extends JPanel {
     private SkipVideoWorker skipVid = null;			// Reference to instance of a worker class to forward/rewind
     private JLabel currentTimeLabel;				// Label showing the time the video is currently at
     private JLabel totalTimeLabel;					// Label showing the total time of the video
-    private JSlider seekSlider;						// Slider showing progress of video and allowing user to set
+    private EnhancedJSlider seekSlider;						// Slider showing progress of video and allowing user to set
     private JButton playButton;						// Play button the play the video
     private JButton pauseButton;					// Button to pause the video
     private JButton stopButton;						// Button to stop the video
     private JButton rewindButton;					// Button to rewind the video
     private JButton fastForwardButton;				// Button to fast forward the video
     private JButton audioOverlaysButton;            // Button to open the audio overlays dialog
-    private JSlider volumeSlider;					// Slider used to control volume
+    private EnhancedJSlider volumeSlider;			// Slider used to control volume
     private JLabel volumeLevelLabel;				// Label showing user current volume level
     private int volume = 100;						// Integer representing volume level
     private float totalTime = 0;					// Total time of the video
@@ -300,7 +300,7 @@ public class ControlsPanel extends JPanel {
         sliderPanel.add(currentTimeLabel,gbc);
         
         // Creating and adding the seek slider to the slider panel
-        seekSlider = new JSlider();
+        seekSlider = new EnhancedJSlider();
         seekSlider.setMinorTickSpacing(1000);
         seekSlider.setMajorTickSpacing(1000);
         gbc.gridx=1;
@@ -400,7 +400,7 @@ public class ControlsPanel extends JPanel {
         buttonsPanel.add(new JLabel("Volume"));
         
         // Adding the volume slider to the layout
-        volumeSlider=new JSlider();
+        volumeSlider=new EnhancedJSlider();
         volumeSlider.setValue(100);
         volumeSlider.setPreferredSize(new Dimension(100,25));
         gbc.gridx=8;

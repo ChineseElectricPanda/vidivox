@@ -6,6 +6,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import vidivox.exception.FileFormatException;
+import vidivox.ui.EnhancedJSlider;
 import vidivox.ui.MainFrame;
 import vidivox.ui.timeline.AudioTimelineDisplay;
 import vidivox.worker.AudioPlayWorker;
@@ -37,7 +38,7 @@ public abstract class AudioOverlay {
     protected JTextField startTimeMillisecondsField;	// Field where the start milliseconds of the audio is specified
     protected JLabel durationLabel;						// Label which informs user of duration of audio
     protected JButton playButton;						// Button to play the voice without any video
-    protected JSlider volumeSlider;						// Slider to allow user to increase/decrease volume
+    protected EnhancedJSlider volumeSlider;						// Slider to allow user to increase/decrease volume
     protected JLabel volumeLevelLabel;					// Label informing user of current volume level
     protected JCheckBox previewCheckBox;				// Check box allowing user to select audio to play with video
     protected boolean showPreview = true;				// Field to determine whether audio should be played with video
@@ -156,7 +157,7 @@ public abstract class AudioOverlay {
         
         // Creating slider to allow user to increase or decrease volume of commentary audio
         // and adding it to the properties panel
-        volumeSlider = new JSlider();
+        volumeSlider = new EnhancedJSlider();
         volumeSlider.setPreferredSize(new Dimension(100, 25));
         volumeSlider.setMinimum(0);
         volumeSlider.setMaximum(100);
