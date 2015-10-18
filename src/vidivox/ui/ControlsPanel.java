@@ -1,4 +1,5 @@
 package vidivox.ui;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -10,6 +11,8 @@ import vidivox.worker.SkipVideoWorker;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -54,7 +57,11 @@ public class ControlsPanel extends JPanel {
      */
     public ControlsPanel(VideoPlayerComponent videoPlayer){
         this.videoPlayer = videoPlayer;
-        setupLayout();
+        try {
+            setupLayout();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         setupListeners();
     }
     
@@ -280,7 +287,7 @@ public class ControlsPanel extends JPanel {
      * Sets up the layout for the sliders, labels and other buttons through the use of the
      * grid bag layout
      */
-    private void setupLayout(){
+    private void setupLayout() throws IOException {
     	
     	// Setting the layout to that of a grid bag layout
         setLayout(new GridBagLayout());
@@ -331,7 +338,7 @@ public class ControlsPanel extends JPanel {
         buttonsPanel.setLayout(new GridBagLayout());
         
         // Instantiating and adding the play button to the buttons panel
-        playButton = new JButton("Play");
+        playButton = new JButton(openImage("play.png"));
         gbc.gridx=0;
         gbc.gridy=0;
         gbc.weightx=0.0f;
@@ -339,7 +346,7 @@ public class ControlsPanel extends JPanel {
         buttonsPanel.add(playButton);
         
         // Creating pause button and adding it to the layout
-        pauseButton = new JButton("Pause");
+        pauseButton = new JButton(openImage("pause.png"));
         gbc.gridx=1;
         gbc.gridy=0;
         gbc.weightx=0.0f;
@@ -347,7 +354,7 @@ public class ControlsPanel extends JPanel {
         buttonsPanel.add(pauseButton,gbc);
         
         // Creating stop button and adding it to the layout
-        stopButton=new JButton("Stop");
+        stopButton=new JButton(openImage("stop.png"));
         gbc.gridx=2;
         gbc.gridy=0;
         gbc.weightx=0.0f;
@@ -362,7 +369,7 @@ public class ControlsPanel extends JPanel {
         buttonsPanel.add(new JPanel());
         
         // Creating rewind button and adding it to the layout
-        rewindButton=new JButton("<<");
+        rewindButton=new JButton(openImage("rewind.png"));
         gbc.gridx=4;
         gbc.gridy=0;
         gbc.weightx=0.0f;
@@ -370,7 +377,7 @@ public class ControlsPanel extends JPanel {
         buttonsPanel.add(rewindButton,gbc);
         
         // Creating forward button and adding it to the layout
-        fastForwardButton=new JButton(">>");
+        fastForwardButton=new JButton(openImage("ff.png"));
         gbc.gridx=5;
         gbc.gridy=0;
         gbc.weightx=0.0f;
@@ -397,7 +404,7 @@ public class ControlsPanel extends JPanel {
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
-        buttonsPanel.add(new JLabel("Volume"));
+        buttonsPanel.add(new JLabel(openImage("speaker.png")));
         
         // Adding the volume slider to the layout
         volumeSlider=new EnhancedJSlider();
@@ -411,6 +418,7 @@ public class ControlsPanel extends JPanel {
         
         // Adding the volume level label to the layout
         volumeLevelLabel=new JLabel(volume + "%");
+        volumeLevelLabel.setPreferredSize(new Dimension(50,19));
         gbc.gridx=9;
         gbc.gridy=0;
         gbc.weightx=0.0f;
@@ -423,6 +431,10 @@ public class ControlsPanel extends JPanel {
         gbc.weightx=1.0;
         gbc.weighty=0.0;
         add(buttonsPanel,gbc);
+    }
+
+    public static ImageIcon openImage(String path) throws IOException {
+        return new ImageIcon(ImageIO.read(new File(path)));
     }
 
     /**
