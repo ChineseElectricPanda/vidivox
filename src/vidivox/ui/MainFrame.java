@@ -186,7 +186,7 @@ public class MainFrame extends JFrame{
                         e.printStackTrace();
                     } catch (FileFormatException e) {
                         // Informing user that an invalid project was chosen
-                        JOptionPane.showMessageDialog(MainFrame.this,"Invalid or corrupted VIDIVOX project file","Invalid File",JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(MainFrame.this, "Invalid or corrupted VIDIVOX project file", "Invalid File", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -333,16 +333,16 @@ public class MainFrame extends JFrame{
         // Adding the fileMenu to the menu bar
         menuBar.add(fileMenu);
         
-        // Adding another tab "Edit" to allow user to select the option of adding audio
+        // Adding another tab "Audio" to allow user to select the option of adding audio
         // through the use of comments by opening the designated frame for those options
-        JMenu editMenu = new JMenu("Edit");
+        JMenu audioMenu = new JMenu("Audio");
         // Setting shortcut key to "Alt + E"
-        editMenu.setMnemonic(KeyEvent.VK_E);
+        audioMenu.setMnemonic(KeyEvent.VK_E);
         
         // Creating button to allow user to bring up the commentary option frame
         commentaryButton = new JMenuItem("Audio Overlays...");
-        editMenu.add(commentaryButton);
-        menuBar.add(editMenu);
+        audioMenu.add(commentaryButton);
+        menuBar.add(audioMenu);
 
         setJMenuBar(menuBar);
     }
