@@ -11,9 +11,7 @@ import vidivox.ui.timeline.AudioTimelineDisplay;
 import vidivox.ui.timeline.AudioTimelinesPanel;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -240,6 +238,18 @@ public class MainFrame extends JFrame{
             	// Creating an AudioOverlaysDialog that contains the options for adding commentary
             	// to the video
                 AudioOverlaysDialog.getInstance().setVisible(true);
+            }
+        });
+
+        // Stop all audio previews when closing the main window
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                for(AudioOverlay overlay: AudioOverlaysDialog.getOverlays()){
+                    overlay.stopPreviewAudio();
+                    overlay.stopAudioPlayer();
+                }
             }
         });
     }
