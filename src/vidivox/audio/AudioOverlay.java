@@ -49,6 +49,7 @@ public abstract class AudioOverlay {
     private ActionListener playActionListener;			// Listener for the play button in this overlay	
     private ActionListener stopActionListener;			// Listener for the play button in this overlay
     private AudioPlayWorker audioPlayWorker;			// Reference to the AudioPlayWorker object which plays audio
+    private AudioPlayWorker audioPreviewWorker;         // Reference to AudioPlayWorker which plays the preview
     protected float duration;
 
     /**
@@ -543,15 +544,15 @@ public abstract class AudioOverlay {
         if(showPreview){
             long currentPositionMillis = MainFrame.getInstance().getVideoPlayer().getMediaPlayer().getTime();
             double currentPositionSeconds = ((double) currentPositionMillis) / 1000;
-            audioPlayWorker = new AudioPlayWorker(this, currentPositionSeconds);
-            audioPlayWorker.execute();
+            audioPreviewWorker = new AudioPlayWorker(this, currentPositionSeconds);
+            audioPreviewWorker.execute();
         }
     }
 
     public void stopAudioPlayer(){
-        if(audioPlayWorker!=null) {
-            audioPlayWorker.kill();
-            audioPlayWorker=null;
+        if(audioPreviewWorker!=null) {
+            audioPreviewWorker.kill();
+            audioPreviewWorker=null;
         }
     }
 
@@ -559,6 +560,13 @@ public abstract class AudioOverlay {
         stopAudioPlayer();
         if(MainFrame.getInstance().getVideoPlayer().getMediaPlayer().isPlaying()){
             startAudioPlayer();
+        }
+    }
+
+    public void stopPreviewAudio(){
+        //stop the preview audio if any
+        if(audioPlayWorker!=null){
+            audioPlayWorker.kill();
         }
     }
 

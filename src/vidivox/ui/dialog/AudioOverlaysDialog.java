@@ -9,6 +9,8 @@ import vidivox.ui.MainFrame;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,6 +112,16 @@ public class AudioOverlaysDialog extends JDialog {
                 }
             });
         }
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosed(e);
+                // Stop all preview audio when the window is closed
+                for(AudioOverlay overlay: overlays){
+                    overlay.stopPreviewAudio();
+                }
+            }
+        });
     }
 
     /**
