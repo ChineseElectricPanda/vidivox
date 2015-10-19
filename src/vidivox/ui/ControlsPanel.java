@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import vidivox.Main;
 import vidivox.audio.AudioOverlay;
 import vidivox.ui.dialog.AudioOverlaysDialog;
 import vidivox.worker.AudioPlayWorker;
@@ -434,7 +435,7 @@ public class ControlsPanel extends JPanel {
     }
 
     public static ImageIcon openImage(String path) throws IOException {
-        return new ImageIcon(ImageIO.read(new File(path)));
+        return new ImageIcon(Main.class.getResource("/vidivox/ui/image/"+path));
     }
 
     /**
