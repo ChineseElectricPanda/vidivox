@@ -6,6 +6,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import vidivox.exception.FileFormatException;
+import vidivox.ui.EnhancedJSlider;
 import vidivox.ui.MainFrame;
 import vidivox.ui.timeline.AudioTimelineDisplay;
 import vidivox.worker.AudioPlayWorker;
@@ -37,7 +38,7 @@ public abstract class AudioOverlay {
     protected JTextField startTimeMillisecondsField;	// Field where the start milliseconds of the audio is specified
     protected JLabel durationLabel;						// Label which informs user of duration of audio
     protected JButton playButton;						// Button to play the voice without any video
-    protected JSlider volumeSlider;						// Slider to allow user to increase/decrease volume
+    protected EnhancedJSlider volumeSlider;						// Slider to allow user to increase/decrease volume
     protected JLabel volumeLevelLabel;					// Label informing user of current volume level
     protected JCheckBox previewCheckBox;				// Check box allowing user to select audio to play with video
     protected boolean showPreview = true;				// Field to determine whether audio should be played with video
@@ -48,6 +49,7 @@ public abstract class AudioOverlay {
     private ActionListener playActionListener;			// Listener for the play button in this overlay	
     private ActionListener stopActionListener;			// Listener for the play button in this overlay
     private AudioPlayWorker audioPlayWorker;			// Reference to the AudioPlayWorker object which plays audio
+    private AudioPlayWorker audioPreviewWorker;         // Reference to AudioPlayWorker which plays the preview
     protected float duration;
 
     /**
@@ -156,7 +158,7 @@ public abstract class AudioOverlay {
         
         // Creating slider to allow user to increase or decrease volume of commentary audio
         // and adding it to the properties panel
-        volumeSlider = new JSlider();
+        volumeSlider = new EnhancedJSlider();
         volumeSlider.setPreferredSize(new Dimension(100, 25));
         volumeSlider.setMinimum(0);
         volumeSlider.setMaximum(100);
@@ -542,15 +544,15 @@ public abstract class AudioOverlay {
         if(showPreview){
             long currentPositionMillis = MainFrame.getInstance().getVideoPlayer().getMediaPlayer().getTime();
             double currentPositionSeconds = ((double) currentPositionMillis) / 1000;
-            audioPlayWorker = new AudioPlayWorker(this, currentPositionSeconds);
-            audioPlayWorker.execute();
+            audioPreviewWorker = new AudioPlayWorker(this, currentPositionSeconds);
+            audioPreviewWorker.execute();
         }
     }
 
     public void stopAudioPlayer(){
-        if(audioPlayWorker!=null) {
-            audioPlayWorker.kill();
-            audioPlayWorker=null;
+        if(audioPreviewWorker!=null) {
+            audioPreviewWorker.kill();
+            audioPreviewWorker=null;
         }
     }
 
@@ -558,6 +560,13 @@ public abstract class AudioOverlay {
         stopAudioPlayer();
         if(MainFrame.getInstance().getVideoPlayer().getMediaPlayer().isPlaying()){
             startAudioPlayer();
+        }
+    }
+
+    public void stopPreviewAudio(){
+        //stop the preview audio if any
+        if(audioPlayWorker!=null){
+            audioPlayWorker.kill();
         }
     }
 

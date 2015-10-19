@@ -15,9 +15,7 @@ import vidivox.ui.timeline.AudioTimelineDisplay;
 import vidivox.ui.timeline.AudioTimelinesPanel;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -144,14 +142,14 @@ public class MainFrame extends JFrame{
                     // Playing the video
                     videoPlayer.playVideo(videoPath);
 
-                    int totalTime=0;
+                    int totalTime = 0;
                     try {
                         Process ffProbeProcess = new ProcessBuilder("/bin/bash", "-c", "ffprobe -i \"" + videoPath + "\" -show_entries format=duration 2>&1 | grep \"duration=\"").start();
                         BufferedReader reader = new BufferedReader(new InputStreamReader(ffProbeProcess.getInputStream()));
                         ffProbeProcess.waitFor();
                         String durationLine = reader.readLine();
                         if (durationLine != null) {
-                            totalTime = (int) Float.parseFloat(durationLine.split("=")[1])*1000;
+                            totalTime = (int) Float.parseFloat(durationLine.split("=")[1]) * 1000;
                         }
                     } catch (InterruptedException | IOException e1) {
                         e1.printStackTrace();
@@ -174,16 +172,16 @@ public class MainFrame extends JFrame{
                 if (fileChooser.showOpenDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
                     try {
                         // Adding warning messages to inform user whether changes to current project (if any) are to be deleted
-                        String[] options = new String[]{"Yes, Discard changes","No"};
-                        String message="Opening another project will cause usaved changes to be discarded\n" +
+                        String[] options = new String[]{"Yes, Discard changes", "No"};
+                        String message = "Opening another project will cause usaved changes to be discarded\n" +
                                 "Are you sure you want to do this?";
 
                         // Storing result of the user's choice on whether to discard changes and open new project or not
                         int result = JOptionPane.showOptionDialog
-                                (MainFrame.this,message,"Warning",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE,null,options,options[1]);
+                                (MainFrame.this, message, "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 
                         // If the user does want to open a new project
-                        if(result==JOptionPane.YES_OPTION) {
+                        if (result == JOptionPane.YES_OPTION) {
                             // Opening new project and getting the selected file
                             openProject(fileChooser.getSelectedFile());
                         }
@@ -191,7 +189,7 @@ public class MainFrame extends JFrame{
                         e.printStackTrace();
                     } catch (FileFormatException e) {
                         // Informing user that an invalid project was chosen
-                        JOptionPane.showMessageDialog(MainFrame.this,"Invalid or corrupted VIDIVOX project file","Invalid File",JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(MainFrame.this, "Invalid or corrupted VIDIVOX project file", "Invalid File", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -238,12 +236,12 @@ public class MainFrame extends JFrame{
             }
         });
 
-    	// Adding listener to the add commentary button
+        // Adding listener to the add commentary button
         commentaryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-            	// Creating an AudioOverlaysDialog that contains the options for adding commentary
-            	// to the video
+                // Creating an AudioOverlaysDialog that contains the options for adding commentary
+                // to the video
                 AudioOverlaysDialog.getInstance().setVisible(true);
             }
         });
@@ -251,14 +249,25 @@ public class MainFrame extends JFrame{
         asciiOutputButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                String[] args={"--vout=caca"};
+                String[] args = {"--vout=caca"};
 
-                MediaPlayerFactory factory=new MediaPlayerFactory(args);
+                MediaPlayerFactory factory = new MediaPlayerFactory(args);
 
-                EmbeddedMediaPlayer player=factory.newEmbeddedMediaPlayer();
+                EmbeddedMediaPlayer player = factory.newEmbeddedMediaPlayer();
                 player.playMedia(videoPath);
 
                 player.release();
+            }
+        });
+        // Stop all audio previews when closing the main window
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                for (AudioOverlay overlay : AudioOverlaysDialog.getOverlays()) {
+                    overlay.stopPreviewAudio();
+                    overlay.stopAudioPlayer();
+                }
             }
         });
     }
@@ -266,6 +275,7 @@ public class MainFrame extends JFrame{
     /**
      * Sets up the frame layout
      */
+
     private void setupLayout(){
     	   	
     	// Getting the content pane to add components to it
@@ -352,16 +362,16 @@ public class MainFrame extends JFrame{
         // Adding the fileMenu to the menu bar
         menuBar.add(fileMenu);
         
-        // Adding another tab "Edit" to allow user to select the option of adding audio
+        // Adding another tab "Audio" to allow user to select the option of adding audio
         // through the use of comments by opening the designated frame for those options
-        JMenu editMenu = new JMenu("Edit");
+        JMenu audioMenu = new JMenu("Audio");
         // Setting shortcut key to "Alt + E"
-        editMenu.setMnemonic(KeyEvent.VK_E);
+        audioMenu.setMnemonic(KeyEvent.VK_E);
         
         // Creating button to allow user to bring up the commentary option frame
         commentaryButton = new JMenuItem("Audio Overlays...");
-        editMenu.add(commentaryButton);
-        menuBar.add(editMenu);
+        audioMenu.add(commentaryButton);
+        menuBar.add(audioMenu);
 
         JMenu outputMenu=new JMenu("Output");
 
