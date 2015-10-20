@@ -15,6 +15,8 @@ import java.util.List;
  */
 
 public class AudioTimelinesPanel extends JPanel {
+	private static AudioTimelinesPanel instance;
+	
     private JPanel contentPane=new JPanel();
     private List<AudioTimelineDisplay> displays=new ArrayList<>();
 
@@ -22,10 +24,17 @@ public class AudioTimelinesPanel extends JPanel {
     private static double playPosition=0;
     private static double videoLength=0;
 
+    public static AudioTimelinesPanel getInstance(){
+    	if(instance==null){
+    		instance=new AudioTimelinesPanel();
+    	}
+    	return instance;
+    }
+    
     /**
      * Creates a panel to hold audio track timelines
      */
-    public AudioTimelinesPanel(){
+    private AudioTimelinesPanel(){
         contentPane.setLayout(new GridBagLayout());
         setLayout(new GridBagLayout());
 
@@ -116,6 +125,7 @@ public class AudioTimelinesPanel extends JPanel {
         revalidate();
         for(AudioTimelineDisplay display:displays){
             display.revalidate();
+            display.repaint();
         }
     }
 }

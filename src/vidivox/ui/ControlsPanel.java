@@ -7,6 +7,7 @@ import javax.swing.event.ChangeListener;
 import vidivox.Main;
 import vidivox.audio.AudioOverlay;
 import vidivox.ui.dialog.AudioOverlaysDialog;
+import vidivox.ui.timeline.AudioTimelinesPanel;
 import vidivox.video.EmbeddedVideoPlayer;
 import vidivox.video.VideoPlayerComponent;
 import vidivox.worker.AudioPlayWorker;
@@ -95,7 +96,9 @@ public class ControlsPanel extends JPanel {
 
                     // Setting the position of the video to that of the seek slider
                     videoPlayer.getMediaPlayer().setTime(seekSlider.getValue());
-
+                    
+                    // Update the timeline display
+                    AudioTimelinesPanel.getInstance().updatePosition((double)currentTime/1000);
                 }
             }
         });
