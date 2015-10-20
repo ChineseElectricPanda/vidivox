@@ -2,6 +2,15 @@
 <component inheritJdk="true">
 	<exclude-output/>
 	<contentEntry url="file://$MODULE_DIR$"/>
+	<lib name="vlcj-3.8.0.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/vlcj-3.8.0.jar!/"/>
+	</lib>
+	<lib name="slf4j-api-1.7.12.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/slf4j-api-1.7.12.jar!/"/>
+	</lib>
+	<lib name="slf4j-simple-1.7.12.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/slf4j-simple-1.7.12.jar!/"/>
+	</lib>
 	<levels>
 		<level name="vlcj-3.8.0" value="project"/>
 	</levels>

@@ -17,6 +17,7 @@ import vidivox.ui.timeline.AudioTimelinesPanel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -255,8 +256,6 @@ public class MainFrame extends JFrame{
 
                 EmbeddedMediaPlayer player = factory.newEmbeddedMediaPlayer();
                 player.playMedia(videoPath);
-
-                player.release();
             }
         });
         // Stop all audio previews when closing the main window
@@ -286,7 +285,7 @@ public class MainFrame extends JFrame{
         GridBagConstraints gbc = new GridBagConstraints();
 
         // Setting up the video player frame by adding a video player component to it
-        videoPlayer = new VideoPlayerComponent();
+        videoPlayer=new VideoPlayerComponent();
     	// Setting up size of the player
         videoPlayer.setPreferredSize(new Dimension(600, 480));
         // Formatting the grid bag layout for the video player and adding it to the top of the frame
