@@ -86,7 +86,7 @@ public abstract class AudioOverlay {
         // and formatting and adding it to the properties panel
         startTimeMinutesField = new JTextField();
         startTimeMinutesField.setHorizontalAlignment(JTextField.RIGHT);
-        startTimeMinutesField.setPreferredSize(new Dimension(50,19));
+        startTimeMinutesField.setPreferredSize(new Dimension(50,24));
         gbc.gridx++;
         propertiesPanel.add(startTimeMinutesField,gbc);
         
@@ -98,7 +98,7 @@ public abstract class AudioOverlay {
         // and formatting and adding it to the properties panel 
         startTimeSecondsField = new JTextField();
         startTimeSecondsField.setHorizontalAlignment(JTextField.RIGHT);
-        startTimeSecondsField.setPreferredSize(new Dimension(25,19));
+        startTimeSecondsField.setPreferredSize(new Dimension(30,24));
         gbc.gridx++;
         propertiesPanel.add(startTimeSecondsField,gbc);
         
@@ -110,7 +110,7 @@ public abstract class AudioOverlay {
         // and formatting and adding it to the properties panel 
         startTimeMillisecondsField = new JTextField();
         startTimeMillisecondsField.setHorizontalAlignment(JTextField.RIGHT);
-        startTimeMillisecondsField.setPreferredSize(new Dimension(35,19));
+        startTimeMillisecondsField.setPreferredSize(new Dimension(40,24));
         gbc.gridx++;
         propertiesPanel.add(startTimeMillisecondsField,gbc);
         gbc.insets = new Insets(5, 5, 5, 5);

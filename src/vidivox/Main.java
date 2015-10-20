@@ -1,17 +1,7 @@
 package vidivox;
-import java.awt.Canvas;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
-import com.sun.jna.Native;
-import com.sun.jna.NativeLibrary;
-import uk.co.caprica.vlcj.binding.LibVlc;
-import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
-import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import vidivox.ui.MainFrame;
 
 /**
@@ -29,6 +19,15 @@ public class Main {
 	 * @param args
 	 */
     public static void main(String[] args){
+    	// Set the look and feel to the Linux theme
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            // Set the sliders to not display the percent values
+            UIManager.put("Slider.paintValue", false);
+        }
+        catch(Exception e) {
+        	System.err.println("Failed to set look and feel");
+        }
  
     	// Creating the main frame which contains functionality for opening a video, playing
     	// the video etc.
