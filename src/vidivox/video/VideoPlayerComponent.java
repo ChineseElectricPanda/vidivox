@@ -39,7 +39,7 @@ public class VideoPlayerComponent extends JPanel implements Playable{
 	 * @param player the active player
 	 */
 	public void setVideoPlayer(Playable player){
-		mediaPlayer.getMediaPlayer().pause();
+		mediaPlayer.getMediaPlayer().stop();
 		mediaPlayer.dispose();
 		
 		mediaPlayer=player;

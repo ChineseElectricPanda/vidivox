@@ -25,6 +25,5 @@ public class EmbeddedVideoPlayer extends EmbeddedMediaPlayerComponent implements
 	
 	@Override
 	public void dispose(){
-		getMediaPlayer().release();
 	}
 }
