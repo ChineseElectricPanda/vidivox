@@ -13,6 +13,7 @@ import vidivox.ui.dialog.AudioOverlaysDialog;
 import vidivox.ui.dialog.ProgressDialog;
 import vidivox.ui.timeline.AudioTimelineDisplay;
 import vidivox.ui.timeline.AudioTimelinesPanel;
+import vidivox.video.DirectVideoPlayer;
 import vidivox.video.EmbeddedVideoPlayer;
 import vidivox.video.VideoPlayerComponent;
 
@@ -58,6 +59,8 @@ public class MainFrame extends JFrame{
     private JMenuItem exportButton;				// Menu bar option for exporting the project containing video + commentary
     private JMenuItem quitButton;				// Menu bar option for closing the application
     private JMenuItem commentaryButton;			// Menu bar option for adding commentary
+    private JMenuItem standardOutputButton;
+    private JMenuItem canvasOutputButton;
     private JMenuItem asciiOutputButton;
 
     /**
@@ -249,6 +252,26 @@ public class MainFrame extends JFrame{
             }
         });
 
+        standardOutputButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                videoPlayer.setVideoPlayer(videoPlayer.getEmbeddedPlayer());
+            }
+        });
+
+        canvasOutputButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    videoPlayer.setVideoPlayer(new DirectVideoPlayer(videoPlayer.getWidth(),videoPlayer.getHeight()));
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         asciiOutputButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -375,6 +398,12 @@ public class MainFrame extends JFrame{
         menuBar.add(audioMenu);
 
         JMenu outputMenu=new JMenu("Output");
+
+        standardOutputButton=new JMenuItem("Standard");
+        outputMenu.add(standardOutputButton);
+
+        canvasOutputButton=new JMenuItem("Fancy");
+        outputMenu.add(canvasOutputButton);
 
         asciiOutputButton=new JMenuItem("ASCII");
         outputMenu.add(asciiOutputButton);

@@ -1,27 +1,22 @@
 package vidivox.video;
-import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.direct.BufferFormat;
-import uk.co.caprica.vlcj.player.direct.BufferFormatCallback;
 import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer;
 import uk.co.caprica.vlcj.player.direct.RenderCallbackAdapter;
 import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-import uk.co.caprica.vlcj.player.embedded.videosurface.CanvasVideoSurface;
-import uk.co.caprica.vlcj.player.embedded.videosurface.VideoSurface;
-import uk.co.caprica.vlcj.player.embedded.videosurface.VideoSurfaceAdapter;
+import vidivox.shape.Ellipse;
+import vidivox.shape.Rectangle;
 
-import javax.print.attribute.standard.Media;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.ArrayList;
+import vidivox.shape.Shape;
 
 /**
  * This creates a JPanel containing a DirectVideoPlayer which can be drawn on as a canvas
@@ -31,10 +26,12 @@ import java.lang.reflect.InvocationTargetException;
  *
  */
 public class DirectVideoPlayer extends JPanel implements Player {
-	private int width=500, height=500;
+	private int width, height;
 	private DirectMediaPlayer mediaPlayer;
 	private BufferedImage image;
 	private MediaPlayerFactory factory;
+
+	private List<Shape> shapes =new ArrayList<>();
 	/**
 	 * Constructor called whenever video player is instantiated
 	 */
@@ -42,12 +39,24 @@ public class DirectVideoPlayer extends JPanel implements Player {
 		this.width=width;
 		this.height=height;
 		
-		image=GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(width, height);
+		image= GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleImage(width, height);
 		image.setAccelerationPriority(1.0f);
 
 		factory=new MediaPlayerFactory();
 
 		mediaPlayer=factory.newDirectMediaPlayer(new BufferFormatCallback(), new RenderCallback());
+
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				super.mouseClicked(e);
+				if(e.getButton()==MouseEvent.BUTTON1) {
+					shapes.add(new Rectangle(e.getX(), e.getY()));
+				}else if(e.getButton()==MouseEvent.BUTTON3){
+					shapes.add(new Ellipse(e.getX(), e.getY()));
+				}
+			}
+		});
 	}
 
 	// Method to play video
@@ -62,16 +71,15 @@ public class DirectVideoPlayer extends JPanel implements Player {
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D)g;
+		//draw the rendered image
 		g2.drawImage(image, null, 0, 0);
-		// You could draw on top of the image here...
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-		g2.setColor(Color.red);
-		g2.setComposite(AlphaComposite.SrcOver.derive(0.3f));
-		g2.fillRoundRect(100, 100, 100, 80, 32, 32);
-		g2.setComposite(AlphaComposite.Xor);
-		g2.setColor(Color.white);
-		g2.drawString("vlcj direct media player", 130, 150);
+
+		g2.setXORMode(new Color(100,100,100));
+		for(Shape shape:shapes){
+			shape.move(width,height);
+			shape.draw(g2);
+		}
+
 	}
 
 	private class RenderCallback extends RenderCallbackAdapter{
@@ -90,7 +98,7 @@ public class DirectVideoPlayer extends JPanel implements Player {
 
 		@Override
 		public BufferFormat getBufferFormat(int srcWidth, int srcHeight) {
-			return new RV32BufferFormat(500,500);
+			return new RV32BufferFormat(width,height);
 		}
 	}
 

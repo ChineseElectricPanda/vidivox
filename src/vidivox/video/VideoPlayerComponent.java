@@ -12,6 +12,7 @@ public class VideoPlayerComponent extends JPanel implements Player{
 	private Player mediaPlayer;
 	private EmbeddedVideoPlayer embeddedPlayer;
 	private GridBagConstraints gbc;
+	private String mediaPath;
 	/**
 	 * Instantiates a container which holds a video player
 	 * @param embeddedPlayer the player embedded in the MainFrame
@@ -24,7 +25,7 @@ public class VideoPlayerComponent extends JPanel implements Player{
 		gbc.fill=GridBagConstraints.BOTH;
 		gbc.weightx=1;
 		gbc.weighty=1;
-		add(embeddedPlayer,gbc);
+		add(embeddedPlayer, gbc);
 	}
 	
 	@Override
@@ -37,11 +38,25 @@ public class VideoPlayerComponent extends JPanel implements Player{
 	 * Set the video player which is currently active and controlled by the controls
 	 * @param player the active player
 	 */
-	public void setVideoPlayer(Player player,boolean addToFrame){
+	public void setVideoPlayer(Player player){
 		mediaPlayer.getMediaPlayer().pause();
 		mediaPlayer.dispose();
 		
 		mediaPlayer=player;
+
+		if(player instanceof EmbeddedVideoPlayer){
+			removeAll();
+			add((EmbeddedVideoPlayer)player,gbc);
+		}
+
+		if(player instanceof  DirectVideoPlayer){
+			removeAll();
+			add((DirectVideoPlayer)player,gbc);
+		}
+
+		if(mediaPath!=null) {
+			mediaPlayer.playVideo(mediaPath);
+		}
 	}
 	
 	/**
@@ -55,6 +70,7 @@ public class VideoPlayerComponent extends JPanel implements Player{
 	@Override
 	public void playVideo(String path) {
 		mediaPlayer.playVideo(path);
+		mediaPath=path;
 	}
 	@Override
 	public MediaPlayer getMediaPlayer() {
