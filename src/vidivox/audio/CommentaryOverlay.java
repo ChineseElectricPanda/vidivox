@@ -20,7 +20,16 @@ import java.io.IOException;
  * @author Ammar Bagasrawala
  */
 public class CommentaryOverlay extends AudioOverlay {
-
+	private enum Voice{
+		Male,
+		Female
+	}
+	
+	private enum Emotion{
+		Neutral,
+		Happy,
+		Sad
+	}
 	/**
 	 * Fields initialized to be used by methods in this class and other packages
 	 */
@@ -149,8 +158,27 @@ public class CommentaryOverlay extends AudioOverlay {
         voiceOptionsPanel.add(femaleVoiceButton,gbc);
         voiceButtonGroup.add(femaleVoiceButton);
         
+        JPanel spacer=new JPanel();
+        spacer.setPreferredSize(new Dimension(50,1));
+        gbc.gridx++;
+        voiceOptionsPanel.add(spacer,gbc);
+        
         ButtonGroup emotionButtonGroup=new ButtonGroup();
         
+        neutralVoiceButton=new JToggleButton("Neutral",true);
+        gbc.gridx++;
+        voiceOptionsPanel.add(neutralVoiceButton,gbc);
+        emotionButtonGroup.add(neutralVoiceButton);
+        
+        happyVoiceButton=new JToggleButton("Happy",false);
+        gbc.gridx++;
+        voiceOptionsPanel.add(happyVoiceButton,gbc);
+        emotionButtonGroup.add(happyVoiceButton);
+        
+        sadVoiceButton=new JToggleButton("Sad",false);
+        gbc.gridx++;
+        voiceOptionsPanel.add(sadVoiceButton,gbc);
+        emotionButtonGroup.add(sadVoiceButton);
         
         
         gbc.gridx=0;
@@ -179,43 +207,7 @@ public class CommentaryOverlay extends AudioOverlay {
             // Method called whenever change occurs
             @Override
             public void changedUpdate(DocumentEvent documentEvent) {
-            	//Storing text
-            	text = textField.getText();
-                // Checking if the synthesis worker thread needs to be killed since
-                // text is being updated
-                if (synthesisWorker != null && !synthesisWorker.isDone()) {
-                    synthesisWorker.kill();
-                }
-
-                // Creating new synthesis worker to convert the text file into a wav file
-                synthesisWorker = new SpeechSynthesisWorker(text, "commentary" + position) {
-                    @Override
-                    protected void done() {
-
-                        super.done();
-                        // Allowing the play button to be clicked
-                        playButton.setEnabled(true);
-                        // Getting the file path of the wav file
-                        CommentaryOverlay.this.filePath = synthesisWorker.filePath;
-
-                        // Getting the duration of the audio and storing it
-                        try {
-                            duration = getDuration(filePath);
-                            int minutes = (int)(duration / 60);
-                            int seconds = (int)(duration % 60);
-                            int milliseconds = (int)((duration - seconds - minutes*60) * 1000);
-                            String durationText=String.format("%02d", minutes)+":"+String.format("%02d", seconds)+":"+String.format("%03d", milliseconds);
-                            // Setting the text in the label to the duration value
-                            durationLabel.setText(durationText);
-                        } catch (IOException | InterruptedException e) {
-                            // Error handling if there was a problem while getting duration
-                            durationLabel.setText("???");
-                        }
-                        // Update the display on the timeline
-                        displayPanel.revalidate();
-                    }
-                };
-                synthesisWorker.execute(); // Executing the process
+            	synthesizeText();
             }
         });
         
@@ -288,7 +280,47 @@ public class CommentaryOverlay extends AudioOverlay {
         return s;
     }
 
-    /**
+    private void synthesizeText() {
+		//Storing text
+		text = textField.getText();
+		// Checking if the synthesis worker thread needs to be killed since
+		// text is being updated
+		if (synthesisWorker != null && !synthesisWorker.isDone()) {
+		    synthesisWorker.kill();
+		}
+
+		// Creating new synthesis worker to convert the text file into a wav file
+		synthesisWorker = new SpeechSynthesisWorker(text, "commentary" + position) {
+		    @Override
+		    protected void done() {
+
+		        super.done();
+		        // Allowing the play button to be clicked is there is text
+		        playButton.setEnabled(text.trim().length()>0);
+		        // Getting the file path of the wav file
+		        CommentaryOverlay.this.filePath = synthesisWorker.filePath;
+
+		        // Getting the duration of the audio and storing it
+		        try {
+		            duration = getDuration(filePath);
+		            int minutes = (int)(duration / 60);
+		            int seconds = (int)(duration % 60);
+		            int milliseconds = (int)((duration - seconds - minutes*60) * 1000);
+		            String durationText=String.format("%02d", minutes)+":"+String.format("%02d", seconds)+":"+String.format("%03d", milliseconds);
+		            // Setting the text in the label to the duration value
+		            durationLabel.setText(durationText);
+		        } catch (IOException | InterruptedException e) {
+		            // Error handling if there was a problem while getting duration
+		            durationLabel.setText("???");
+		        }
+		        // Update the display on the timeline
+		        displayPanel.revalidate();
+		    }
+		};
+		synthesisWorker.execute(); // Executing the process
+	}
+
+	/**
      * This method takes in a string 's' and splits it to get the fields
      * position, text, start time and volume and creates a class of type
      * CommentaryOverlay with those fields
