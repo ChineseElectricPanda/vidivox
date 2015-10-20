@@ -8,7 +8,7 @@ import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
  * @author Ammar Bagasrawala
  *
  */
-public class EmbeddedVideoPlayer extends EmbeddedMediaPlayerComponent implements Player{
+public class EmbeddedVideoPlayer extends EmbeddedMediaPlayerComponent implements Playable{
 
 	/**
 	 * Constructor called whenever video player is instantiated

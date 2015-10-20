@@ -8,8 +8,8 @@ import javax.swing.JPanel;
 
 import uk.co.caprica.vlcj.player.MediaPlayer;
 
-public class VideoPlayerComponent extends JPanel implements Player{
-	private Player mediaPlayer;
+public class VideoPlayerComponent extends JPanel implements Playable{
+	private Playable mediaPlayer;
 	private EmbeddedVideoPlayer embeddedPlayer;
 	private GridBagConstraints gbc;
 	private String mediaPath;
@@ -38,7 +38,7 @@ public class VideoPlayerComponent extends JPanel implements Player{
 	 * Set the video player which is currently active and controlled by the controls
 	 * @param player the active player
 	 */
-	public void setVideoPlayer(Player player){
+	public void setVideoPlayer(Playable player){
 		mediaPlayer.getMediaPlayer().pause();
 		mediaPlayer.dispose();
 		

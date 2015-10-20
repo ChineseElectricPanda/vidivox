@@ -173,7 +173,7 @@ public abstract class AudioOverlay {
         gbc.gridx++;
         propertiesPanel.add(volumeLevelLabel, gbc);
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.gridwidth=10;
         gbc.weightx = 1.0f;
         gbc.fill = GridBagConstraints.HORIZONTAL;

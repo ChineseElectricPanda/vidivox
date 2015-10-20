@@ -25,7 +25,7 @@ import vidivox.shape.Shape;
  * @author Ammar Bagasrawala
  *
  */
-public class DirectVideoPlayer extends JPanel implements Player {
+public class DirectVideoPlayer extends JPanel implements Playable {
 	private int width, height;
 	private DirectMediaPlayer mediaPlayer;
 	private BufferedImage image;

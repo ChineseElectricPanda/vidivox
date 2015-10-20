@@ -31,6 +31,13 @@ public class CommentaryOverlay extends AudioOverlay {
     private SpeechSynthesisWorker synthesisWorker;		// Reference to the class that creates the wav file
     private JTextFieldWithCharacterLimit textField;						// Text field where user enters comment
     private JButton saveToFileButton;					// Button used to save commentary as mp3
+    
+    private JToggleButton maleVoiceButton;
+    private JToggleButton femaleVoiceButton;
+    
+    private JToggleButton neutralVoiceButton;
+    private JToggleButton happyVoiceButton;
+    private JToggleButton sadVoiceButton;
 
     /**
      * Constructor which takes in only the position of the audio and initializes other fields
@@ -122,6 +129,36 @@ public class CommentaryOverlay extends AudioOverlay {
         saveToFileButton=new JButton("Save to mp3");
         gbc.gridx++;
         contentPane.add(saveToFileButton);
+        
+        JPanel voiceOptionsPanel=new JPanel();
+        voiceOptionsPanel.setLayout(new GridBagLayout());
+        
+        ButtonGroup voiceButtonGroup=new ButtonGroup();
+        gbc.insets=new Insets(0, 0, 0, 0);
+        
+        maleVoiceButton=new JToggleButton("Male",true);
+        gbc.gridx=0;
+        gbc.gridy=0;
+        gbc.fill=GridBagConstraints.NONE;
+        gbc.anchor=GridBagConstraints.WEST;
+        voiceOptionsPanel.add(maleVoiceButton,gbc);
+        voiceButtonGroup.add(maleVoiceButton);
+        
+        femaleVoiceButton=new JToggleButton("Female",false);
+        gbc.gridx++;
+        voiceOptionsPanel.add(femaleVoiceButton,gbc);
+        voiceButtonGroup.add(femaleVoiceButton);
+        
+        ButtonGroup emotionButtonGroup=new ButtonGroup();
+        
+        
+        
+        gbc.gridx=0;
+        gbc.gridy=1;
+        gbc.gridwidth=3;
+        gbc.insets=new Insets(5, 5, 5, 5);
+        contentPane.add(voiceOptionsPanel,gbc);
+        
 
         // Adding document listener to the text field to determine when the user has
         // typed something in and getting the text from the text field to store

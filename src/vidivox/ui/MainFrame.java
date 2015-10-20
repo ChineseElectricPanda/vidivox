@@ -13,6 +13,7 @@ import vidivox.ui.dialog.AudioOverlaysDialog;
 import vidivox.ui.dialog.ProgressDialog;
 import vidivox.ui.timeline.AudioTimelineDisplay;
 import vidivox.ui.timeline.AudioTimelinesPanel;
+import vidivox.video.AsciiVideoPlayer;
 import vidivox.video.DirectVideoPlayer;
 import vidivox.video.EmbeddedVideoPlayer;
 import vidivox.video.VideoPlayerComponent;
@@ -275,12 +276,7 @@ public class MainFrame extends JFrame{
         asciiOutputButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                String[] args = {"--vout=caca"};
-
-                MediaPlayerFactory factory = new MediaPlayerFactory(args);
-
-                EmbeddedMediaPlayer player = factory.newEmbeddedMediaPlayer();
-                player.playMedia(videoPath);
+                videoPlayer.setVideoPlayer(new AsciiVideoPlayer());
             }
         });
         // Stop all audio previews when closing the main window
