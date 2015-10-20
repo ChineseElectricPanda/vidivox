@@ -13,6 +13,8 @@ import vidivox.ui.dialog.AudioOverlaysDialog;
 import vidivox.ui.dialog.ProgressDialog;
 import vidivox.ui.timeline.AudioTimelineDisplay;
 import vidivox.ui.timeline.AudioTimelinesPanel;
+import vidivox.video.EmbeddedVideoPlayer;
+import vidivox.video.VideoPlayerComponent;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -285,7 +287,7 @@ public class MainFrame extends JFrame{
         GridBagConstraints gbc = new GridBagConstraints();
 
         // Setting up the video player frame by adding a video player component to it
-        videoPlayer=new VideoPlayerComponent();
+        videoPlayer=new VideoPlayerComponent(new EmbeddedVideoPlayer());
     	// Setting up size of the player
         videoPlayer.setPreferredSize(new Dimension(600, 480));
         // Formatting the grid bag layout for the video player and adding it to the top of the frame

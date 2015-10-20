@@ -7,6 +7,8 @@ import javax.swing.event.ChangeListener;
 import vidivox.Main;
 import vidivox.audio.AudioOverlay;
 import vidivox.ui.dialog.AudioOverlaysDialog;
+import vidivox.video.EmbeddedVideoPlayer;
+import vidivox.video.VideoPlayerComponent;
 import vidivox.worker.AudioPlayWorker;
 import vidivox.worker.SkipVideoWorker;
 

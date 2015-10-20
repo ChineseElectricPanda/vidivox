@@ -1,4 +1,4 @@
-package vidivox.ui;
+package vidivox.video;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 
 /**
@@ -8,12 +8,12 @@ import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
  * @author Ammar Bagasrawala
  *
  */
-public class VideoPlayerComponent extends EmbeddedMediaPlayerComponent {
+public class EmbeddedVideoPlayer extends EmbeddedMediaPlayerComponent implements Player{
 
 	/**
 	 * Constructor called whenever video player is instantiated
 	 */
-	public VideoPlayerComponent() {
+	public EmbeddedVideoPlayer() {
 		// Setting the volume to the maximum possible
 		getMediaPlayer().setVolume(100);
 	}
@@ -21,5 +21,10 @@ public class VideoPlayerComponent extends EmbeddedMediaPlayerComponent {
 	// Method to play video
 	public void playVideo(String path) {
 		getMediaPlayer().playMedia(path);
+	}
+	
+	@Override
+	public void dispose(){
+		getMediaPlayer().release();
 	}
 }

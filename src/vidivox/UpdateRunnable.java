@@ -2,8 +2,9 @@ package vidivox;
 import javax.swing.SwingUtilities;
 
 import vidivox.ui.ControlsPanel;
-import vidivox.ui.VideoPlayerComponent;
 import vidivox.ui.timeline.AudioTimelinesPanel;
+import vidivox.video.EmbeddedVideoPlayer;
+import vidivox.video.VideoPlayerComponent;
 
 /**
  * This class is instantiated every 500 milliseconds and is used to set the time label and the slider

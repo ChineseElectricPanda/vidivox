@@ -4,7 +4,8 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import vidivox.ui.ControlsPanel;
-import vidivox.ui.VideoPlayerComponent;
+import vidivox.video.EmbeddedVideoPlayer;
+import vidivox.video.Player;
 
 /**
  * This class extends swing worker and inherits its methods to perform a time consuming
@@ -21,7 +22,7 @@ public class SkipVideoWorker extends SwingWorker<Void, Integer> {
 	 * Declaring fields to be used within class and project
 	 */
 	private ControlsPanel controlsPanel;				// Reference to controls panel class
-	private VideoPlayerComponent videoPlayer = null;	// Reference to the video player
+	private Player videoPlayer = null;	// Reference to the video player
 	private boolean isSkipping = false;					// Boolean to allow skipping
 	private int skipValue = 0;							// Value to skip by
 	private int time;									// Current time of the video
@@ -32,7 +33,7 @@ public class SkipVideoWorker extends SwingWorker<Void, Integer> {
 	 * @param videoPlayer -  video player reference
 	 * @param controlsPanel - controls panel reference
 	 */
-	public SkipVideoWorker (VideoPlayerComponent videoPlayer, ControlsPanel controlsPanel) {
+	public SkipVideoWorker (Player videoPlayer, ControlsPanel controlsPanel) {
 		this.videoPlayer = videoPlayer;
 		this.controlsPanel = controlsPanel;
 	}

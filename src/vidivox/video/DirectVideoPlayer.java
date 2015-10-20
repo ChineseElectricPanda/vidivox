@@ -1,4 +1,4 @@
-package vidivox.ui;
+package vidivox.video;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
@@ -30,7 +30,7 @@ import java.lang.reflect.InvocationTargetException;
  * @author Ammar Bagasrawala
  *
  */
-public class DirectVideoPlayer extends JPanel{// implements Playable {
+public class DirectVideoPlayer extends JPanel implements Player {
 	private int width=500, height=500;
 	private DirectMediaPlayer mediaPlayer;
 	private BufferedImage image;
@@ -48,7 +48,6 @@ public class DirectVideoPlayer extends JPanel{// implements Playable {
 		factory=new MediaPlayerFactory();
 
 		mediaPlayer=factory.newDirectMediaPlayer(new BufferFormatCallback(), new RenderCallback());
-		mediaPlayer.playMedia("/afs/ec.auckland.ac.nz/users/h/w/hwan462/unixhome/video.mp4");
 	}
 
 	// Method to play video
@@ -93,5 +92,11 @@ public class DirectVideoPlayer extends JPanel{// implements Playable {
 		public BufferFormat getBufferFormat(int srcWidth, int srcHeight) {
 			return new RV32BufferFormat(500,500);
 		}
+	}
+
+	@Override
+	public void dispose() {
+		factory.release();
+		mediaPlayer.release();
 	}
 }
