@@ -60,9 +60,9 @@ public class MainFrame extends JFrame{
     private JMenuItem exportButton;				// Menu bar option for exporting the project containing video + commentary
     private JMenuItem quitButton;				// Menu bar option for closing the application
     private JMenuItem commentaryButton;			// Menu bar option for adding commentary
-    private JMenuItem standardOutputButton;
-    private JMenuItem canvasOutputButton;
-    private JMenuItem asciiOutputButton;
+    private JMenuItem standardOutputButton;		// Menu bar option for setting vout to standard
+    private JMenuItem canvasOutputButton;		// Menu bar option for setting vout to direct (canvas)
+    private JMenuItem asciiOutputButton;		// Menu bar option for setting vout to ASCII (--vout="caca")
 
     /**
      * Gets the singleton instance of this class
@@ -149,6 +149,7 @@ public class MainFrame extends JFrame{
                     // Playing the video
                     videoPlayer.playVideo(videoPath);
 
+                    // Get the duration of the video
                     int totalTime = 0;
                     try {
                         Process ffProbeProcess = new ProcessBuilder("/bin/bash", "-c", "ffprobe -i \"" + videoPath + "\" -show_entries format=duration 2>&1 | grep \"duration=\"").start();
@@ -164,6 +165,7 @@ public class MainFrame extends JFrame{
                     }
                     getControlsPanel().setTotalTime(totalTime);
                     audioTimelinesPanel.setVideoLength(((double) totalTime) / 1000);
+                    controlsPanel.setControlsEnabled(true);
                 }
             }
         });
@@ -484,6 +486,8 @@ public class MainFrame extends JFrame{
         // play immediately after opening the project
         if(videoPath!=null){
             videoPlayer.playVideo(videoPath);
+            // Enable the controls after opening the video
+            controlsPanel.setControlsEnabled(true);
         }
         
         // Setting the commentary overlays in the class AudioOverlaysDialog which handles them

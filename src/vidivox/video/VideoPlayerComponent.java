@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 
 import uk.co.caprica.vlcj.player.MediaPlayer;
+import vidivox.ui.ControlsPanel;
 
 public class VideoPlayerComponent extends JPanel implements Playable{
 	private Playable mediaPlayer;
@@ -44,6 +45,7 @@ public class VideoPlayerComponent extends JPanel implements Playable{
 		
 		mediaPlayer=player;
 
+		// If the video player is embeddable as a JComponent, add it to the frame
 		if(player instanceof EmbeddedVideoPlayer){
 			removeAll();
 			add((EmbeddedVideoPlayer)player,gbc);
@@ -54,6 +56,7 @@ public class VideoPlayerComponent extends JPanel implements Playable{
 			add((DirectVideoPlayer)player,gbc);
 		}
 
+		// Play the video if one has been selected
 		if(mediaPath!=null) {
 			mediaPlayer.playVideo(mediaPath);
 		}

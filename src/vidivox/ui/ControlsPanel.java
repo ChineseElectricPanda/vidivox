@@ -40,13 +40,14 @@ public class ControlsPanel extends JPanel {
     private SkipVideoWorker skipVid = null;			// Reference to instance of a worker class to forward/rewind
     private JLabel currentTimeLabel;				// Label showing the time the video is currently at
     private JLabel totalTimeLabel;					// Label showing the total time of the video
-    private EnhancedJSlider seekSlider;						// Slider showing progress of video and allowing user to set
+    private EnhancedJSlider seekSlider;				// Slider showing progress of video and allowing user to set
     private JButton playButton;						// Play button the play the video
     private JButton pauseButton;					// Button to pause the video
     private JButton stopButton;						// Button to stop the video
     private JButton rewindButton;					// Button to rewind the video
     private JButton fastForwardButton;				// Button to fast forward the video
     private JButton audioOverlaysButton;            // Button to open the audio overlays dialog
+    private JLabel volumeIconLabel;					// Label for the volume icon
     private EnhancedJSlider volumeSlider;			// Slider used to control volume
     private JLabel volumeLevelLabel;				// Label showing user current volume level
     private int volume = 100;						// Integer representing volume level
@@ -406,30 +407,31 @@ public class ControlsPanel extends JPanel {
         buttonsPanel.add(new JPanel(),gbc);
         
         // Adding volume label to the layout
-        gbc.gridx=8;
+        volumeIconLabel=new JLabel(openImage("speaker.png"));
+        gbc.gridx++;
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
-        buttonsPanel.add(new JLabel(openImage("speaker.png")));
+        buttonsPanel.add(volumeIconLabel,gbc);
         
         // Adding the volume slider to the layout
         volumeSlider=new EnhancedJSlider();
         volumeSlider.setValue(100);
         volumeSlider.setPreferredSize(new Dimension(100,25));
-        gbc.gridx=8;
+        gbc.gridx++;
         gbc.gridy=0;
-        gbc.weightx=1.0f;
+        gbc.weightx=0.0f;
         gbc.weighty=1.0f;
-        buttonsPanel.add(volumeSlider);
+        buttonsPanel.add(volumeSlider,gbc);
         
         // Adding the volume level label to the layout
         volumeLevelLabel=new JLabel(volume + "%");
         volumeLevelLabel.setPreferredSize(new Dimension(50,19));
-        gbc.gridx=9;
+        gbc.gridx++;
         gbc.gridy=0;
         gbc.weightx=0.0f;
         gbc.weighty=1.0f;
-        buttonsPanel.add(volumeLevelLabel);
+        buttonsPanel.add(volumeLevelLabel,gbc);
         
         // Adding the button panels to the layout
         gbc.gridx=0;
@@ -437,6 +439,9 @@ public class ControlsPanel extends JPanel {
         gbc.weightx=1.0;
         gbc.weighty=0.0;
         add(buttonsPanel,gbc);
+        
+        // Disable the controls until a video is opened
+        setControlsEnabled(false);
     }
 
     public static ImageIcon openImage(String path) throws IOException {
@@ -550,5 +555,24 @@ public class ControlsPanel extends JPanel {
         if(videoPlayer.getMediaPlayer().isPlaying()){
         	startAudioPlayers();
         }
+    }
+    
+    /**
+     * Enables or disables the control components
+     * @param flag enable or disable components
+     */
+    public void setControlsEnabled(boolean flag){
+    	currentTimeLabel.setEnabled(flag);
+    	totalTimeLabel.setEnabled(flag);
+    	playButton.setEnabled(flag);
+    	pauseButton.setEnabled(flag);
+    	stopButton.setEnabled(flag);
+    	rewindButton.setEnabled(flag);
+    	fastForwardButton.setEnabled(flag);
+    	audioOverlaysButton.setEnabled(flag);
+    	volumeIconLabel.setEnabled(flag);
+    	volumeSlider.setEnabled(flag);
+    	volumeLevelLabel.setEnabled(flag);
+    	seekSlider.setEnabled(flag);
     }
 }
