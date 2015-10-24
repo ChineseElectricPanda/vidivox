@@ -286,7 +286,7 @@ public class MainFrame extends JFrame{
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
-                for (AudioOverlay overlay : AudioOverlaysDialog.getOverlays()) {
+                for (AudioOverlay overlay : AudioOverlaysDialog.getInstance().getOverlays()) {
                     overlay.stopPreviewAudio();
                     overlay.stopAudioPlayer();
                 }
@@ -442,7 +442,7 @@ public class MainFrame extends JFrame{
     	
     	// Looking through all the comments being edited in the AudioOverlayDialog frame and storing
     	// them into the file after the video path in order to bring them up in the future
-        for(AudioOverlay overlay : AudioOverlaysDialog.getOverlays()) {
+        for(AudioOverlay overlay : AudioOverlaysDialog.getInstance().getOverlays()) {
         	saveFile.write(overlay.toString()+"\n");
         }
         
@@ -491,7 +491,11 @@ public class MainFrame extends JFrame{
         }
         
         // Setting the commentary overlays in the class AudioOverlaysDialog which handles them
-        AudioOverlaysDialog.setOverlays(overlays);
+        AudioOverlaysDialog.getInstance().setOverlays(overlays);
+        
+        AudioOverlaysDialog.getInstance().refreshLayout();
+        
+        updateAudioDisplays();
 
     }
 
@@ -510,7 +514,7 @@ public class MainFrame extends JFrame{
         progressDialog.setVisible(true);
         
         // Creating a list of the audio overlays generated from the comments
-        final List<AudioOverlay> overlays = AudioOverlaysDialog.getOverlays();
+        final List<AudioOverlay> overlays = AudioOverlaysDialog.getInstance().getOverlays();
         
         // Setting the maximum length of the progress bar to the number of comments + 1
         // so that after each comment is processed the progress bar can be incremented

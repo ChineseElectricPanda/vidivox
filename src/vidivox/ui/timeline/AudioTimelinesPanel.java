@@ -100,7 +100,7 @@ public class AudioTimelinesPanel extends JPanel {
         gbc.fill=GridBagConstraints.BOTH;
 
         //Re-add all of the timeline displays
-        for(AudioOverlay overlay: AudioOverlaysDialog.getOverlays()){
+        for(AudioOverlay overlay: AudioOverlaysDialog.getInstance().getOverlays()){
             contentPane.add(new JSeparator(JSeparator.HORIZONTAL), gbc);
             gbc.gridy++;
             AudioTimelineDisplay display=overlay.getDisplayPanel();

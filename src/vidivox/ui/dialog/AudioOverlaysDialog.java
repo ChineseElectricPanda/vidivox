@@ -51,8 +51,7 @@ public class AudioOverlaysDialog extends JDialog {
         super(MainFrame.getInstance());
         this.mainFrame=MainFrame.getInstance();
         setTitle("Audio Overlays");
-        setupLayout();
-        setupListeners();
+        refreshLayout();
         setMinimumSize(new Dimension(900, 400));
         setLocation(mainFrame.getX()+mainFrame.getWidth(), mainFrame.getY());
         pack();
@@ -62,7 +61,7 @@ public class AudioOverlaysDialog extends JDialog {
      * Gets the list of audio overlays currently being added to the video
      * @return the list of overlays
      */
-    public static List<AudioOverlay> getOverlays() {
+    public List<AudioOverlay> getOverlays() {
         return overlays;
     }
 
@@ -70,7 +69,7 @@ public class AudioOverlaysDialog extends JDialog {
      * Sets the list of audio overlays currently being added to the video
      * @param overlays the list to set to
      */
-    public static void setOverlays(List<AudioOverlay> overlays){
+    public void setOverlays(List<AudioOverlay> overlays){
         AudioOverlaysDialog.overlays=overlays;
     }
 
@@ -84,8 +83,7 @@ public class AudioOverlaysDialog extends JDialog {
             public void actionPerformed(ActionEvent actionEvent) {
                 CommentaryOverlay overlay=new CommentaryOverlay(overlays.size());
                 overlays.add(overlay);
-                setupLayout();
-                setupListeners();
+                refreshLayout();
                 mainFrame.updateAudioDisplays();
             }
         });
@@ -95,8 +93,7 @@ public class AudioOverlaysDialog extends JDialog {
             public void actionPerformed(ActionEvent actionEvent) {
                 FileOverlay overlay=new FileOverlay();
                 overlays.add(overlay);
-                setupLayout();
-                setupListeners();
+                refreshLayout();
                 mainFrame.updateAudioDisplays();
             }
         });
@@ -108,8 +105,7 @@ public class AudioOverlaysDialog extends JDialog {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
                     overlays.remove(position);
-                    setupLayout();
-                    setupListeners();
+                    refreshLayout();
                     mainFrame.updateAudioDisplays();
                 }
             });
@@ -195,9 +191,14 @@ public class AudioOverlaysDialog extends JDialog {
         revalidate();
     }
 
-    public static void updateStartTimeFields(){
+    public void updateStartTimeFields(){
         for(AudioOverlay overlay:overlays){
             overlay.updateStartTimeFields();
         }
     }
+
+	public void refreshLayout() {
+		setupLayout();
+		setupListeners();
+	}
 }

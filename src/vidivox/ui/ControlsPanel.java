@@ -533,7 +533,7 @@ public class ControlsPanel extends JPanel {
 
     	stopAudioPlayers();
     	
-    	for(AudioOverlay overlay: AudioOverlaysDialog.getOverlays()){
+    	for(AudioOverlay overlay: AudioOverlaysDialog.getInstance().getOverlays()){
     		overlay.startAudioPlayer();
     	}
     }
@@ -542,7 +542,7 @@ public class ControlsPanel extends JPanel {
      * Stops all the overlaid audio tracks currently playing
      */
     public void stopAudioPlayers(){
-        for(AudioOverlay overlay: AudioOverlaysDialog.getOverlays()){
+        for(AudioOverlay overlay: AudioOverlaysDialog.getInstance().getOverlays()){
             overlay.stopAudioPlayer();
         }
     }

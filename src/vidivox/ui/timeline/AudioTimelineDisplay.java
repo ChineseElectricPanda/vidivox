@@ -119,7 +119,7 @@ public class AudioTimelineDisplay extends JPanel{
                     newStartTime=0;
                 }
                 overlay.setStartTime(newStartTime);
-                AudioOverlaysDialog.updateStartTimeFields();
+                AudioOverlaysDialog.getInstance().updateStartTimeFields();
                 canvas.revalidate();
             }
         };
