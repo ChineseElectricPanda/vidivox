@@ -104,6 +104,9 @@ public class AudioOverlaysDialog extends JDialog {
             deleteButtons.get(i).addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
+                	//stop the audio preview when it is removed
+                	overlays.get(position).stopAudioPlayer();
+                	overlays.get(position).stopPreviewAudio();
                     overlays.remove(position);
                     refreshLayout();
                     mainFrame.updateAudioDisplays();
