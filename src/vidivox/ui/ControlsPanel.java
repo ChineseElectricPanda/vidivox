@@ -47,7 +47,7 @@ public class ControlsPanel extends JPanel {
     private JButton rewindButton;					// Button to rewind the video
     private JButton fastForwardButton;				// Button to fast forward the video
     private JButton audioOverlaysButton;            // Button to open the audio overlays dialog
-    private JLabel volumeIconLabel;					// Label for the volume icon
+    private JButton volumeIconLabel;				// Button for the volume icon
     private EnhancedJSlider volumeSlider;			// Slider used to control volume
     private JLabel volumeLevelLabel;				// Label showing user current volume level
     private int volume = 100;						// Integer representing volume level
@@ -276,6 +276,27 @@ public class ControlsPanel extends JPanel {
             }
         });
         
+        volumeIconLabel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(videoPlayer.getMediaPlayer().isMute()){
+					//Unmute the video if it is muted
+					videoPlayer.getMediaPlayer().mute(false);
+					if(volume==0){
+	                	volumeIconLabel.setIcon(openImage("speaker0.png"));
+	                }else if(volume<50){
+	                	volumeIconLabel.setIcon(openImage("speaker1.png"));
+	                }else{
+	                	volumeIconLabel.setIcon(openImage("speaker.png"));
+	                }
+				}else{
+					//Mute the video if it isn't muted
+					videoPlayer.getMediaPlayer().mute(true);
+					volumeIconLabel.setIcon(openImage("speakerMute.png"));
+				}
+			}
+		});
+        
         // Adding a listener to the volume slider in order to change the volume of the video accordingly
         volumeSlider.addChangeListener(new ChangeListener() {
             @Override
@@ -284,8 +305,18 @@ public class ControlsPanel extends JPanel {
                 volume = volumeSlider.getValue();
                 // Updating the audio in the video player to the selected volume
                 videoPlayer.getMediaPlayer().setVolume(volume);
+                videoPlayer.getMediaPlayer().mute(false);
                 // Updating the label for the volume to show current volume level
                 volumeLevelLabel.setText(volume + "%");
+                // Update the volume icon
+                if(volume==0){
+                	volumeIconLabel.setIcon(openImage("speaker0.png"));
+                }else if(volume<50){
+                	volumeIconLabel.setIcon(openImage("speaker1.png"));
+                }else{
+                	volumeIconLabel.setIcon(openImage("speaker.png"));
+                }
+                
             }
         });
     }
@@ -407,7 +438,7 @@ public class ControlsPanel extends JPanel {
         buttonsPanel.add(new JPanel(),gbc);
         
         // Adding volume label to the layout
-        volumeIconLabel=new JLabel(openImage("speaker.png"));
+        volumeIconLabel=new JButton(openImage("speaker.png"));
         gbc.gridx++;
         gbc.gridy=0;
         gbc.weightx=0.0f;
@@ -444,7 +475,7 @@ public class ControlsPanel extends JPanel {
         setControlsEnabled(false);
     }
 
-    public static ImageIcon openImage(String path) throws IOException {
+    public static ImageIcon openImage(String path) {
         return new ImageIcon(Main.class.getResource("/vidivox/ui/image/"+path));
     }
 
