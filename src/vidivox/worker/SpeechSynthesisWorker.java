@@ -1,5 +1,13 @@
 package vidivox.worker;
 import javax.swing.*;
+
+import vidivox.audio.CommentaryOverlay;
+import vidivox.audio.CommentaryOverlay.Emotion;
+import vidivox.audio.CommentaryOverlay.Voice;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -11,7 +19,6 @@ import java.io.IOException;
  *
  */
 public class SpeechSynthesisWorker extends SwingWorker<Void,Void> {
-	
 	/**
 	 * Fields declared to be used within class and package
 	 */
@@ -26,15 +33,49 @@ public class SpeechSynthesisWorker extends SwingWorker<Void,Void> {
      * @param text - Text to be created into audio
      * @param fileName - Name of the text file
      */
-    public SpeechSynthesisWorker(String text, String fileName) {
+    public SpeechSynthesisWorker(String text, String fileName, float timeScale, CommentaryOverlay.Voice voice, CommentaryOverlay.Emotion emotion) {
         this.text = text;
         // Creating file path to the wav file
         filePath = "/tmp/" + fileName;
+        int startPitch, endPitch;
+        // Create a scheme file to set voice emotion and timeScale
+        if(voice==Voice.FEMALE){
+        	startPitch=200;
+        	endPitch=165;
+        }else{
+        	startPitch=120;
+        	endPitch=105;
+        }
+        
+        if(emotion==Emotion.HAPPY){
+        	startPitch+=15;
+        	endPitch+=15;
+        	timeScale*=0.8;
+        }else if(emotion==Emotion.SAD){
+        	startPitch-=25;
+        	endPitch-=15;
+        	timeScale/=0.8;
+        }
+        
+        StringBuilder scm=new StringBuilder();
+        scm.append("(Parameter.set 'Duration_Stretch "+timeScale+")");
+        scm.append("(set! duffint_params '((start "+startPitch+") (end "+endPitch+")))");
+        scm.append("(Parameter.set 'Int_Method 'DuffInt)");
+        scm.append("(Parameter.set 'Int_Target_Method Int_Targets_Default)");
+        
+        try {
+			BufferedWriter writer=new BufferedWriter(new FileWriter(new File("/tmp/festival.scm")));
+			writer.write(scm.toString());
+			writer.close();
+		} catch (IOException e) {
+			
+		}
+        
         
         // Creating process to convert text file into the audio file
         try {
             synthesisProcess = new ProcessBuilder("/bin/bash", "-c", 
-            									  "echo \"" + text + "\" | text2wave -o \"" + filePath+"\"").start();
+            									  "echo \"" + text + "\" | text2wave -o \"" + filePath+"\" -eval "+"/tmp/festival.scm").start();
         } catch (IOException e) {
             e.printStackTrace();
         }

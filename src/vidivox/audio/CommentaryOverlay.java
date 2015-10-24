@@ -1,8 +1,11 @@
 package vidivox.audio;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import sun.launcher.resources.launcher;
 import vidivox.ui.JTextFieldWithCharacterLimit;
 import vidivox.worker.SpeechSynthesisWorker;
 
@@ -20,25 +23,25 @@ import java.io.IOException;
  * @author Ammar Bagasrawala
  */
 public class CommentaryOverlay extends AudioOverlay {
-	private enum Voice{
-		Male,
-		Female
+	public enum Voice{
+		MALE,
+		FEMALE
 	}
 	
-	private enum Emotion{
-		Neutral,
-		Happy,
-		Sad
+	public enum Emotion{
+		NEUTRAL,
+		HAPPY,
+		SAD
 	}
 	/**
 	 * Fields initialized to be used by methods in this class and other packages
 	 */
-    private final int CHARACTER_LIMIT=75;              // Character limit for the commentary
+    private final int CHARACTER_LIMIT=75;              	// Character limit for the commentary
 	private String text;								// String storing the user's comment
     private String filePath;							// File path of created wav file
     private int position;								// Position of the comment in the AudioOverlaysDialog
     private SpeechSynthesisWorker synthesisWorker;		// Reference to the class that creates the wav file
-    private JTextFieldWithCharacterLimit textField;						// Text field where user enters comment
+    private JTextFieldWithCharacterLimit textField;		// Text field where user enters comment
     private JButton saveToFileButton;					// Button used to save commentary as mp3
     
     private JToggleButton maleVoiceButton;
@@ -47,6 +50,8 @@ public class CommentaryOverlay extends AudioOverlay {
     private JToggleButton neutralVoiceButton;
     private JToggleButton happyVoiceButton;
     private JToggleButton sadVoiceButton;
+    
+    private JSlider timeScaleSlider;
 
     /**
      * Constructor which takes in only the position of the audio and initializes other fields
@@ -76,8 +81,25 @@ public class CommentaryOverlay extends AudioOverlay {
         // Checking if the text is empty and if not, allowing the commentary to be
         // converted into a wav file
         if (text != null && !text.isEmpty()) {
+        	// Determine the selected voice and emotion
+        	Voice voice;
+        	Emotion emotion;
+        	if(maleVoiceButton.isSelected()){
+        		voice=Voice.MALE;
+        	}else{
+        		voice=Voice.FEMALE;
+        	}
+        	
+        	if(neutralVoiceButton.isSelected()){
+        		emotion=Emotion.NEUTRAL;
+        	}else if(happyVoiceButton.isSelected()){
+        		emotion=Emotion.HAPPY;
+        	}else{
+        		emotion=Emotion.SAD;
+        	}
+        	
         	// Instantiating class to convert from text to speech
-        	new SpeechSynthesisWorker(text, "commentary" + position) {
+        	new SpeechSynthesisWorker(text, "commentary" + position,1,voice,emotion) {
         		@Override
         		protected void done() {
 	        		super.done();
@@ -180,6 +202,24 @@ public class CommentaryOverlay extends AudioOverlay {
         voiceOptionsPanel.add(sadVoiceButton,gbc);
         emotionButtonGroup.add(sadVoiceButton);
         
+        spacer=new JPanel();
+        spacer.setPreferredSize(new Dimension(50,1));
+        gbc.gridx++;
+        voiceOptionsPanel.add(spacer,gbc);
+        
+        gbc.gridx++;
+        voiceOptionsPanel.add(new JLabel("Speed (%)"), gbc);
+        
+        timeScaleSlider=new JSlider();
+        timeScaleSlider.setMinimum(60);
+        timeScaleSlider.setMaximum(140);
+        timeScaleSlider.setValue(100);
+        timeScaleSlider.setMajorTickSpacing(20);
+        timeScaleSlider.setSnapToTicks(true);
+        timeScaleSlider.setPaintTicks(true);
+        timeScaleSlider.setPaintLabels(true);
+        gbc.gridx++;
+        voiceOptionsPanel.add(timeScaleSlider,gbc);
         
         gbc.gridx=0;
         gbc.gridy=1;
@@ -187,7 +227,6 @@ public class CommentaryOverlay extends AudioOverlay {
         gbc.insets=new Insets(5, 5, 5, 5);
         contentPane.add(voiceOptionsPanel,gbc);
         
-
         // Adding document listener to the text field to determine when the user has
         // typed something in and getting the text from the text field to store
         textField.getDocument().addDocumentListener(new DocumentListener() {
@@ -246,6 +285,25 @@ public class CommentaryOverlay extends AudioOverlay {
             }
         });
         
+        //Resynthesise the text whenever a voice setting is changed
+        ActionListener voiceChangeListener=new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				synthesizeText();
+			}
+		};
+		maleVoiceButton.addActionListener(voiceChangeListener);
+		femaleVoiceButton.addActionListener(voiceChangeListener);
+		neutralVoiceButton.addActionListener(voiceChangeListener);
+		happyVoiceButton.addActionListener(voiceChangeListener);
+		sadVoiceButton.addActionListener(voiceChangeListener);
+		timeScaleSlider.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				synthesizeText();
+			}
+		});
+        
         // Checking if the text is not empty and setting the text in the text field
         if (text != null) {
             textField.setText(text);
@@ -288,9 +346,26 @@ public class CommentaryOverlay extends AudioOverlay {
 		if (synthesisWorker != null && !synthesisWorker.isDone()) {
 		    synthesisWorker.kill();
 		}
+		
+		// Determine the selected voice and emotion
+    	Voice voice;
+    	Emotion emotion;
+    	if(maleVoiceButton.isSelected()){
+    		voice=Voice.MALE;
+    	}else{
+    		voice=Voice.FEMALE;
+    	}
+    	
+    	if(neutralVoiceButton.isSelected()){
+    		emotion=Emotion.NEUTRAL;
+    	}else if(happyVoiceButton.isSelected()){
+    		emotion=Emotion.HAPPY;
+    	}else{
+    		emotion=Emotion.SAD;
+    	}
 
 		// Creating new synthesis worker to convert the text file into a wav file
-		synthesisWorker = new SpeechSynthesisWorker(text, "commentary" + position) {
+		synthesisWorker = new SpeechSynthesisWorker(text, "commentary" + position, 100/((float)timeScaleSlider.getValue()) ,voice, emotion) {
 		    @Override
 		    protected void done() {
 

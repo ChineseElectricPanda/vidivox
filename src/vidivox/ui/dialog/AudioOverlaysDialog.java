@@ -1,9 +1,11 @@
 package vidivox.ui.dialog;
 import javax.swing.*;
 
+import sun.applet.Main;
 import vidivox.audio.AudioOverlay;
 import vidivox.audio.CommentaryOverlay;
 import vidivox.audio.FileOverlay;
+import vidivox.ui.ControlsPanel;
 import vidivox.ui.MainFrame;
 
 import java.awt.*;
@@ -180,7 +182,7 @@ public class AudioOverlaysDialog extends JDialog {
             gbc.gridx=1;
             gbc.weightx=0.0f;
             gbc.anchor=GridBagConstraints.CENTER;
-            JButton deleteButton=new JButton("X");
+            JButton deleteButton=new JButton(new ImageIcon(Main.class.getResource("/vidivox/ui/image/delete.png")));
             deleteButtons.add(deleteButton);
             contentPane.add(deleteButton,gbc);
         }
