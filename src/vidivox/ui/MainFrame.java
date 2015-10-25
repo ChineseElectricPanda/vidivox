@@ -1,6 +1,8 @@
 package vidivox.ui;
 import vidivox.UpdateRunnable;
 import vidivox.audio.AudioOverlay;
+import vidivox.audio.CommentaryOverlay;
+import vidivox.audio.FileOverlay;
 import vidivox.exception.FileFormatException;
 import vidivox.ui.dialog.AudioOverlaysDialog;
 import vidivox.ui.dialog.ProgressDialog;
@@ -218,6 +220,33 @@ public class MainFrame extends JFrame{
         exportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+            	List<AudioOverlay> cutOverlays=new ArrayList<>();
+            	// Check if any audios wil lbe cut off
+            	for(AudioOverlay overlay: AudioOverlaysDialog.getInstance().getOverlays()){
+            		// Check if any overlays begin before or end after the video
+            		System.out.println((overlay.getStartTime()+overlay.getDuration())+","+controlsPanel.getTotalTime()/1000);
+            		if(overlay.getStartTime()<0 || overlay.getStartTime()+overlay.getDuration()>controlsPanel.getTotalTime()/1000){
+            			cutOverlays.add(overlay);
+            		}
+            	}
+            	// Warn the user of any audios which will be cut off
+            	if(cutOverlays.size()>0){
+            		StringBuilder text=new StringBuilder();
+            		text.append("The following audio will be cut off as they are outside the video range:\n\n");
+            		for(AudioOverlay overlay:cutOverlays){
+            			if(overlay instanceof CommentaryOverlay){
+            				text.append("  [Commentary] "+((CommentaryOverlay)overlay).getText()+"\n");
+            			}else if(overlay instanceof FileOverlay){
+            				text.append("  [File] "+((FileOverlay)overlay).getFileName()+"\n");
+            			}
+            		}
+            		text.append("\nAre you sure you want to do this?");
+            		
+            		int result=JOptionPane.showConfirmDialog(MainFrame.this, text, "Audio overlays cut",JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            		if(result!=JOptionPane.YES_OPTION){
+            			return;
+            		}
+            	}
                 // Allowing user to select destination of exported file
                 JFileChooser fileChooser = new JFileChooser();
                 if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
