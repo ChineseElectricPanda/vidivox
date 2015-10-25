@@ -7,7 +7,6 @@ import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 
 import uk.co.caprica.vlcj.player.MediaPlayer;
-import vidivox.ui.ControlsPanel;
 
 public class VideoPlayerComponent extends JPanel implements Playable{
 	private Playable mediaPlayer;

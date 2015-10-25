@@ -1,17 +1,21 @@
 package vidivox.ui.timeline;
 
-import vidivox.audio.AudioOverlay;
-import vidivox.audio.CommentaryOverlay;
-import vidivox.audio.FileOverlay;
-import vidivox.ui.MainFrame;
-import vidivox.ui.dialog.AudioOverlaysDialog;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 import java.util.Random;
+
+import javax.swing.JPanel;
+
+import vidivox.audio.AudioOverlay;
+import vidivox.audio.CommentaryOverlay;
+import vidivox.audio.FileOverlay;
+import vidivox.ui.dialog.AudioOverlaysDialog;
 
 /**
  * This class is for the timeline display for a single audio track
@@ -87,21 +91,17 @@ public class AudioTimelineDisplay extends JPanel{
 
         // Create a listener to listen for clicks and drags on the timeline
         MouseAdapter adapter=new MouseAdapter() {
-            boolean mouseDown=false;
             int startPosition=0;
             double initialTime=overlay.getStartTime();
             @Override
             public void mousePressed(MouseEvent e) {
                 //start tracking mouse movement when it is pressed down on the timeline
-                mouseDown=true;
                 startPosition=e.getX();
                 initialTime=overlay.getStartTime();
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                mouseDown=false;
-
                 //update the audio player to reflect changes made to timeline
                 overlay.updateAudioPlayer();
             }

@@ -1,20 +1,30 @@
 package vidivox.ui.dialog;
-import javax.swing.*;
-
-import sun.applet.Main;
-import vidivox.audio.AudioOverlay;
-import vidivox.audio.CommentaryOverlay;
-import vidivox.audio.FileOverlay;
-import vidivox.ui.ControlsPanel;
-import vidivox.ui.MainFrame;
-
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.ScrollPaneConstants;
+
+import sun.applet.Main;
+import vidivox.audio.AudioOverlay;
+import vidivox.audio.CommentaryOverlay;
+import vidivox.audio.FileOverlay;
+import vidivox.ui.MainFrame;
 
 /**
  * This is the class for the Dialog which allows users to add and edit the audio tracks they wish to overlay onto their

@@ -1,6 +1,19 @@
 package vidivox.ui;
-import javax.imageio.ImageIO;
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -8,16 +21,8 @@ import vidivox.Main;
 import vidivox.audio.AudioOverlay;
 import vidivox.ui.dialog.AudioOverlaysDialog;
 import vidivox.ui.timeline.AudioTimelinesPanel;
-import vidivox.video.EmbeddedVideoPlayer;
 import vidivox.video.VideoPlayerComponent;
-import vidivox.worker.AudioPlayWorker;
 import vidivox.worker.SkipVideoWorker;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * This class contains the components which allow the user to perform the basic tasks
@@ -34,7 +39,6 @@ public class ControlsPanel extends JPanel {
 	/**
 	 * Declaring fields to be used within this class and the project
 	 */
-	private ArrayList<AudioPlayWorker> audioPlayWorkers = new ArrayList<AudioPlayWorker>(); // List of audio workers
 	private ControlsPanel controlsPanel = this;		// Reference to the only instance of this class
     private VideoPlayerComponent videoPlayer;		// Reference to the video player component 
     private SkipVideoWorker skipVid = null;			// Reference to instance of a worker class to forward/rewind

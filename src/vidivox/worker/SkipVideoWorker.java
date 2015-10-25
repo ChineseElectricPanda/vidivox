@@ -4,7 +4,6 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import vidivox.ui.ControlsPanel;
-import vidivox.video.EmbeddedVideoPlayer;
 import vidivox.video.Playable;
 
 /**

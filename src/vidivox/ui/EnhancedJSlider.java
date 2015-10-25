@@ -1,7 +1,6 @@
 package vidivox.ui;
 
-import javax.swing.*;
-import javax.swing.plaf.metal.MetalSliderUI;
+import javax.swing.JSlider;
 
 /**
  * A JSlider which will jump to the position clicked when it is clicked

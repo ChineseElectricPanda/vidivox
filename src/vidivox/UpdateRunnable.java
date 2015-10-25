@@ -3,7 +3,6 @@ import javax.swing.SwingUtilities;
 
 import vidivox.ui.ControlsPanel;
 import vidivox.ui.timeline.AudioTimelinesPanel;
-import vidivox.video.EmbeddedVideoPlayer;
 import vidivox.video.VideoPlayerComponent;
 
 /**

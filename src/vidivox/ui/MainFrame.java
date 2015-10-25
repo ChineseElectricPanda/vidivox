@@ -1,32 +1,48 @@
 package vidivox.ui;
-import javax.swing.*;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import uk.co.caprica.vlcj.player.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.embedded.DefaultFullScreenStrategy;
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-import uk.co.caprica.vlcj.player.embedded.FullScreenStrategy;
 import vidivox.UpdateRunnable;
 import vidivox.audio.AudioOverlay;
 import vidivox.exception.FileFormatException;
 import vidivox.ui.dialog.AudioOverlaysDialog;
 import vidivox.ui.dialog.ProgressDialog;
-import vidivox.ui.timeline.AudioTimelineDisplay;
 import vidivox.ui.timeline.AudioTimelinesPanel;
 import vidivox.video.AsciiVideoPlayer;
 import vidivox.video.DirectVideoPlayer;
 import vidivox.video.EmbeddedVideoPlayer;
 import vidivox.video.VideoPlayerComponent;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is the main frame of the vidivox application
@@ -229,7 +245,12 @@ public class MainFrame extends JFrame{
                 JFileChooser fileChooser = new JFileChooser();
                 if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
                     try {
-                        exportProject(fileChooser.getSelectedFile());
+                    	// Append .mp4 to the file name if the user didn't define an extension
+	                	String filePath=fileChooser.getSelectedFile().getAbsolutePath();
+	                	if(filePath.endsWith(".mp4")||filePath.endsWith(".avi")){
+	                		filePath=filePath+".mp4";
+	                	}
+	                	 exportProject(filePath);
                     } catch (IOException | InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -478,6 +499,8 @@ public class MainFrame extends JFrame{
             overlays.add(AudioOverlay.fromString(line));
         }
         
+        fileToOpen.close();
+        
         // Setting the global variable for video path after all other variables have been assigned to
         // prevent errors from occurring
         this.videoPath = videoPath;
@@ -502,11 +525,11 @@ public class MainFrame extends JFrame{
     /**
      * Merges the video and audio tracks into one file using ffmpeg by overlaying them
      * 
-     * @param file the file to output
+     * @param filePath the file to output
      * @throws InterruptedException
      * @throws IOException
      */
-    private void exportProject(final File file) throws InterruptedException, IOException {
+    private void exportProject(final String filePath) throws InterruptedException, IOException {
        
     	// Creating progress dialog to show the user the progress of the export as it takes
     	// some time
@@ -565,15 +588,12 @@ public class MainFrame extends JFrame{
         		if(audioTracksAdded>0){
         			cmd.append(" -filter_complex amix="+(audioTracksAdded+1));
         		}
-        		
-        		// Force output format to avi
-        		cmd.append(" -f avi");
 
                 // End the output when the video ends
                 cmd.append(" -t "+((double)controlsPanel.getTotalTime())/1000);
         		
         		// Append the option to allow ffmpeg to use support more formats, then append the output file path
-        		cmd.append(" -strict -2 \"" + file.getAbsolutePath()+"\"");
+        		cmd.append(" -strict -2 \"" + filePath + "\"");
         		
         		// Building process and process builder to run the command then starting it
         		Process process = new ProcessBuilder("/bin/bash", "-c", cmd.toString()).start();
@@ -627,7 +647,7 @@ public class MainFrame extends JFrame{
             protected void done() {
             	// Dialog popup to inform user of successful export
                 JOptionPane.showMessageDialog(MainFrame.this,"Sucessfully exported project to "
-                					+ file.getAbsolutePath(), "Success!", JOptionPane.INFORMATION_MESSAGE);
+                					+ filePath, "Success!", JOptionPane.INFORMATION_MESSAGE);
             }
         }.execute();
     }
