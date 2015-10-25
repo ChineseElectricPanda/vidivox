@@ -26,7 +26,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import vidivox.exception.FileFormatException;
-import vidivox.ui.EnhancedJSlider;
 import vidivox.ui.MainFrame;
 import vidivox.ui.timeline.AudioTimelineDisplay;
 import vidivox.worker.AudioPlayWorker;
@@ -48,13 +47,12 @@ public abstract class AudioOverlay {
     protected AudioTimelineDisplay displayPanel;
     protected double startTime = 0;						// Setting the default start time of the audio to 0
     protected int volume = 100;							// Setting the default volume to 100
-    protected CommentaryOverlay commentary;				// Reference to the CommentaryOverlay object
     protected JTextField startTimeMinutesField;			// Field where the start minute of the audio is specified
     protected JTextField startTimeSecondsField;			// Field where the start seconds of the audio is specified
     protected JTextField startTimeMillisecondsField;	// Field where the start milliseconds of the audio is specified
     protected JLabel durationLabel;						// Label which informs user of duration of audio
     protected JButton playButton;						// Button to play the voice without any video
-    protected EnhancedJSlider volumeSlider;						// Slider to allow user to increase/decrease volume
+    protected JSlider volumeSlider;						// Slider to allow user to increase/decrease volume
     protected JLabel volumeLevelLabel;					// Label informing user of current volume level
     protected JCheckBox previewCheckBox;				// Check box allowing user to select audio to play with video
     protected boolean showPreview = true;				// Field to determine whether audio should be played with video
@@ -73,7 +71,7 @@ public abstract class AudioOverlay {
      * through the use of the grid bag layout and returns the formatted
      * JPanel contentPane
      * 
-     * @return 
+     * @return a JPanel containing the setting components for this overlay
      */
     public JPanel getComponentView() {
     	// Initializing the contentPane JPanel to be formatted and returned
@@ -174,7 +172,7 @@ public abstract class AudioOverlay {
         
         // Creating slider to allow user to increase or decrease volume of commentary audio
         // and adding it to the properties panel
-        volumeSlider = new EnhancedJSlider();
+        volumeSlider = new JSlider();
         volumeSlider.setPreferredSize(new Dimension(100, 25));
         volumeSlider.setMinimum(0);
         volumeSlider.setMaximum(100);
@@ -225,12 +223,12 @@ public abstract class AudioOverlay {
         		try{
         			minutes = Integer.parseInt(startTimeMinutesField.getText());
         		} catch (NumberFormatException|NullPointerException ex) {}
-        		
+
         		// Getting the value of the seconds the user entered
         		try{
         			seconds = Integer.parseInt(startTimeSecondsField.getText());
         		} catch (NumberFormatException|NullPointerException ex) {}
-        	
+
         		// Getting the milliseconds the user entered
         		try{
         			milliseconds = Integer.parseInt(startTimeMillisecondsField.getText());
@@ -287,15 +285,8 @@ public abstract class AudioOverlay {
         	// Method called whenever user clicks on the check box
         	@Override
         	public void itemStateChanged(ItemEvent e) {
-        		
-        		// Determining whether the check box is ticked or not ticked
-        		if (e.getStateChange() == ItemEvent.SELECTED) {
-        			// If the box is ticked
-        			showPreview = true;
-        		} else {
-        			// If the box isn't ticked
-        			showPreview = false;
-        		}
+        		// Show the preview if the preview checkbox is ticked
+                showPreview = e.getStateChange() == ItemEvent.SELECTED;
         	}
         });
 
@@ -516,15 +507,7 @@ public abstract class AudioOverlay {
     	startTimeMillisecondsField.setText(String.format("%03d", milliseconds));
         updateDisplayPanel();
     }
-    
-    /**
-     * This method serves as a getter for the boolean showPreview variable
-     * @return returns showPreview
-     */
-    public boolean isShowingPreview() {
-    	return showPreview;
-    }
-    
+
     /**
      * This method serves as a getter for the volume variable
      * @return an integer specifying the volume

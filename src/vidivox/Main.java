@@ -15,7 +15,7 @@ import vidivox.ui.MainFrame;
 public class Main {
 	/**
 	 * Main method for the vidivox application
-	 * @param args
+	 * @param args command line arguments (not used)
 	 */
     public static void main(String[] args){
     	// Set the look and feel to the Linux theme

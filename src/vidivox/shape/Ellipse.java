@@ -3,7 +3,7 @@ package vidivox.shape;
 import java.awt.*;
 
 /**
- * Created by hamcake on 20/10/15.
+ * Class to represent the ellipse shape
  */
 public class Ellipse extends Shape {
     public Ellipse(int x, int y){

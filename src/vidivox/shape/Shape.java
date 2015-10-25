@@ -3,7 +3,7 @@ package vidivox.shape;
 import java.awt.*;
 
 /**
- * Created by hamcake on 20/10/15.
+ * Class to represent shapes used for bounce
  */
 public abstract class Shape {
     protected int width,height;

@@ -1,38 +1,4 @@
 package vidivox.ui;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingWorker;
-import javax.swing.WindowConstants;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import vidivox.UpdateRunnable;
 import vidivox.audio.AudioOverlay;
 import vidivox.exception.FileFormatException;
@@ -43,6 +9,17 @@ import vidivox.video.AsciiVideoPlayer;
 import vidivox.video.DirectVideoPlayer;
 import vidivox.video.EmbeddedVideoPlayer;
 import vidivox.video.VideoPlayerComponent;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is the main frame of the vidivox application
@@ -129,7 +106,7 @@ public class MainFrame extends JFrame{
 	/**
 	 * Setter for the instance of controlsPanel of type ControlsPanel
 	 * 
-	 * @param controlsPanel
+	 * @param controlsPanel the ControlsPanel to use
 	 */
 	public void setControlsPanel(ControlsPanel controlsPanel) {
 		this.controlsPanel = controlsPanel;
@@ -244,16 +221,12 @@ public class MainFrame extends JFrame{
                 // Allowing user to select destination of exported file
                 JFileChooser fileChooser = new JFileChooser();
                 if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
-                    try {
-                    	// Append .mp4 to the file name if the user didn't define an extension
-	                	String filePath=fileChooser.getSelectedFile().getAbsolutePath();
-	                	if(filePath.endsWith(".mp4")||filePath.endsWith(".avi")){
-	                		filePath=filePath+".mp4";
-	                	}
-	                	 exportProject(filePath);
-                    } catch (IOException | InterruptedException e) {
-                        e.printStackTrace();
+                    // Append .mp4 to the file name if the user didn't define an extension
+                    String filePath=fileChooser.getSelectedFile().getAbsolutePath();
+                    if(filePath.endsWith(".mp4")||filePath.endsWith(".avi")){
+                        filePath=filePath+".mp4";
                     }
+                    exportProject(filePath);
                 }
             }
         });
@@ -286,13 +259,7 @@ public class MainFrame extends JFrame{
         canvasOutputButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    videoPlayer.setVideoPlayer(new DirectVideoPlayer(videoPlayer.getWidth(),videoPlayer.getHeight()));
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                videoPlayer.setVideoPlayer(new DirectVideoPlayer(videoPlayer.getWidth(),videoPlayer.getHeight()));
             }
         });
 
@@ -526,10 +493,8 @@ public class MainFrame extends JFrame{
      * Merges the video and audio tracks into one file using ffmpeg by overlaying them
      * 
      * @param filePath the file to output
-     * @throws InterruptedException
-     * @throws IOException
      */
-    private void exportProject(final String filePath) throws InterruptedException, IOException {
+    private void exportProject(final String filePath) {
        
     	// Creating progress dialog to show the user the progress of the export as it takes
     	// some time

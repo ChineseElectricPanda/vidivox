@@ -7,16 +7,16 @@ import uk.co.caprica.vlcj.player.direct.RenderCallbackAdapter;
 import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat;
 import vidivox.shape.Ellipse;
 import vidivox.shape.Rectangle;
+import vidivox.shape.Shape;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import java.util.ArrayList;
-import vidivox.shape.Shape;
+import java.util.List;
 
 /**
  * This creates a JPanel containing a DirectVideoPlayer which can be drawn on as a canvas
@@ -35,7 +35,7 @@ public class DirectVideoPlayer extends JPanel implements Playable {
 	/**
 	 * Constructor called whenever video player is instantiated
 	 */
-	public DirectVideoPlayer(int width, int height) throws InvocationTargetException, InterruptedException {
+	public DirectVideoPlayer(int width, int height) {
 		this.width=width;
 		this.height=height;
 		

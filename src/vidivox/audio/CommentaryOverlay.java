@@ -70,7 +70,7 @@ public class CommentaryOverlay extends AudioOverlay {
      * Constructor which takes in only the position of the audio and initializes other fields
      * in this class to a default value
      * 
-     * @param position
+     * @param position the position of this commentary in the list
      */
     public CommentaryOverlay(int position) {
         this(position, "", 0, 100, Voice.MALE,Emotion.NEUTRAL,100);
@@ -349,8 +349,7 @@ public class CommentaryOverlay extends AudioOverlay {
      */
     @Override
     public String toString() {
-        String s = "C\t" + position + "\t" + text + "\t" + startTime + "\t" + volume + "\t" + voice.toString() + "\t" + emotion.toString() + "\t" + timeScale;
-        return s;
+        return "C\t" + position + "\t" + text + "\t" + startTime + "\t" + volume + "\t" + voice.toString() + "\t" + emotion.toString() + "\t" + timeScale;
     }
 
     private void synthesizeText() {
@@ -415,8 +414,8 @@ public class CommentaryOverlay extends AudioOverlay {
      * position, text, start time and volume and creates a class of type
      * CommentaryOverlay with those fields
      * 
-     * @param s
-     * @return
+     * @param s the string to construct this object from
+     * @return the CommentaryOverlay object created from the string
      */
     public static CommentaryOverlay fromString(String s) {
     	

@@ -44,7 +44,7 @@ public class SkipVideoWorker extends SwingWorker<Void, Integer> {
 	protected Void doInBackground() throws Exception {
 		
 		// While the user still wants the video to fast forward
-		while (isSkipping == true) {
+		while (isSkipping) {
 			// Sleeping the thread for 100 milliseconds to avoid errors
 			Thread.sleep(100);
 

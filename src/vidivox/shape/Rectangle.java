@@ -3,7 +3,7 @@ package vidivox.shape;
 import java.awt.*;
 
 /**
- * Created by hamcake on 20/10/15.
+ * Class to represent the rectangle shape
  */
 public class Rectangle extends Shape{
     public Rectangle(int x, int y){

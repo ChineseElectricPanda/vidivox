@@ -1,28 +1,19 @@
 package vidivox.ui;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.IOException;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import vidivox.Main;
 import vidivox.audio.AudioOverlay;
 import vidivox.ui.dialog.AudioOverlaysDialog;
 import vidivox.ui.timeline.AudioTimelinesPanel;
 import vidivox.video.VideoPlayerComponent;
 import vidivox.worker.SkipVideoWorker;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * This class contains the components which allow the user to perform the basic tasks
@@ -44,7 +35,7 @@ public class ControlsPanel extends JPanel {
     private SkipVideoWorker skipVid = null;			// Reference to instance of a worker class to forward/rewind
     private JLabel currentTimeLabel;				// Label showing the time the video is currently at
     private JLabel totalTimeLabel;					// Label showing the total time of the video
-    private EnhancedJSlider seekSlider;				// Slider showing progress of video and allowing user to set
+    private JSlider seekSlider;				        // Slider showing progress of video and allowing user to set
     private JButton playButton;						// Play button the play the video
     private JButton pauseButton;					// Button to pause the video
     private JButton stopButton;						// Button to stop the video
@@ -52,11 +43,10 @@ public class ControlsPanel extends JPanel {
     private JButton fastForwardButton;				// Button to fast forward the video
     private JButton audioOverlaysButton;            // Button to open the audio overlays dialog
     private JButton volumeIconLabel;				// Button for the volume icon
-    private EnhancedJSlider volumeSlider;			// Slider used to control volume
+    private JSlider volumeSlider;			        // Slider used to control volume
     private JLabel volumeLevelLabel;				// Label showing user current volume level
     private int volume = 100;						// Integer representing volume level
     private float totalTime = 0;					// Total time of the video
-    private float currentTime = 0;					// Current time of the video
     private boolean sliderCanMove = false;			// Boolean indicating whether the slider is movable
 
     /**
@@ -66,11 +56,7 @@ public class ControlsPanel extends JPanel {
      */
     public ControlsPanel(VideoPlayerComponent videoPlayer){
         this.videoPlayer = videoPlayer;
-        try {
-            setupLayout();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        setupLayout();
         setupListeners();
     }
     
@@ -329,7 +315,7 @@ public class ControlsPanel extends JPanel {
      * Sets up the layout for the sliders, labels and other buttons through the use of the
      * grid bag layout
      */
-    private void setupLayout() throws IOException {
+    private void setupLayout() {
     	
     	// Setting the layout to that of a grid bag layout
         setLayout(new GridBagLayout());
@@ -349,7 +335,7 @@ public class ControlsPanel extends JPanel {
         sliderPanel.add(currentTimeLabel,gbc);
         
         // Creating and adding the seek slider to the slider panel
-        seekSlider = new EnhancedJSlider();
+        seekSlider = new JSlider();
         seekSlider.setMinorTickSpacing(1000);
         seekSlider.setMajorTickSpacing(1000);
         gbc.gridx=1;
@@ -450,7 +436,7 @@ public class ControlsPanel extends JPanel {
         buttonsPanel.add(volumeIconLabel,gbc);
         
         // Adding the volume slider to the layout
-        volumeSlider=new EnhancedJSlider();
+        volumeSlider=new JSlider();
         volumeSlider.setValue(100);
         volumeSlider.setPreferredSize(new Dimension(100,25));
         gbc.gridx++;
@@ -502,7 +488,6 @@ public class ControlsPanel extends JPanel {
      */
     public void setCurrentTime(long time) {
     	currentTimeLabel.setText(formatTime(time));
-    	currentTime = time;
     }
     
     /**
@@ -531,34 +516,18 @@ public class ControlsPanel extends JPanel {
     
     /**
      * Getter for the totalTime variable
-     * @return
+     * @return the total duration of the video
      */
     public float getTotalTime() {
     	return totalTime;
     }
-
-    /**
-     * Getter for the current play time
-     * @return
-     */
-    public float getCurrentTime(){
-        return currentTime;
-    }
     
     /**
      * Getter for the slider field
-     * @return
+     * @return the JSlider used for seeking
      */
     public JSlider getSlider() {
     	return seekSlider;
-    }
-    
-    /**
-     * Getter for the sliderCanMove variable
-     * @return
-     */
-    public boolean getSliderStatus() {
-    	return sliderCanMove;
     }
 
     /**

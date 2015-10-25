@@ -165,8 +165,7 @@ public class FileOverlay extends AudioOverlay{
      */
     @Override
     public String toString(){
-        String s = "F\t" + getFilePath() + "\t" + startTime + "\t" + volume;
-        return s;
+        return "F\t" + getFilePath() + "\t" + startTime + "\t" + volume;
     }
 
     /**
@@ -174,7 +173,7 @@ public class FileOverlay extends AudioOverlay{
      * of a specific audio file. It then returns a new instance of FileOverlay with those specified
      * inputs
      * 
-     * @param s
+     * @param s the string to construct from
      * @return instance of FileOverlay
      */
     public static FileOverlay fromString(String s){

@@ -109,7 +109,7 @@ public class ProgressDialog extends JDialog {
     
     /**
      * Method to set the actual progress of the task specific bar
-     * @param progress
+     * @param progress the progress of the task
      */
     public void setTaskProgress(int progress){
         taskProgressBar.setValue(progress);

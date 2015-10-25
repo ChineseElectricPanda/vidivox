@@ -68,7 +68,7 @@ public class SpeechSynthesisWorker extends SwingWorker<Void,Void> {
 			writer.write(scm.toString());
 			writer.close();
 		} catch (IOException e) {
-			
+			System.err.println("Error running festival");
 		}
         
         
