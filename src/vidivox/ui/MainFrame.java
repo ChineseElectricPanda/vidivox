@@ -11,6 +11,7 @@ import vidivox.video.AsciiVideoPlayer;
 import vidivox.video.DirectVideoPlayer;
 import vidivox.video.EmbeddedVideoPlayer;
 import vidivox.video.VideoPlayerComponent;
+import vidivox.worker.VideoExportWorker;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -548,135 +549,8 @@ public class MainFrame extends JFrame{
      * @param filePath the file to output
      */
     private void exportProject(final String filePath) {
-       
-    	// Creating progress dialog to show the user the progress of the export as it takes
-    	// some time
-    	final ProgressDialog progressDialog = new ProgressDialog();
-        progressDialog.setVisible(true);
-        
-        // Creating a list of the audio overlays generated from the comments
-        final List<AudioOverlay> overlays = AudioOverlaysDialog.getInstance().getOverlays();
-        
-        // Setting the maximum length of the progress bar to the number of comments + 1
-        // so that after each comment is processed the progress bar can be incremented
-        progressDialog.setOverallTotal(overlays.size()+1);
-
         // Creating SwingWorker class to allow for multi-threading
-        new SwingWorker<Void,AudioOverlay>() {
-            
-        	// Initial progress
-        	int progress = 0;
-
-        	/**
-        	 * The doInBackground method handles time consuming tasks in the background
-        	 * so as to not make the GUI freeze
-        	 * This method is used to merge the audio and video files together into one video file
-        	 * where the audio specified by the user overlaps the existing audio
-        	 */
-        	@Override
-        	protected Void doInBackground() throws Exception {
-        		
-        		// Processing all of the audio files
-        		List<String> audioPaths = new ArrayList<>();
-        		for (AudioOverlay overlay : overlays) {
-        			// Calling the process method to interact with the GUI
-        			publish(overlay);
-        			// Adding the file path of the audio files to the arraylist containing 
-        			// the paths of all audio files
-        			audioPaths.add(overlay.getProcessedFilePath());
-        		}
-
-        		// Combining all the audio files with the video files using an ffmpeg process
-        		publish((AudioOverlay) null);
-        		
-        		// Building the command to pass into the process builder
-        		StringBuilder cmd = new StringBuilder("ffmpeg -y -i \"" + videoPath+"\"");
-        		// Appending the audio path of each audio file to the command
-        		// Keep count of the number of audio files added
-        		int audioTracksAdded=0;
-        		for (int i=0;i<audioPaths.size();i++) {
-        			// Only add audio files which aren't empty
-        			if(audioPaths.get(i)!=null && !audioPaths.get(i).isEmpty()){
-        				cmd.append(" -itsoffset "+overlays.get(i).getStartTime()+" -i \"" + audioPaths.get(i)+"\"");
-        				audioTracksAdded++;
-        			}
-        		}
-        		
-        		// If audio tracks have been added then append the command to mix them
-        		if(audioTracksAdded>0){
-        			for(int i=0;i<audioTracksAdded+1;i++){
-        				cmd.append(" -map "+i+":0");
-        			}
-        			cmd.append(" -async 1 -filter_complex amix=inputs="+(audioTracksAdded+1));
-        		}
-
-                // End the output when the video ends
-                cmd.append(" -t "+((double)controlsPanel.getTotalTime())/1000);
-        		
-                // Append the option to fix volume levels
-                cmd.append(" -ac 2");
-                
-                // Keep the video codec
-                cmd.append(" -c:v copy");
-                
-        		// Append the option to allow ffmpeg to use support more formats, then append the output file path
-        		cmd.append(" -strict -2 \"" + filePath + "\"");
-        		
-        		// Building process and process builder to run the command then starting it
-        		Process process = new ProcessBuilder("/bin/bash", "-c", cmd.toString()).start();
-
-                //print the command that was executed (for debug)
-        		System.out.println(cmd.toString());
-        		
-        		// Causes the current thread to wait if necessary
-        		process.waitFor();
-        		
-        		// Closing the progress dialog indicating how long merging video and audio will take
-        		progressDialog.close();
-        		return null;
-        	}
-        	
-        	/**
-        	 * Process method called when the GUI needs to be updated at stages of the doInBackground
-        	 * method
-        	 * This method is called by the publish() method
-        	 */
-            @Override
-            protected void process(List<AudioOverlay> chunks) {
-            	
-            	// Checking if the size of the list is 0 and returning if so
-                if (chunks.size() == 0) {
-                    return;
-                }
-                
-                // Adding the size of the audio list to the progress variable in order
-                // to inform user how much time is left
-                progress += chunks.size();
-                progressDialog.setOverallProgress(progress-1);
-                
-                // Informing the user as to which audio overlay is being processed at a given time
-                AudioOverlay currentlyProcessedOverlay = chunks.get(chunks.size()-1);
-                if (currentlyProcessedOverlay != null) {
-                    // If there is an audio file being processed at a certain time then informing the user
-                	// as to which file is being processed
-                	progressDialog.setTaskProgressNote("Processing " + currentlyProcessedOverlay.getFileName() + "...");
-                } else {
-                	// If there is no audio being processed then this message shows and informs the user that
-                	// they are in the final stages of exporting where the video and audio is being merged
-                    progressDialog.setTaskProgressNote("Merging video with audio tracks...");
-                }
-            }
-
-            /**
-             * done() method which informs the user when the export is completed successfully
-             */
-            @Override
-            protected void done() {
-            	// Dialog popup to inform user of successful export
-                JOptionPane.showMessageDialog(MainFrame.this,"Sucessfully exported project to "
-                					+ filePath, "Success!", JOptionPane.INFORMATION_MESSAGE);
-            }
-        }.execute();
+        new VideoExportWorker(videoPath, filePath, controlsPanel.getTotalTime()/1000).execute();
     }
 
     public VideoPlayerComponent getVideoPlayer() {

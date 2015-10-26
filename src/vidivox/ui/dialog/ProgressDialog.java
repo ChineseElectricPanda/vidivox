@@ -1,6 +1,7 @@
 package vidivox.ui.dialog;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 
 /**
@@ -12,24 +13,22 @@ import java.awt.*;
  *
  */
 public class ProgressDialog extends JDialog {
-	
 	/**
 	 * Declaring fields to be used globally within class
 	 */
     private JLabel overallProgressLabel; 		// Label indicating to user the overall progress
     private JProgressBar overallProgresBar;		// Progress bar showing overall progress of export
-    private JLabel taskProgressLabel;			// Label indicating to user the progress of a specific task
-    private JProgressBar taskProgressBar;		// Progress bar showing the progress of a specific task
     private JButton cancelButton;				// Button to allow user to cancel the export
 
     /**
      * Constructor to set up the layout of the progress bar
      */
     public ProgressDialog () {
+    	setTitle("Exporting...");
         setupLayout();
-        setMinimumSize(new Dimension(300,130));
+        setMinimumSize(new Dimension(300,70));
         pack();
-        taskProgressBar.setIndeterminate(true);
+        overallProgresBar.setIndeterminate(true);
     }
 
     /**
@@ -58,14 +57,6 @@ public class ProgressDialog extends JDialog {
         gbc.gridy++;
         contentPane.add(overallProgresBar,gbc);
         
-        // Adding the specific task progress bar and label to the content pane
-        taskProgressLabel = new JLabel("Task Progress...");
-        gbc.gridy++;
-        contentPane.add(taskProgressLabel,gbc);
-        taskProgressBar = new JProgressBar();
-        gbc.gridy++;
-        contentPane.add(taskProgressBar,gbc);
-        
         // Adding empty panels to allow for space between GUI elements
         gbc.gridy++;
         gbc.weighty = 1.0f;
@@ -82,53 +73,13 @@ public class ProgressDialog extends JDialog {
         gbc.weightx=0.0f;
         contentPane.add(cancelButton,gbc);
     }
-
-    /**
-     * Method to set the maximum value of the progress bar
-     * @param total - highest progress that can be achieved
-     */
-    public void setOverallTotal(int total) {
-        overallProgresBar.setMaximum(total);
-    }
     
     /**
-     * Method to set the actual progress of the progress bar
-     * @param progress - the current level of progress
+     * Add an ActionListener to the cancel button
+     * @param l the ActionListener to add
      */
-    public void setOverallProgress(int progress){
-        overallProgresBar.setValue(progress);
-    }
-    
-    /**
-     * Method to set the maximum value of the task bar
-     * @param total - highest progress that can be achieved
-     */
-    public void setTaskTotal(int total){
-        taskProgressBar.setMaximum(total);
-    }
-    
-    /**
-     * Method to set the actual progress of the task specific bar
-     * @param progress the progress of the task
-     */
-    public void setTaskProgress(int progress){
-        taskProgressBar.setValue(progress);
-    }
-    
-    /**
-     * Method to set the text in the label indicating the overall progress
-     * @param note - string describing progress
-     */
-    public void setOverallProgressNote(String note){
-        overallProgressLabel.setText(note);
-    }
-    
-    /**
-     * Method to set the text in the label indicating the progress of a certain task
-     * @param note - string describing progress
-     */
-    public void setTaskProgressNote(String note){
-        taskProgressLabel.setText(note);
+    public void addCancelListener(ActionListener l){
+    	cancelButton.addActionListener(l);
     }
 
     /**
