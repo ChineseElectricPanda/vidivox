@@ -408,24 +408,26 @@ public abstract class AudioOverlay {
             return getFilePath();
         }
         
-        // Creating a silent audio file equal to the length of the start time offset
-        // (reference: http://superuser.com/questions/579008/add-1-second-of-silence-to-audio-through-ffmpeg)
-        String silenceFilePath = "/tmp/silence" + startTime + ".mp3";
-        
-        // Building process to create the silent audio file
-        String cmd = "ffmpeg -y -f lavfi -i aevalsrc=0:0:0:0:0:0::duration=" + startTime + " " + silenceFilePath;
-        Process process=new ProcessBuilder("/bin/bash", "-c", cmd).start();
-        process.waitFor();
-
-        // Concatenating the silent file before the actual file and adjusting the volume
-        //(reference: http://superuser.com/questions/587511/concatenate-multiple-wav-files-using-single-command-without-extra-file)
-        String outFilePath = "/tmp/" + getFileName() + ".mp3";
-        String concatCommand = "ffmpeg -y -i " + silenceFilePath + " -i \"" + getFilePath()
-        						+ "\" -filter_complex '[0:0][1:0]concat=n=2:v=0:a=1[combined];[combined]volume=" + 
-        						(((float)volume)/100) + "[out]' -map '[out]' \"" + outFilePath+"\"";
-        
-        // Starting process to concatenate the silent and audio files
-        process = new ProcessBuilder("/bin/bash", "-c", concatCommand).start();
+//        // Creating a silent audio file equal to the length of the start time offset
+//        // (reference: http://superuser.com/questions/579008/add-1-second-of-silence-to-audio-through-ffmpeg)
+//        String silenceFilePath = "/tmp/silence" + startTime + ".mp3";
+//        
+//        // Building process to create the silent audio file
+//        String cmd = "ffmpeg -y -f lavfi -i aevalsrc=0:0:0:0:0:0::duration=" + startTime + " " + silenceFilePath;
+//        Process process=new ProcessBuilder("/bin/bash", "-c", cmd).start();
+//        process.waitFor();
+//
+//        // Concatenating the silent file before the actual file and adjusting the volume
+//        //(reference: http://superuser.com/questions/587511/concatenate-multiple-wav-files-using-single-command-without-extra-file)
+        String outFilePath = "/tmp/" + getFileName()+".mp3";
+//        String concatCommand = "ffmpeg -y -i " + silenceFilePath + " -i \"" + getFilePath()
+//        						+ "\" -filter_complex '[0:0][1:0]concat=n=2:v=0:a=1[combined];[combined]volume=" + 
+//        						(((float)volume)/100) + "[out]' -map '[out]' \"" + outFilePath+"\"";
+//        
+//        // Starting process to concatenate the silent and audio files
+        String cmd="ffmpeg -y -i \""+getFilePath()+"\" -af \"volume="+(((float)volume)/100)+"\" \""+outFilePath+"\"";
+        System.out.println(cmd);
+        Process process = new ProcessBuilder("/bin/bash", "-c", cmd).start();
         process.waitFor();
         return outFilePath;
     }

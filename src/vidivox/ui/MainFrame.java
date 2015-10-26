@@ -252,7 +252,7 @@ public class MainFrame extends JFrame{
                 if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
                     // Append .mp4 to the file name if the user didn't define an extension
                     String filePath=fileChooser.getSelectedFile().getAbsolutePath();
-                    if(filePath.endsWith(".mp4")||filePath.endsWith(".avi")){
+                    if(!(filePath.endsWith(".mp4")||filePath.endsWith(".avi"))){
                         filePath=filePath+".mp4";
                     }
                     exportProject(filePath);
@@ -570,22 +570,31 @@ public class MainFrame extends JFrame{
         		// Appending the audio path of each audio file to the command
         		// Keep count of the number of audio files added
         		int audioTracksAdded=0;
-        		for (String audioPath : audioPaths) {
+        		for (int i=0;i<audioPaths.size();i++) {
         			// Only add audio files which aren't empty
-        			if(audioPath!=null && !audioPath.isEmpty()){
-        				cmd.append(" -i \"" + audioPath+"\"");
+        			if(audioPaths.get(i)!=null && !audioPaths.get(i).isEmpty()){
+        				cmd.append(" -itsoffset "+overlays.get(i).getStartTime()+" -i \"" + audioPaths.get(i)+"\"");
         				audioTracksAdded++;
         			}
         		}
         		
         		// If audio tracks have been added then append the command to mix them
         		if(audioTracksAdded>0){
-        			cmd.append(" -filter_complex amix="+(audioTracksAdded+1));
+        			for(int i=0;i<audioTracksAdded+1;i++){
+        				cmd.append(" -map "+i+":0");
+        			}
+        			cmd.append(" -async 1 -filter_complex amix=inputs="+(audioTracksAdded+1));
         		}
 
                 // End the output when the video ends
                 cmd.append(" -t "+((double)controlsPanel.getTotalTime())/1000);
         		
+                // Append the option to fix volume levels
+                cmd.append(" -ac 2");
+                
+                // Keep the video codec
+                cmd.append(" -c:v copy");
+                
         		// Append the option to allow ffmpeg to use support more formats, then append the output file path
         		cmd.append(" -strict -2 \"" + filePath + "\"");
         		
