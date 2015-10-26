@@ -221,7 +221,7 @@ public class MainFrame extends JFrame{
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
             	List<AudioOverlay> cutOverlays=new ArrayList<>();
-            	// Check if any audios wil lbe cut off
+            	// Check if any audios will be cut off
             	for(AudioOverlay overlay: AudioOverlaysDialog.getInstance().getOverlays()){
             		// Check if any overlays begin before or end after the video
             		System.out.println((overlay.getStartTime()+overlay.getDuration())+","+controlsPanel.getTotalTime()/1000);
