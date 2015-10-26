@@ -394,21 +394,23 @@ public class MainFrame extends JFrame{
         menuBar = new JMenuBar();
         // Setting up the menu options for the menu bar item "File"
         JMenu fileMenu = new JMenu("File");
-        // Adding a keyboard shortcut for opening the file menu by pressing "Alt + F"
         fileMenu.setMnemonic(KeyEvent.VK_F);
         
         // Menu item choice to choose a video and play in the video player component
         openVideoButton = new JMenuItem("Open Video");
+        openVideoButton.setMnemonic(KeyEvent.VK_V);
         // Adding the open video button to the file menu
         fileMenu.add(openVideoButton);
         
         // Creating a button to allow the user to open a saved project
         openProjectButton=new JMenuItem("Open Project");
+        openProjectButton.setMnemonic(KeyEvent.VK_O);
         // Adding the open project button to the file menu
         fileMenu.add(openProjectButton);
         
         // Button to allow projects to be saved so that the user can come back and reopen it
         saveProjectButton = new JMenuItem("Save Project");
+        saveProjectButton.setMnemonic(KeyEvent.VK_S);
         fileMenu.add(saveProjectButton);
         // Separator to increase neatness of GUI
         fileMenu.addSeparator();
@@ -416,11 +418,13 @@ public class MainFrame extends JFrame{
         // Export button to allow user to merge video and audio generated from comments into
         // a single video file which can then be played and will contain both video and audio
         exportButton = new JMenuItem("Export");
+        exportButton.setMnemonic(KeyEvent.VK_E);
         fileMenu.add(exportButton);
         fileMenu.addSeparator();
         
         // Adding a quit button to allow the user to quit the application cleanly
         quitButton = new JMenuItem("Quit");
+        quitButton.setMnemonic(KeyEvent.VK_Q);
         fileMenu.add(quitButton);
         
         // Adding the fileMenu to the menu bar
@@ -429,11 +433,11 @@ public class MainFrame extends JFrame{
         // Adding another tab "Audio" to allow user to select the option of adding audio
         // through the use of comments by opening the designated frame for those options
         JMenu audioMenu = new JMenu("Audio");
-        // Setting shortcut key to "Alt + E"
-        audioMenu.setMnemonic(KeyEvent.VK_E);
+        audioMenu.setMnemonic(KeyEvent.VK_A);
         
         // Creating button to allow user to bring up the commentary option frame
         commentaryButton = new JMenuItem("Audio Overlays...");
+        commentaryButton.setMnemonic(KeyEvent.VK_A);
         audioMenu.add(commentaryButton);
         menuBar.add(audioMenu);
 
