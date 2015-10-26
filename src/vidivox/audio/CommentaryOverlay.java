@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 
 import javax.swing.ButtonGroup;
@@ -21,6 +22,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import vidivox.ui.JTextFieldWithCharacterLimit;
+import vidivox.ui.dialog.AudioOverlaysDialog;
 import vidivox.worker.SpeechSynthesisWorker;
 
 /**
@@ -274,6 +276,16 @@ public class CommentaryOverlay extends AudioOverlay {
                         fileName = fileName + ".mp3";
                     }
                     
+                    // Check if the file already exists
+                    File outFile=new File(fileName);
+                    if(outFile.exists()){
+                    	// Show a confirmation dialog before overwriting a file 
+                    	if(JOptionPane.showConfirmDialog(AudioOverlaysDialog.getInstance(),
+                    			outFile.getName()+" already exists!\nWould you like to overwrite it?","File already exists",
+                    			JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE)!=JOptionPane.YES_OPTION){
+                    		return;
+                    	}
+                    }
                     // Calling method to save the comment as an mp3 file
                     try {
                         saveToMp3(fileName);

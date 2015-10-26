@@ -14,6 +14,9 @@ import vidivox.video.VideoPlayerComponent;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import com.sun.org.apache.bcel.internal.generic.NEW;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -209,6 +212,16 @@ public class MainFrame extends JFrame{
                     // Allows the user to save the project by clicking on an existing file
                     // or by typing it in and passing the file to the saveProject() method
                     try {
+                    	// Check if the project file already exists
+                    	File outFile=fileChooser.getSelectedFile();
+                        if(outFile.exists()){
+                        	// Show a confirmation dialog before overwriting a file 
+                        	if(JOptionPane.showConfirmDialog(MainFrame.this,
+                        			outFile.getName()+" already exists!\nWould you like to overwrite it?","File already exists",
+                        			JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE)!=JOptionPane.YES_OPTION){
+                        		return;
+                        	}
+                        }
                         saveProject(fileChooser.getSelectedFile());
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -254,6 +267,17 @@ public class MainFrame extends JFrame{
                     String filePath=fileChooser.getSelectedFile().getAbsolutePath();
                     if(!(filePath.endsWith(".mp4")||filePath.endsWith(".avi"))){
                         filePath=filePath+".mp4";
+                    }
+                    
+                    // Check if the file already exists
+                    File outFile=new File(filePath);
+                    if(outFile.exists()){
+                    	// Show a confirmation dialog before overwriting a file 
+                    	if(JOptionPane.showConfirmDialog(MainFrame.this,
+                    			outFile.getName()+" already exists!\nWould you like to overwrite it?","File already exists",
+                    			JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE)!=JOptionPane.YES_OPTION){
+                    		return;
+                    	}
                     }
                     exportProject(filePath);
                 }
