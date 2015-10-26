@@ -147,6 +147,9 @@ public class MainFrame extends JFrame{
 
                     // Playing the video
                     videoPlayer.playVideo(videoPath);
+                    
+                    // Set the title bar to show the video path
+                    setTitle("VIDIVOX - "+selectedFile.getAbsolutePath());
 
                     // Get the duration of the video
                     int totalTime = 0;
